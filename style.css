@@ -21,6 +21,8 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--orange-hover);outli
 .welcome h1{font-size:clamp(53px,8vw,92px);letter-spacing:-3.8px;line-height:1.05;margin:0 0 15px;font-weight:800}
 .accent{color:var(--orange)}
 .welcome p{font-size:16px;color:var(--muted);margin:0}
+.home-cta{display:inline-flex;align-items:center;justify-content:center;min-height:38px;margin-top:8px;padding:9px 15px;border:1px solid #73573f;border-radius:8px;background:#1a2130;color:var(--orange-hover);font-size:13px;font-weight:700;text-decoration:none;transition:background .2s,border-color .2s,transform .2s}
+.home-cta:hover{background:var(--panel-hover);border-color:var(--orange);transform:translateY(-2px)}
 .home-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px;margin-bottom:95px}
 .home-card{min-height:158px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-decoration:none;text-align:center;background:var(--panel);border:1px solid #324059;border-radius:13px;padding:26px 14px;transition:transform .2s,background .2s,border-color .2s,box-shadow .2s}
 .home-card:hover{transform:translateY(-4px);background:var(--panel-hover);border-color:var(--orange);box-shadow:0 12px 30px rgba(0,0,0,.12)}
