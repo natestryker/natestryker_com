@@ -1,0 +1,2790 @@
+[
+  {
+    "id": "minecraft:white_concrete",
+    "name": "White Concrete",
+    "category": "Concrete",
+    "color": [
+      207,
+      213,
+      214
+    ],
+    "texture": "textures/white_concrete.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 0.68,
+    "hex": "#cfd5d6"
+  },
+  {
+    "id": "minecraft:orange_concrete",
+    "name": "Orange Concrete",
+    "category": "Concrete",
+    "color": [
+      224,
+      97,
+      1
+    ],
+    "texture": "textures/orange_concrete.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 0.98,
+    "hex": "#e06101"
+  },
+  {
+    "id": "minecraft:magenta_concrete",
+    "name": "Magenta Concrete",
+    "category": "Concrete",
+    "color": [
+      169,
+      48,
+      159
+    ],
+    "texture": "textures/magenta_concrete.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 1.0,
+    "hex": "#a9309f"
+  },
+  {
+    "id": "minecraft:light_blue_concrete",
+    "name": "Light Blue Concrete",
+    "category": "Concrete",
+    "color": [
+      36,
+      137,
+      199
+    ],
+    "texture": "textures/light_blue_concrete.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 0.96,
+    "hex": "#2489c7"
+  },
+  {
+    "id": "minecraft:yellow_concrete",
+    "name": "Yellow Concrete",
+    "category": "Concrete",
+    "color": [
+      241,
+      175,
+      21
+    ],
+    "texture": "textures/yellow_concrete.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 1.05,
+    "hex": "#f1af15"
+  },
+  {
+    "id": "minecraft:lime_concrete",
+    "name": "Lime Concrete",
+    "category": "Concrete",
+    "color": [
+      94,
+      169,
+      24
+    ],
+    "texture": "textures/lime_concrete.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 1.01,
+    "hex": "#5ea918"
+  },
+  {
+    "id": "minecraft:pink_concrete",
+    "name": "Pink Concrete",
+    "category": "Concrete",
+    "color": [
+      214,
+      101,
+      143
+    ],
+    "texture": "textures/pink_concrete.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 0.85,
+    "hex": "#d6658f"
+  },
+  {
+    "id": "minecraft:gray_concrete",
+    "name": "Gray Concrete",
+    "category": "Concrete",
+    "color": [
+      55,
+      58,
+      62
+    ],
+    "texture": "textures/gray_concrete.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 0.43,
+    "hex": "#373a3e"
+  },
+  {
+    "id": "minecraft:light_gray_concrete",
+    "name": "Light Gray Concrete",
+    "category": "Concrete",
+    "color": [
+      125,
+      125,
+      115
+    ],
+    "texture": "textures/light_gray_concrete.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 0.53,
+    "hex": "#7d7d73"
+  },
+  {
+    "id": "minecraft:cyan_concrete",
+    "name": "Cyan Concrete",
+    "category": "Concrete",
+    "color": [
+      21,
+      119,
+      136
+    ],
+    "texture": "textures/cyan_concrete.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 0.57,
+    "hex": "#157788"
+  },
+  {
+    "id": "minecraft:purple_concrete",
+    "name": "Purple Concrete",
+    "category": "Concrete",
+    "color": [
+      100,
+      32,
+      156
+    ],
+    "texture": "textures/purple_concrete.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 0.61,
+    "hex": "#64209c"
+  },
+  {
+    "id": "minecraft:blue_concrete",
+    "name": "Blue Concrete",
+    "category": "Concrete",
+    "color": [
+      45,
+      47,
+      143
+    ],
+    "texture": "textures/blue_concrete.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 0.57,
+    "hex": "#2d2f8f"
+  },
+  {
+    "id": "minecraft:brown_concrete",
+    "name": "Brown Concrete",
+    "category": "Concrete",
+    "color": [
+      96,
+      60,
+      32
+    ],
+    "texture": "textures/brown_concrete.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 0.55,
+    "hex": "#603c20"
+  },
+  {
+    "id": "minecraft:green_concrete",
+    "name": "Green Concrete",
+    "category": "Concrete",
+    "color": [
+      73,
+      91,
+      36
+    ],
+    "texture": "textures/green_concrete.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 0.55,
+    "hex": "#495b24"
+  },
+  {
+    "id": "minecraft:red_concrete",
+    "name": "Red Concrete",
+    "category": "Concrete",
+    "color": [
+      142,
+      33,
+      33
+    ],
+    "texture": "textures/red_concrete.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 0.8,
+    "hex": "#8e2121"
+  },
+  {
+    "id": "minecraft:black_concrete",
+    "name": "Black Concrete",
+    "category": "Concrete",
+    "color": [
+      8,
+      10,
+      15
+    ],
+    "texture": "textures/black_concrete.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 1.15,
+    "hex": "#080a0f"
+  },
+  {
+    "id": "minecraft:white_wool",
+    "name": "White Wool",
+    "category": "Wool",
+    "color": [
+      234,
+      236,
+      237
+    ],
+    "texture": "textures/white_wool.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 159.64,
+    "hex": "#eaeced"
+  },
+  {
+    "id": "minecraft:orange_wool",
+    "name": "Orange Wool",
+    "category": "Wool",
+    "color": [
+      241,
+      118,
+      20
+    ],
+    "texture": "textures/orange_wool.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 129.21,
+    "hex": "#f17614"
+  },
+  {
+    "id": "minecraft:magenta_wool",
+    "name": "Magenta Wool",
+    "category": "Wool",
+    "color": [
+      190,
+      69,
+      180
+    ],
+    "texture": "textures/magenta_wool.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 167.4,
+    "hex": "#be45b4"
+  },
+  {
+    "id": "minecraft:light_blue_wool",
+    "name": "Light Blue Wool",
+    "category": "Wool",
+    "color": [
+      58,
+      175,
+      217
+    ],
+    "texture": "textures/light_blue_wool.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 184.77,
+    "hex": "#3aafd9"
+  },
+  {
+    "id": "minecraft:yellow_wool",
+    "name": "Yellow Wool",
+    "category": "Wool",
+    "color": [
+      249,
+      198,
+      40
+    ],
+    "texture": "textures/yellow_wool.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 101.37,
+    "hex": "#f9c628"
+  },
+  {
+    "id": "minecraft:lime_wool",
+    "name": "Lime Wool",
+    "category": "Wool",
+    "color": [
+      112,
+      185,
+      26
+    ],
+    "texture": "textures/lime_wool.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 76.88,
+    "hex": "#70b91a"
+  },
+  {
+    "id": "minecraft:pink_wool",
+    "name": "Pink Wool",
+    "category": "Wool",
+    "color": [
+      238,
+      141,
+      172
+    ],
+    "texture": "textures/pink_wool.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 280.56,
+    "hex": "#ee8dac"
+  },
+  {
+    "id": "minecraft:gray_wool",
+    "name": "Gray Wool",
+    "category": "Wool",
+    "color": [
+      63,
+      68,
+      72
+    ],
+    "texture": "textures/gray_wool.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 35.56,
+    "hex": "#3f4448"
+  },
+  {
+    "id": "minecraft:light_gray_wool",
+    "name": "Light Gray Wool",
+    "category": "Wool",
+    "color": [
+      142,
+      142,
+      135
+    ],
+    "texture": "textures/light_gray_wool.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 99.93,
+    "hex": "#8e8e87"
+  },
+  {
+    "id": "minecraft:cyan_wool",
+    "name": "Cyan Wool",
+    "category": "Wool",
+    "color": [
+      21,
+      138,
+      145
+    ],
+    "texture": "textures/cyan_wool.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 49.29,
+    "hex": "#158a91"
+  },
+  {
+    "id": "minecraft:purple_wool",
+    "name": "Purple Wool",
+    "category": "Wool",
+    "color": [
+      122,
+      42,
+      173
+    ],
+    "texture": "textures/purple_wool.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 137.6,
+    "hex": "#7a2aad"
+  },
+  {
+    "id": "minecraft:blue_wool",
+    "name": "Blue Wool",
+    "category": "Wool",
+    "color": [
+      53,
+      57,
+      157
+    ],
+    "texture": "textures/blue_wool.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 59.7,
+    "hex": "#35399d"
+  },
+  {
+    "id": "minecraft:brown_wool",
+    "name": "Brown Wool",
+    "category": "Wool",
+    "color": [
+      114,
+      72,
+      41
+    ],
+    "texture": "textures/brown_wool.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 63.83,
+    "hex": "#724829"
+  },
+  {
+    "id": "minecraft:green_wool",
+    "name": "Green Wool",
+    "category": "Wool",
+    "color": [
+      85,
+      110,
+      28
+    ],
+    "texture": "textures/green_wool.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 67.64,
+    "hex": "#556e1c"
+  },
+  {
+    "id": "minecraft:red_wool",
+    "name": "Red Wool",
+    "category": "Wool",
+    "color": [
+      161,
+      39,
+      35
+    ],
+    "texture": "textures/red_wool.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 55.71,
+    "hex": "#a12723"
+  },
+  {
+    "id": "minecraft:black_wool",
+    "name": "Black Wool",
+    "category": "Wool",
+    "color": [
+      21,
+      21,
+      26
+    ],
+    "texture": "textures/black_wool.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 58.29,
+    "hex": "#15151a"
+  },
+  {
+    "id": "minecraft:white_terracotta",
+    "name": "White Terracotta",
+    "category": "Terracotta",
+    "color": [
+      210,
+      178,
+      161
+    ],
+    "texture": "textures/white_terracotta.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 3.96,
+    "hex": "#d2b2a1"
+  },
+  {
+    "id": "minecraft:orange_terracotta",
+    "name": "Orange Terracotta",
+    "category": "Terracotta",
+    "color": [
+      162,
+      84,
+      38
+    ],
+    "texture": "textures/orange_terracotta.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 5.03,
+    "hex": "#a25426"
+  },
+  {
+    "id": "minecraft:magenta_terracotta",
+    "name": "Magenta Terracotta",
+    "category": "Terracotta",
+    "color": [
+      150,
+      88,
+      109
+    ],
+    "texture": "textures/magenta_terracotta.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 5.0,
+    "hex": "#96586d"
+  },
+  {
+    "id": "minecraft:light_blue_terracotta",
+    "name": "Light Blue Terracotta",
+    "category": "Terracotta",
+    "color": [
+      113,
+      109,
+      138
+    ],
+    "texture": "textures/light_blue_terracotta.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 2.52,
+    "hex": "#716d8a"
+  },
+  {
+    "id": "minecraft:yellow_terracotta",
+    "name": "Yellow Terracotta",
+    "category": "Terracotta",
+    "color": [
+      186,
+      133,
+      35
+    ],
+    "texture": "textures/yellow_terracotta.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 4.83,
+    "hex": "#ba8523"
+  },
+  {
+    "id": "minecraft:lime_terracotta",
+    "name": "Lime Terracotta",
+    "category": "Terracotta",
+    "color": [
+      104,
+      118,
+      53
+    ],
+    "texture": "textures/lime_terracotta.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 5.07,
+    "hex": "#687635"
+  },
+  {
+    "id": "minecraft:pink_terracotta",
+    "name": "Pink Terracotta",
+    "category": "Terracotta",
+    "color": [
+      162,
+      78,
+      79
+    ],
+    "texture": "textures/pink_terracotta.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 5.42,
+    "hex": "#a24e4f"
+  },
+  {
+    "id": "minecraft:gray_terracotta",
+    "name": "Gray Terracotta",
+    "category": "Terracotta",
+    "color": [
+      58,
+      42,
+      36
+    ],
+    "texture": "textures/gray_terracotta.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 1.17,
+    "hex": "#3a2a24"
+  },
+  {
+    "id": "minecraft:light_gray_terracotta",
+    "name": "Light Gray Terracotta",
+    "category": "Terracotta",
+    "color": [
+      135,
+      107,
+      98
+    ],
+    "texture": "textures/light_gray_terracotta.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 2.78,
+    "hex": "#876b62"
+  },
+  {
+    "id": "minecraft:cyan_terracotta",
+    "name": "Cyan Terracotta",
+    "category": "Terracotta",
+    "color": [
+      87,
+      91,
+      91
+    ],
+    "texture": "textures/cyan_terracotta.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 3.76,
+    "hex": "#575b5b"
+  },
+  {
+    "id": "minecraft:purple_terracotta",
+    "name": "Purple Terracotta",
+    "category": "Terracotta",
+    "color": [
+      118,
+      70,
+      86
+    ],
+    "texture": "textures/purple_terracotta.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 5.45,
+    "hex": "#764656"
+  },
+  {
+    "id": "minecraft:blue_terracotta",
+    "name": "Blue Terracotta",
+    "category": "Terracotta",
+    "color": [
+      74,
+      60,
+      91
+    ],
+    "texture": "textures/blue_terracotta.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 1.88,
+    "hex": "#4a3c5b"
+  },
+  {
+    "id": "minecraft:brown_terracotta",
+    "name": "Brown Terracotta",
+    "category": "Terracotta",
+    "color": [
+      77,
+      51,
+      36
+    ],
+    "texture": "textures/brown_terracotta.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 1.85,
+    "hex": "#4d3324"
+  },
+  {
+    "id": "minecraft:green_terracotta",
+    "name": "Green Terracotta",
+    "category": "Terracotta",
+    "color": [
+      76,
+      83,
+      42
+    ],
+    "texture": "textures/green_terracotta.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 2.03,
+    "hex": "#4c532a"
+  },
+  {
+    "id": "minecraft:red_terracotta",
+    "name": "Red Terracotta",
+    "category": "Terracotta",
+    "color": [
+      143,
+      61,
+      47
+    ],
+    "texture": "textures/red_terracotta.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 4.72,
+    "hex": "#8f3d2f"
+  },
+  {
+    "id": "minecraft:black_terracotta",
+    "name": "Black Terracotta",
+    "category": "Terracotta",
+    "color": [
+      37,
+      23,
+      16
+    ],
+    "texture": "textures/black_terracotta.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 0.97,
+    "hex": "#251710"
+  },
+  {
+    "id": "minecraft:white_glazed_terracotta",
+    "name": "White Glazed Terracotta",
+    "category": "Glazed Terracotta",
+    "color": [
+      188,
+      212,
+      203
+    ],
+    "texture": "textures/white_glazed_terracotta.png",
+    "survival": true,
+    "properties": {
+      "facing": "east"
+    },
+    "notes": "Place facing east. Unrotated west template face becomes the south-facing wall face; other faces have rotated patterns.",
+    "version": "1.20.4",
+    "textureVariance": 4875.43,
+    "hex": "#bcd4cb"
+  },
+  {
+    "id": "minecraft:orange_glazed_terracotta",
+    "name": "Orange Glazed Terracotta",
+    "category": "Glazed Terracotta",
+    "color": [
+      155,
+      147,
+      92
+    ],
+    "texture": "textures/orange_glazed_terracotta.png",
+    "survival": true,
+    "properties": {
+      "facing": "east"
+    },
+    "notes": "Place facing east. Unrotated west template face becomes the south-facing wall face; other faces have rotated patterns.",
+    "version": "1.20.4",
+    "textureVariance": 6502.04,
+    "hex": "#9b935c"
+  },
+  {
+    "id": "minecraft:magenta_glazed_terracotta",
+    "name": "Magenta Glazed Terracotta",
+    "category": "Glazed Terracotta",
+    "color": [
+      208,
+      100,
+      192
+    ],
+    "texture": "textures/magenta_glazed_terracotta.png",
+    "survival": true,
+    "properties": {
+      "facing": "east"
+    },
+    "notes": "Place facing east. Unrotated west template face becomes the south-facing wall face; other faces have rotated patterns.",
+    "version": "1.20.4",
+    "textureVariance": 943.09,
+    "hex": "#d064c0"
+  },
+  {
+    "id": "minecraft:light_blue_glazed_terracotta",
+    "name": "Light Blue Glazed Terracotta",
+    "category": "Glazed Terracotta",
+    "color": [
+      95,
+      165,
+      209
+    ],
+    "texture": "textures/light_blue_glazed_terracotta.png",
+    "survival": true,
+    "properties": {
+      "facing": "east"
+    },
+    "notes": "Place facing east. Unrotated west template face becomes the south-facing wall face; other faces have rotated patterns.",
+    "version": "1.20.4",
+    "textureVariance": 3845.07,
+    "hex": "#5fa5d1"
+  },
+  {
+    "id": "minecraft:yellow_glazed_terracotta",
+    "name": "Yellow Glazed Terracotta",
+    "category": "Glazed Terracotta",
+    "color": [
+      234,
+      192,
+      89
+    ],
+    "texture": "textures/yellow_glazed_terracotta.png",
+    "survival": true,
+    "properties": {
+      "facing": "east"
+    },
+    "notes": "Place facing east. Unrotated west template face becomes the south-facing wall face; other faces have rotated patterns.",
+    "version": "1.20.4",
+    "textureVariance": 2334.03,
+    "hex": "#eac059"
+  },
+  {
+    "id": "minecraft:lime_glazed_terracotta",
+    "name": "Lime Glazed Terracotta",
+    "category": "Glazed Terracotta",
+    "color": [
+      163,
+      198,
+      55
+    ],
+    "texture": "textures/lime_glazed_terracotta.png",
+    "survival": true,
+    "properties": {
+      "facing": "east"
+    },
+    "notes": "Place facing east. Unrotated west template face becomes the south-facing wall face; other faces have rotated patterns.",
+    "version": "1.20.4",
+    "textureVariance": 2374.88,
+    "hex": "#a3c637"
+  },
+  {
+    "id": "minecraft:pink_glazed_terracotta",
+    "name": "Pink Glazed Terracotta",
+    "category": "Glazed Terracotta",
+    "color": [
+      235,
+      155,
+      182
+    ],
+    "texture": "textures/pink_glazed_terracotta.png",
+    "survival": true,
+    "properties": {
+      "facing": "east"
+    },
+    "notes": "Place facing east. Unrotated west template face becomes the south-facing wall face; other faces have rotated patterns.",
+    "version": "1.20.4",
+    "textureVariance": 535.64,
+    "hex": "#eb9bb6"
+  },
+  {
+    "id": "minecraft:gray_glazed_terracotta",
+    "name": "Gray Glazed Terracotta",
+    "category": "Glazed Terracotta",
+    "color": [
+      83,
+      90,
+      94
+    ],
+    "texture": "textures/gray_glazed_terracotta.png",
+    "survival": true,
+    "properties": {
+      "facing": "east"
+    },
+    "notes": "Place facing east. Unrotated west template face becomes the south-facing wall face; other faces have rotated patterns.",
+    "version": "1.20.4",
+    "textureVariance": 1093.32,
+    "hex": "#535a5e"
+  },
+  {
+    "id": "minecraft:light_gray_glazed_terracotta",
+    "name": "Light Gray Glazed Terracotta",
+    "category": "Glazed Terracotta",
+    "color": [
+      144,
+      166,
+      168
+    ],
+    "texture": "textures/light_gray_glazed_terracotta.png",
+    "survival": true,
+    "properties": {
+      "facing": "east"
+    },
+    "notes": "Place facing east. Unrotated west template face becomes the south-facing wall face; other faces have rotated patterns.",
+    "version": "1.20.4",
+    "textureVariance": 2306.1,
+    "hex": "#90a6a8"
+  },
+  {
+    "id": "minecraft:cyan_glazed_terracotta",
+    "name": "Cyan Glazed Terracotta",
+    "category": "Glazed Terracotta",
+    "color": [
+      52,
+      119,
+      125
+    ],
+    "texture": "textures/cyan_glazed_terracotta.png",
+    "survival": true,
+    "properties": {
+      "facing": "east"
+    },
+    "notes": "Place facing east. Unrotated west template face becomes the south-facing wall face; other faces have rotated patterns.",
+    "version": "1.20.4",
+    "textureVariance": 2447.5,
+    "hex": "#34777d"
+  },
+  {
+    "id": "minecraft:purple_glazed_terracotta",
+    "name": "Purple Glazed Terracotta",
+    "category": "Glazed Terracotta",
+    "color": [
+      110,
+      48,
+      152
+    ],
+    "texture": "textures/purple_glazed_terracotta.png",
+    "survival": true,
+    "properties": {
+      "facing": "east"
+    },
+    "notes": "Place facing east. Unrotated west template face becomes the south-facing wall face; other faces have rotated patterns.",
+    "version": "1.20.4",
+    "textureVariance": 1729.15,
+    "hex": "#6e3098"
+  },
+  {
+    "id": "minecraft:blue_glazed_terracotta",
+    "name": "Blue Glazed Terracotta",
+    "category": "Glazed Terracotta",
+    "color": [
+      47,
+      65,
+      139
+    ],
+    "texture": "textures/blue_glazed_terracotta.png",
+    "survival": true,
+    "properties": {
+      "facing": "east"
+    },
+    "notes": "Place facing east. Unrotated west template face becomes the south-facing wall face; other faces have rotated patterns.",
+    "version": "1.20.4",
+    "textureVariance": 1600.68,
+    "hex": "#2f418b"
+  },
+  {
+    "id": "minecraft:brown_glazed_terracotta",
+    "name": "Brown Glazed Terracotta",
+    "category": "Glazed Terracotta",
+    "color": [
+      120,
+      106,
+      86
+    ],
+    "texture": "textures/brown_glazed_terracotta.png",
+    "survival": true,
+    "properties": {
+      "facing": "east"
+    },
+    "notes": "Place facing east. Unrotated west template face becomes the south-facing wall face; other faces have rotated patterns.",
+    "version": "1.20.4",
+    "textureVariance": 2063.0,
+    "hex": "#786a56"
+  },
+  {
+    "id": "minecraft:green_glazed_terracotta",
+    "name": "Green Glazed Terracotta",
+    "category": "Glazed Terracotta",
+    "color": [
+      117,
+      142,
+      67
+    ],
+    "texture": "textures/green_glazed_terracotta.png",
+    "survival": true,
+    "properties": {
+      "facing": "east"
+    },
+    "notes": "Place facing east. Unrotated west template face becomes the south-facing wall face; other faces have rotated patterns.",
+    "version": "1.20.4",
+    "textureVariance": 2597.55,
+    "hex": "#758e43"
+  },
+  {
+    "id": "minecraft:red_glazed_terracotta",
+    "name": "Red Glazed Terracotta",
+    "category": "Glazed Terracotta",
+    "color": [
+      182,
+      60,
+      53
+    ],
+    "texture": "textures/red_glazed_terracotta.png",
+    "survival": true,
+    "properties": {
+      "facing": "east"
+    },
+    "notes": "Place facing east. Unrotated west template face becomes the south-facing wall face; other faces have rotated patterns.",
+    "version": "1.20.4",
+    "textureVariance": 629.13,
+    "hex": "#b63c35"
+  },
+  {
+    "id": "minecraft:black_glazed_terracotta",
+    "name": "Black Glazed Terracotta",
+    "category": "Glazed Terracotta",
+    "color": [
+      68,
+      30,
+      32
+    ],
+    "texture": "textures/black_glazed_terracotta.png",
+    "survival": true,
+    "properties": {
+      "facing": "east"
+    },
+    "notes": "Place facing east. Unrotated west template face becomes the south-facing wall face; other faces have rotated patterns.",
+    "version": "1.20.4",
+    "textureVariance": 1130.03,
+    "hex": "#441e20"
+  },
+  {
+    "id": "minecraft:terracotta",
+    "name": "Terracotta",
+    "category": "Terracotta",
+    "color": [
+      152,
+      94,
+      68
+    ],
+    "texture": "textures/terracotta.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 3.49,
+    "hex": "#985e44"
+  },
+  {
+    "id": "minecraft:oak_planks",
+    "name": "Oak Planks",
+    "category": "Wood",
+    "color": [
+      162,
+      131,
+      79
+    ],
+    "texture": "textures/oak_planks.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 576.01,
+    "hex": "#a2834f"
+  },
+  {
+    "id": "minecraft:spruce_planks",
+    "name": "Spruce Planks",
+    "category": "Wood",
+    "color": [
+      115,
+      85,
+      49
+    ],
+    "texture": "textures/spruce_planks.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 192.7,
+    "hex": "#735531"
+  },
+  {
+    "id": "minecraft:birch_planks",
+    "name": "Birch Planks",
+    "category": "Wood",
+    "color": [
+      192,
+      175,
+      121
+    ],
+    "texture": "textures/birch_planks.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 352.05,
+    "hex": "#c0af79"
+  },
+  {
+    "id": "minecraft:jungle_planks",
+    "name": "Jungle Planks",
+    "category": "Wood",
+    "color": [
+      160,
+      115,
+      81
+    ],
+    "texture": "textures/jungle_planks.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 567.41,
+    "hex": "#a07351"
+  },
+  {
+    "id": "minecraft:acacia_planks",
+    "name": "Acacia Planks",
+    "category": "Wood",
+    "color": [
+      168,
+      90,
+      50
+    ],
+    "texture": "textures/acacia_planks.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 188.44,
+    "hex": "#a85a32"
+  },
+  {
+    "id": "minecraft:dark_oak_planks",
+    "name": "Dark Oak Planks",
+    "category": "Wood",
+    "color": [
+      67,
+      43,
+      20
+    ],
+    "texture": "textures/dark_oak_planks.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 102.59,
+    "hex": "#432b14"
+  },
+  {
+    "id": "minecraft:mangrove_planks",
+    "name": "Mangrove Planks",
+    "category": "Wood",
+    "color": [
+      118,
+      54,
+      49
+    ],
+    "texture": "textures/mangrove_planks.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 166.1,
+    "hex": "#763631"
+  },
+  {
+    "id": "minecraft:cherry_planks",
+    "name": "Cherry Planks",
+    "category": "Wood",
+    "color": [
+      227,
+      179,
+      173
+    ],
+    "texture": "textures/cherry_planks.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 305.05,
+    "hex": "#e3b3ad"
+  },
+  {
+    "id": "minecraft:bamboo_planks",
+    "name": "Bamboo Planks",
+    "category": "Wood",
+    "color": [
+      193,
+      173,
+      80
+    ],
+    "texture": "textures/bamboo_planks.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 548.1,
+    "hex": "#c1ad50"
+  },
+  {
+    "id": "minecraft:crimson_planks",
+    "name": "Crimson Planks",
+    "category": "Wood",
+    "color": [
+      101,
+      49,
+      71
+    ],
+    "texture": "textures/crimson_planks.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 327.84,
+    "hex": "#653147"
+  },
+  {
+    "id": "minecraft:warped_planks",
+    "name": "Warped Planks",
+    "category": "Wood",
+    "color": [
+      43,
+      105,
+      99
+    ],
+    "texture": "textures/warped_planks.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 619.8,
+    "hex": "#2b6963"
+  },
+  {
+    "id": "minecraft:bamboo_mosaic",
+    "name": "Bamboo Mosaic",
+    "category": "Wood",
+    "color": [
+      190,
+      170,
+      78
+    ],
+    "texture": "textures/bamboo_mosaic.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 492.6,
+    "hex": "#beaa4e"
+  },
+  {
+    "id": "minecraft:stone",
+    "name": "Stone",
+    "category": "Stone",
+    "color": [
+      126,
+      126,
+      126
+    ],
+    "texture": "textures/stone.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 116.78,
+    "hex": "#7e7e7e"
+  },
+  {
+    "id": "minecraft:cobblestone",
+    "name": "Cobblestone",
+    "category": "Stone",
+    "color": [
+      128,
+      127,
+      128
+    ],
+    "texture": "textures/cobblestone.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 864.88,
+    "hex": "#807f80"
+  },
+  {
+    "id": "minecraft:mossy_cobblestone",
+    "name": "Mossy Cobblestone",
+    "category": "Stone",
+    "color": [
+      110,
+      118,
+      95
+    ],
+    "texture": "textures/mossy_cobblestone.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 800.67,
+    "hex": "#6e765f"
+  },
+  {
+    "id": "minecraft:granite",
+    "name": "Granite",
+    "category": "Stone",
+    "color": [
+      149,
+      103,
+      86
+    ],
+    "texture": "textures/granite.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 463.1,
+    "hex": "#956756"
+  },
+  {
+    "id": "minecraft:polished_granite",
+    "name": "Polished Granite",
+    "category": "Stone",
+    "color": [
+      154,
+      107,
+      89
+    ],
+    "texture": "textures/polished_granite.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 475.77,
+    "hex": "#9a6b59"
+  },
+  {
+    "id": "minecraft:diorite",
+    "name": "Diorite",
+    "category": "Stone",
+    "color": [
+      189,
+      188,
+      189
+    ],
+    "texture": "textures/diorite.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 1202.2,
+    "hex": "#bdbcbd"
+  },
+  {
+    "id": "minecraft:polished_diorite",
+    "name": "Polished Diorite",
+    "category": "Stone",
+    "color": [
+      193,
+      193,
+      195
+    ],
+    "texture": "textures/polished_diorite.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 1151.59,
+    "hex": "#c1c1c3"
+  },
+  {
+    "id": "minecraft:andesite",
+    "name": "Andesite",
+    "category": "Stone",
+    "color": [
+      136,
+      136,
+      137
+    ],
+    "texture": "textures/andesite.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 247.9,
+    "hex": "#888889"
+  },
+  {
+    "id": "minecraft:polished_andesite",
+    "name": "Polished Andesite",
+    "category": "Stone",
+    "color": [
+      132,
+      135,
+      134
+    ],
+    "texture": "textures/polished_andesite.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 439.46,
+    "hex": "#848786"
+  },
+  {
+    "id": "minecraft:stone_bricks",
+    "name": "Stone Bricks",
+    "category": "Stone",
+    "color": [
+      122,
+      122,
+      122
+    ],
+    "texture": "textures/stone_bricks.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 358.27,
+    "hex": "#7a7a7a"
+  },
+  {
+    "id": "minecraft:mossy_stone_bricks",
+    "name": "Mossy Stone Bricks",
+    "category": "Stone",
+    "color": [
+      115,
+      121,
+      105
+    ],
+    "texture": "textures/mossy_stone_bricks.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 531.41,
+    "hex": "#737969"
+  },
+  {
+    "id": "minecraft:cracked_stone_bricks",
+    "name": "Cracked Stone Bricks",
+    "category": "Stone",
+    "color": [
+      118,
+      118,
+      118
+    ],
+    "texture": "textures/cracked_stone_bricks.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 358.92,
+    "hex": "#767676"
+  },
+  {
+    "id": "minecraft:chiseled_stone_bricks",
+    "name": "Chiseled Stone Bricks",
+    "category": "Stone",
+    "color": [
+      120,
+      119,
+      120
+    ],
+    "texture": "textures/chiseled_stone_bricks.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 510.71,
+    "hex": "#787778"
+  },
+  {
+    "id": "minecraft:deepslate",
+    "name": "Deepslate",
+    "category": "Stone",
+    "color": [
+      80,
+      80,
+      83
+    ],
+    "texture": "textures/deepslate.png",
+    "survival": true,
+    "properties": {
+      "axis": "y"
+    },
+    "notes": "Top and bottom use a different face texture; south face used for this wall.",
+    "version": "1.20.4",
+    "textureVariance": 422.46,
+    "hex": "#505053"
+  },
+  {
+    "id": "minecraft:cobbled_deepslate",
+    "name": "Cobbled Deepslate",
+    "category": "Stone",
+    "color": [
+      77,
+      77,
+      81
+    ],
+    "texture": "textures/cobbled_deepslate.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 417.63,
+    "hex": "#4d4d51"
+  },
+  {
+    "id": "minecraft:polished_deepslate",
+    "name": "Polished Deepslate",
+    "category": "Stone",
+    "color": [
+      72,
+      73,
+      73
+    ],
+    "texture": "textures/polished_deepslate.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 407.87,
+    "hex": "#484949"
+  },
+  {
+    "id": "minecraft:deepslate_bricks",
+    "name": "Deepslate Bricks",
+    "category": "Stone",
+    "color": [
+      71,
+      71,
+      71
+    ],
+    "texture": "textures/deepslate_bricks.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 486.25,
+    "hex": "#474747"
+  },
+  {
+    "id": "minecraft:cracked_deepslate_bricks",
+    "name": "Cracked Deepslate Bricks",
+    "category": "Stone",
+    "color": [
+      65,
+      65,
+      65
+    ],
+    "texture": "textures/cracked_deepslate_bricks.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 512.82,
+    "hex": "#414141"
+  },
+  {
+    "id": "minecraft:deepslate_tiles",
+    "name": "Deepslate Tiles",
+    "category": "Stone",
+    "color": [
+      55,
+      55,
+      55
+    ],
+    "texture": "textures/deepslate_tiles.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 223.96,
+    "hex": "#373737"
+  },
+  {
+    "id": "minecraft:cracked_deepslate_tiles",
+    "name": "Cracked Deepslate Tiles",
+    "category": "Stone",
+    "color": [
+      53,
+      53,
+      53
+    ],
+    "texture": "textures/cracked_deepslate_tiles.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 219.61,
+    "hex": "#353535"
+  },
+  {
+    "id": "minecraft:chiseled_deepslate",
+    "name": "Chiseled Deepslate",
+    "category": "Stone",
+    "color": [
+      54,
+      54,
+      55
+    ],
+    "texture": "textures/chiseled_deepslate.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 259.56,
+    "hex": "#363637"
+  },
+  {
+    "id": "minecraft:tuff",
+    "name": "Tuff",
+    "category": "Stone",
+    "color": [
+      108,
+      109,
+      103
+    ],
+    "texture": "textures/tuff.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 435.94,
+    "hex": "#6c6d67"
+  },
+  {
+    "id": "minecraft:calcite",
+    "name": "Calcite",
+    "category": "Stone",
+    "color": [
+      223,
+      224,
+      221
+    ],
+    "texture": "textures/calcite.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 373.55,
+    "hex": "#dfe0dd"
+  },
+  {
+    "id": "minecraft:smooth_basalt",
+    "name": "Smooth Basalt",
+    "category": "Stone",
+    "color": [
+      73,
+      72,
+      78
+    ],
+    "texture": "textures/smooth_basalt.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 258.68,
+    "hex": "#49484e"
+  },
+  {
+    "id": "minecraft:obsidian",
+    "name": "Obsidian",
+    "category": "Stone",
+    "color": [
+      15,
+      11,
+      25
+    ],
+    "texture": "textures/obsidian.png",
+    "survival": false,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 357.53,
+    "hex": "#0f0b19"
+  },
+  {
+    "id": "minecraft:netherrack",
+    "name": "Netherrack",
+    "category": "Stone",
+    "color": [
+      98,
+      38,
+      38
+    ],
+    "texture": "textures/netherrack.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 196.16,
+    "hex": "#622626"
+  },
+  {
+    "id": "minecraft:nether_bricks",
+    "name": "Nether Bricks",
+    "category": "Stone",
+    "color": [
+      44,
+      22,
+      26
+    ],
+    "texture": "textures/nether_bricks.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 96.57,
+    "hex": "#2c161a"
+  },
+  {
+    "id": "minecraft:red_nether_bricks",
+    "name": "Red Nether Bricks",
+    "category": "Stone",
+    "color": [
+      70,
+      7,
+      9
+    ],
+    "texture": "textures/red_nether_bricks.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 200.11,
+    "hex": "#460709"
+  },
+  {
+    "id": "minecraft:cracked_nether_bricks",
+    "name": "Cracked Nether Bricks",
+    "category": "Stone",
+    "color": [
+      40,
+      20,
+      24
+    ],
+    "texture": "textures/cracked_nether_bricks.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 106.81,
+    "hex": "#281418"
+  },
+  {
+    "id": "minecraft:chiseled_nether_bricks",
+    "name": "Chiseled Nether Bricks",
+    "category": "Stone",
+    "color": [
+      47,
+      24,
+      28
+    ],
+    "texture": "textures/chiseled_nether_bricks.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 128.33,
+    "hex": "#2f181c"
+  },
+  {
+    "id": "minecraft:blackstone",
+    "name": "Blackstone",
+    "category": "Stone",
+    "color": [
+      42,
+      36,
+      41
+    ],
+    "texture": "textures/blackstone.png",
+    "survival": true,
+    "properties": {},
+    "notes": "Top and bottom use a different face texture; south face used for this wall.",
+    "version": "1.20.4",
+    "textureVariance": 280.74,
+    "hex": "#2a2429"
+  },
+  {
+    "id": "minecraft:polished_blackstone",
+    "name": "Polished Blackstone",
+    "category": "Stone",
+    "color": [
+      53,
+      49,
+      57
+    ],
+    "texture": "textures/polished_blackstone.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 258.48,
+    "hex": "#353139"
+  },
+  {
+    "id": "minecraft:polished_blackstone_bricks",
+    "name": "Polished Blackstone Bricks",
+    "category": "Stone",
+    "color": [
+      48,
+      43,
+      50
+    ],
+    "texture": "textures/polished_blackstone_bricks.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 322.98,
+    "hex": "#302b32"
+  },
+  {
+    "id": "minecraft:cracked_polished_blackstone_bricks",
+    "name": "Cracked Polished Blackstone Bricks",
+    "category": "Stone",
+    "color": [
+      44,
+      38,
+      44
+    ],
+    "texture": "textures/cracked_polished_blackstone_bricks.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 370.22,
+    "hex": "#2c262c"
+  },
+  {
+    "id": "minecraft:chiseled_polished_blackstone",
+    "name": "Chiseled Polished Blackstone",
+    "category": "Stone",
+    "color": [
+      54,
+      49,
+      57
+    ],
+    "texture": "textures/chiseled_polished_blackstone.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 405.61,
+    "hex": "#363139"
+  },
+  {
+    "id": "minecraft:end_stone",
+    "name": "End Stone",
+    "category": "Stone",
+    "color": [
+      220,
+      223,
+      158
+    ],
+    "texture": "textures/end_stone.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 280.36,
+    "hex": "#dcdf9e"
+  },
+  {
+    "id": "minecraft:end_stone_bricks",
+    "name": "End Stone Bricks",
+    "category": "Stone",
+    "color": [
+      218,
+      224,
+      162
+    ],
+    "texture": "textures/end_stone_bricks.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 485.89,
+    "hex": "#dae0a2"
+  },
+  {
+    "id": "minecraft:purpur_block",
+    "name": "Purpur Block",
+    "category": "Stone",
+    "color": [
+      170,
+      126,
+      170
+    ],
+    "texture": "textures/purpur_block.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 294.25,
+    "hex": "#aa7eaa"
+  },
+  {
+    "id": "minecraft:bricks",
+    "name": "Bricks",
+    "category": "Stone",
+    "color": [
+      151,
+      98,
+      83
+    ],
+    "texture": "textures/bricks.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 610.21,
+    "hex": "#976253"
+  },
+  {
+    "id": "minecraft:mud",
+    "name": "Mud",
+    "category": "Stone",
+    "color": [
+      60,
+      57,
+      61
+    ],
+    "texture": "textures/mud.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 45.13,
+    "hex": "#3c393d"
+  },
+  {
+    "id": "minecraft:packed_mud",
+    "name": "Packed Mud",
+    "category": "Stone",
+    "color": [
+      142,
+      107,
+      80
+    ],
+    "texture": "textures/packed_mud.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 97.0,
+    "hex": "#8e6b50"
+  },
+  {
+    "id": "minecraft:mud_bricks",
+    "name": "Mud Bricks",
+    "category": "Stone",
+    "color": [
+      137,
+      104,
+      79
+    ],
+    "texture": "textures/mud_bricks.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 279.96,
+    "hex": "#89684f"
+  },
+  {
+    "id": "minecraft:dirt",
+    "name": "Dirt",
+    "category": "Stone",
+    "color": [
+      134,
+      96,
+      67
+    ],
+    "texture": "textures/dirt.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 540.88,
+    "hex": "#866043"
+  },
+  {
+    "id": "minecraft:coarse_dirt",
+    "name": "Coarse Dirt",
+    "category": "Stone",
+    "color": [
+      119,
+      86,
+      59
+    ],
+    "texture": "textures/coarse_dirt.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 674.95,
+    "hex": "#77563b"
+  },
+  {
+    "id": "minecraft:rooted_dirt",
+    "name": "Rooted Dirt",
+    "category": "Stone",
+    "color": [
+      144,
+      104,
+      77
+    ],
+    "texture": "textures/rooted_dirt.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 740.53,
+    "hex": "#90684d"
+  },
+  {
+    "id": "minecraft:iron_block",
+    "name": "Iron Block",
+    "category": "Metal",
+    "color": [
+      220,
+      220,
+      220
+    ],
+    "texture": "textures/iron_block.png",
+    "survival": false,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 322.38,
+    "hex": "#dcdcdc"
+  },
+  {
+    "id": "minecraft:gold_block",
+    "name": "Gold Block",
+    "category": "Metal",
+    "color": [
+      246,
+      208,
+      62
+    ],
+    "texture": "textures/gold_block.png",
+    "survival": false,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 612.97,
+    "hex": "#f6d03e"
+  },
+  {
+    "id": "minecraft:diamond_block",
+    "name": "Diamond Block",
+    "category": "Metal",
+    "color": [
+      98,
+      237,
+      228
+    ],
+    "texture": "textures/diamond_block.png",
+    "survival": false,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 1043.47,
+    "hex": "#62ede4"
+  },
+  {
+    "id": "minecraft:emerald_block",
+    "name": "Emerald Block",
+    "category": "Metal",
+    "color": [
+      42,
+      203,
+      88
+    ],
+    "texture": "textures/emerald_block.png",
+    "survival": false,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 1286.61,
+    "hex": "#2acb58"
+  },
+  {
+    "id": "minecraft:lapis_block",
+    "name": "Lapis Block",
+    "category": "Metal",
+    "color": [
+      31,
+      67,
+      140
+    ],
+    "texture": "textures/lapis_block.png",
+    "survival": false,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 94.25,
+    "hex": "#1f438c"
+  },
+  {
+    "id": "minecraft:redstone_block",
+    "name": "Redstone Block",
+    "category": "Metal",
+    "color": [
+      176,
+      25,
+      5
+    ],
+    "texture": "textures/redstone_block.png",
+    "survival": false,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 597.24,
+    "hex": "#b01905"
+  },
+  {
+    "id": "minecraft:coal_block",
+    "name": "Coal Block",
+    "category": "Metal",
+    "color": [
+      16,
+      16,
+      16
+    ],
+    "texture": "textures/coal_block.png",
+    "survival": false,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 73.22,
+    "hex": "#101010"
+  },
+  {
+    "id": "minecraft:netherite_block",
+    "name": "Netherite Block",
+    "category": "Metal",
+    "color": [
+      67,
+      61,
+      64
+    ],
+    "texture": "textures/netherite_block.png",
+    "survival": false,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 241.87,
+    "hex": "#433d40"
+  },
+  {
+    "id": "minecraft:raw_iron_block",
+    "name": "Raw Iron Block",
+    "category": "Metal",
+    "color": [
+      166,
+      136,
+      107
+    ],
+    "texture": "textures/raw_iron_block.png",
+    "survival": false,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 1528.7,
+    "hex": "#a6886b"
+  },
+  {
+    "id": "minecraft:raw_gold_block",
+    "name": "Raw Gold Block",
+    "category": "Metal",
+    "color": [
+      222,
+      169,
+      47
+    ],
+    "texture": "textures/raw_gold_block.png",
+    "survival": false,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 1375.39,
+    "hex": "#dea92f"
+  },
+  {
+    "id": "minecraft:raw_copper_block",
+    "name": "Raw Copper Block",
+    "category": "Metal",
+    "color": [
+      154,
+      106,
+      79
+    ],
+    "texture": "textures/raw_copper_block.png",
+    "survival": false,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 1091.97,
+    "hex": "#9a6a4f"
+  },
+  {
+    "id": "minecraft:waxed_copper_block",
+    "name": "Waxed Copper Block",
+    "category": "Metal",
+    "color": [
+      192,
+      108,
+      80
+    ],
+    "texture": "textures/copper_block.png",
+    "survival": false,
+    "properties": {},
+    "notes": "Waxed to preserve this color.",
+    "version": "1.20.4",
+    "textureVariance": 363.77,
+    "hex": "#c06c50"
+  },
+  {
+    "id": "minecraft:waxed_exposed_copper",
+    "name": "Waxed Exposed Copper",
+    "category": "Metal",
+    "color": [
+      161,
+      126,
+      104
+    ],
+    "texture": "textures/exposed_copper.png",
+    "survival": false,
+    "properties": {},
+    "notes": "Waxed to preserve this color.",
+    "version": "1.20.4",
+    "textureVariance": 323.12,
+    "hex": "#a17e68"
+  },
+  {
+    "id": "minecraft:waxed_weathered_copper",
+    "name": "Waxed Weathered Copper",
+    "category": "Metal",
+    "color": [
+      108,
+      153,
+      110
+    ],
+    "texture": "textures/weathered_copper.png",
+    "survival": false,
+    "properties": {},
+    "notes": "Waxed to preserve this color.",
+    "version": "1.20.4",
+    "textureVariance": 366.77,
+    "hex": "#6c996e"
+  },
+  {
+    "id": "minecraft:waxed_oxidized_copper",
+    "name": "Waxed Oxidized Copper",
+    "category": "Metal",
+    "color": [
+      82,
+      163,
+      133
+    ],
+    "texture": "textures/oxidized_copper.png",
+    "survival": false,
+    "properties": {},
+    "notes": "Waxed to preserve this color.",
+    "version": "1.20.4",
+    "textureVariance": 399.74,
+    "hex": "#52a385"
+  },
+  {
+    "id": "minecraft:waxed_cut_copper",
+    "name": "Waxed Cut Copper",
+    "category": "Metal",
+    "color": [
+      191,
+      107,
+      81
+    ],
+    "texture": "textures/cut_copper.png",
+    "survival": false,
+    "properties": {},
+    "notes": "Waxed to preserve this color.",
+    "version": "1.20.4",
+    "textureVariance": 445.66,
+    "hex": "#bf6b51"
+  },
+  {
+    "id": "minecraft:waxed_exposed_cut_copper",
+    "name": "Waxed Exposed Cut Copper",
+    "category": "Metal",
+    "color": [
+      155,
+      122,
+      101
+    ],
+    "texture": "textures/exposed_cut_copper.png",
+    "survival": false,
+    "properties": {},
+    "notes": "Waxed to preserve this color.",
+    "version": "1.20.4",
+    "textureVariance": 416.78,
+    "hex": "#9b7a65"
+  },
+  {
+    "id": "minecraft:waxed_weathered_cut_copper",
+    "name": "Waxed Weathered Cut Copper",
+    "category": "Metal",
+    "color": [
+      109,
+      145,
+      108
+    ],
+    "texture": "textures/weathered_cut_copper.png",
+    "survival": false,
+    "properties": {},
+    "notes": "Waxed to preserve this color.",
+    "version": "1.20.4",
+    "textureVariance": 462.96,
+    "hex": "#6d916c"
+  },
+  {
+    "id": "minecraft:waxed_oxidized_cut_copper",
+    "name": "Waxed Oxidized Cut Copper",
+    "category": "Metal",
+    "color": [
+      80,
+      154,
+      126
+    ],
+    "texture": "textures/oxidized_cut_copper.png",
+    "survival": false,
+    "properties": {},
+    "notes": "Waxed to preserve this color.",
+    "version": "1.20.4",
+    "textureVariance": 527.95,
+    "hex": "#509a7e"
+  },
+  {
+    "id": "minecraft:sandstone",
+    "name": "Sandstone",
+    "category": "Sandstone",
+    "color": [
+      216,
+      203,
+      156
+    ],
+    "texture": "textures/sandstone.png",
+    "survival": true,
+    "properties": {},
+    "notes": "South face used for wall; top/bottom differ from preview.",
+    "version": "1.20.4",
+    "textureVariance": 364.63,
+    "hex": "#d8cb9c"
+  },
+  {
+    "id": "minecraft:red_sandstone",
+    "name": "Red Sandstone",
+    "category": "Sandstone",
+    "color": [
+      187,
+      99,
+      29
+    ],
+    "texture": "textures/red_sandstone.png",
+    "survival": true,
+    "properties": {},
+    "notes": "South face used for wall; top/bottom differ from preview.",
+    "version": "1.20.4",
+    "textureVariance": 207.29,
+    "hex": "#bb631d"
+  },
+  {
+    "id": "minecraft:cut_sandstone",
+    "name": "Cut Sandstone",
+    "category": "Sandstone",
+    "color": [
+      218,
+      206,
+      160
+    ],
+    "texture": "textures/cut_sandstone.png",
+    "survival": true,
+    "properties": {},
+    "notes": "South face used for wall; top/bottom differ from preview.",
+    "version": "1.20.4",
+    "textureVariance": 286.62,
+    "hex": "#dacea0"
+  },
+  {
+    "id": "minecraft:cut_red_sandstone",
+    "name": "Cut Red Sandstone",
+    "category": "Sandstone",
+    "color": [
+      189,
+      102,
+      32
+    ],
+    "texture": "textures/cut_red_sandstone.png",
+    "survival": true,
+    "properties": {},
+    "notes": "South face used for wall; top/bottom differ from preview.",
+    "version": "1.20.4",
+    "textureVariance": 157.61,
+    "hex": "#bd6620"
+  },
+  {
+    "id": "minecraft:chiseled_sandstone",
+    "name": "Chiseled Sandstone",
+    "category": "Sandstone",
+    "color": [
+      216,
+      203,
+      155
+    ],
+    "texture": "textures/chiseled_sandstone.png",
+    "survival": true,
+    "properties": {},
+    "notes": "South face used for wall; top/bottom differ from preview.",
+    "version": "1.20.4",
+    "textureVariance": 416.79,
+    "hex": "#d8cb9b"
+  },
+  {
+    "id": "minecraft:chiseled_red_sandstone",
+    "name": "Chiseled Red Sandstone",
+    "category": "Sandstone",
+    "color": [
+      183,
+      97,
+      28
+    ],
+    "texture": "textures/chiseled_red_sandstone.png",
+    "survival": true,
+    "properties": {},
+    "notes": "South face used for wall; top/bottom differ from preview.",
+    "version": "1.20.4",
+    "textureVariance": 235.26,
+    "hex": "#b7611c"
+  },
+  {
+    "id": "minecraft:smooth_sandstone",
+    "name": "Smooth Sandstone",
+    "category": "Sandstone",
+    "color": [
+      224,
+      214,
+      170
+    ],
+    "texture": "textures/sandstone_top.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 36.15,
+    "hex": "#e0d6aa"
+  },
+  {
+    "id": "minecraft:smooth_red_sandstone",
+    "name": "Smooth Red Sandstone",
+    "category": "Sandstone",
+    "color": [
+      181,
+      98,
+      31
+    ],
+    "texture": "textures/red_sandstone_top.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 34.64,
+    "hex": "#b5621f"
+  },
+  {
+    "id": "minecraft:quartz_block",
+    "name": "Quartz Block",
+    "category": "Other",
+    "color": [
+      236,
+      230,
+      223
+    ],
+    "texture": "textures/quartz_block_side.png",
+    "survival": true,
+    "properties": {},
+    "notes": "South face used for wall; other faces may differ.",
+    "version": "1.20.4",
+    "textureVariance": 45.01,
+    "hex": "#ece6df"
+  },
+  {
+    "id": "minecraft:smooth_quartz",
+    "name": "Smooth Quartz",
+    "category": "Other",
+    "color": [
+      237,
+      230,
+      224
+    ],
+    "texture": "textures/quartz_block_bottom.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 13.19,
+    "hex": "#ede6e0"
+  },
+  {
+    "id": "minecraft:quartz_bricks",
+    "name": "Quartz Bricks",
+    "category": "Other",
+    "color": [
+      235,
+      229,
+      222
+    ],
+    "texture": "textures/quartz_bricks.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 65.56,
+    "hex": "#ebe5de"
+  },
+  {
+    "id": "minecraft:snow_block",
+    "name": "Snow Block",
+    "category": "Other",
+    "color": [
+      249,
+      254,
+      254
+    ],
+    "texture": "textures/snow.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 12.83,
+    "hex": "#f9fefe"
+  },
+  {
+    "id": "minecraft:clay",
+    "name": "Clay",
+    "category": "Other",
+    "color": [
+      161,
+      166,
+      179
+    ],
+    "texture": "textures/clay.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 60.2,
+    "hex": "#a1a6b3"
+  },
+  {
+    "id": "minecraft:moss_block",
+    "name": "Moss Block",
+    "category": "Other",
+    "color": [
+      89,
+      110,
+      45
+    ],
+    "texture": "textures/moss_block.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 181.55,
+    "hex": "#596e2d"
+  },
+  {
+    "id": "minecraft:sponge",
+    "name": "Sponge",
+    "category": "Other",
+    "color": [
+      196,
+      192,
+      75
+    ],
+    "texture": "textures/sponge.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 305.55,
+    "hex": "#c4c04b"
+  },
+  {
+    "id": "minecraft:wet_sponge",
+    "name": "Wet Sponge",
+    "category": "Other",
+    "color": [
+      171,
+      181,
+      70
+    ],
+    "texture": "textures/wet_sponge.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 345.7,
+    "hex": "#abb546"
+  },
+  {
+    "id": "minecraft:dried_kelp_block",
+    "name": "Dried Kelp Block",
+    "category": "Other",
+    "color": [
+      38,
+      49,
+      30
+    ],
+    "texture": "textures/dried_kelp_side.png",
+    "survival": true,
+    "properties": {},
+    "notes": "South face used for wall; other faces may differ.",
+    "version": "1.20.4",
+    "textureVariance": 637.59,
+    "hex": "#26311e"
+  },
+  {
+    "id": "minecraft:honeycomb_block",
+    "name": "Honeycomb Block",
+    "category": "Other",
+    "color": [
+      229,
+      148,
+      30
+    ],
+    "texture": "textures/honeycomb_block.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 1170.46,
+    "hex": "#e5941e"
+  },
+  {
+    "id": "minecraft:shroomlight",
+    "name": "Shroomlight",
+    "category": "Other",
+    "color": [
+      241,
+      147,
+      71
+    ],
+    "texture": "textures/shroomlight.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 1998.52,
+    "hex": "#f19347"
+  },
+  {
+    "id": "minecraft:glowstone",
+    "name": "Glowstone",
+    "category": "Other",
+    "color": [
+      172,
+      131,
+      84
+    ],
+    "texture": "textures/glowstone.png",
+    "survival": true,
+    "properties": {},
+    "notes": "",
+    "version": "1.20.4",
+    "textureVariance": 3925.59,
+    "hex": "#ac8354"
+  },
+  {
+    "id": "minecraft:melon",
+    "name": "Melon",
+    "category": "Other",
+    "color": [
+      114,
+      146,
+      30
+    ],
+    "texture": "textures/melon_side.png",
+    "survival": true,
+    "properties": {},
+    "notes": "South face used for wall; other faces may differ.",
+    "version": "1.20.4",
+    "textureVariance": 820.39,
+    "hex": "#72921e"
+  }
+]

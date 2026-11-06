@@ -117,7 +117,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--orange-hover);outli
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
 
-/* Creations: three playable, independently hosted projects */
+/* Creations: playable and interactive projects */
 .creation-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
 .creation-card{background:var(--panel);border:1px solid #324059;border-radius:14px;text-decoration:none;color:var(--text);overflow:hidden;min-width:0;display:flex;flex-direction:column;transition:transform .2s,border-color .2s,background .2s}
 .creation-card:hover{transform:translateY(-5px);border-color:var(--orange);background:var(--panel-hover)}
@@ -125,9 +125,11 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--orange-hover);outli
 .creation-art.sidestep{background:radial-gradient(circle at center,#1b4960 0,#122b43 55%,#0f2034 100%)}
 .creation-art.riftcraft{background:radial-gradient(circle at center,#473153 0,#24253f 60%,#181a32 100%)}
 .creation-art.lollab{background:radial-gradient(circle at center,#423729 0,#2b2730 55%,#1b2230 100%)}
+.creation-art.minecraft{background:radial-gradient(circle at center,#244738 0,#1b3035 58%,#152331 100%)}
 .arena-signal{display:flex;align-items:center;gap:24px}.arena-signal i{display:block;width:30px;height:30px;border:2px solid #83d7e8;border-radius:50%;box-shadow:0 0 22px #43bcd633}.arena-signal i:first-child{width:15px;height:15px;border-color:#fdad7c}.arena-signal b{font-size:60px;font-weight:400;color:#fdad7c;transform:rotate(-9deg)}
 .craft-signal{display:flex;align-items:center;gap:17px;font-size:54px;color:#d9adfa}.craft-signal i{font-style:normal;text-shadow:0 0 26px #b07aff}.craft-signal>span{font-size:24px;color:#e2c8ed}
 .lab-signal{display:flex;gap:7px}.lab-signal i{font:700 20px Georgia,serif;font-style:normal;color:#d3b16b;border:1px solid #947a4f;background:#141b2b;border-radius:6px;width:43px;height:48px;display:grid;place-items:center}
+.minecraft-signal{display:flex;align-items:center;gap:15px;color:#a6e7b0}.minecraft-signal>b{font-size:28px;font-weight:400}.minecraft-pixels,.minecraft-blocks{display:grid;grid-template-columns:repeat(2,26px);gap:4px}.minecraft-signal i{width:26px;height:26px;border:1px solid #ffffff30;border-radius:3px;box-shadow:0 3px 8px #0004}.minecraft-pixels i:nth-child(1){background:#f2c27b}.minecraft-pixels i:nth-child(2){background:#6bbd83}.minecraft-pixels i:nth-child(3){background:#78a9e8}.minecraft-pixels i:nth-child(4){background:#d78278}.minecraft-blocks i:nth-child(1){background:#559b5d;transform:skewY(-8deg)}.minecraft-blocks i:nth-child(2){background:#9e7148;transform:skewY(-8deg)}.minecraft-blocks i:nth-child(3){background:#668f4c;transform:skewY(-8deg)}.minecraft-blocks i:nth-child(4){background:#a67a50;transform:skewY(-8deg)}
 .creation-body{padding:24px;display:flex;flex-direction:column;flex:1}
 .creation-kind{color:var(--orange-hover);font:700 10px Consolas,monospace;letter-spacing:1.25px}
 .creation-body h2{margin:13px 0 11px;font-size:23px;letter-spacing:-.5px}

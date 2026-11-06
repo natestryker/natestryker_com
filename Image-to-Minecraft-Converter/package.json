@@ -1,0 +1,9 @@
+{
+  "name": "image-to-minecraft-converter",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node tests.mjs && node translation-tests.mjs"
+  }
+}
