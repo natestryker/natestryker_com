@@ -1,0 +1,58 @@
+import {RARE_TRAITS} from './data.js';
+export const ACHIEVEMENTS=[];
+function milestones(metric,category,items,description){for(const [goal,name] of items)ACHIEVEMENTS.push({id:metric+'-'+goal,metric,goal,name,category,description:description(goal)});}
+function one(id,name,category,description,secret=false){ACHIEVEMENTS.push({id,metric:id,goal:1,name,category,description,secret});}
+milestones('series','Competition',[[1,'On the board'],[25,'Finding your feet'],[100,'A hundred matchdays'],[250,'Seasoned manager'],[500,'Part of the furniture']],n=>`Play ${n} series in one career.`);
+milestones('wins','Competition',[[1,'First blood'],[25,'Building momentum'],[100,'Winning habit'],[250,'A very full results folder']],n=>`Win ${n} series in one career.`);
+milestones('games','Competition',[[10,'Ten on the Rift'],[100,'VOD collection'],[1000,'One thousand games']],n=>`Play ${n} individual stage games in one career.`);
+milestones('streak','Competition',[[5,'Heating up'],[10,'Untouchable'],[20,'Nobody has an answer']],n=>`Win ${n} consecutive series in one career.`);
+milestones('sweeps','Competition',[[1,'Clean work'],[10,'Bring a broom'],[50,'No extra games']],n=>`Win ${n} series without dropping a game in one career.`);
+milestones('titles','Trophies',[[1,'Make room on the shelf'],[5,'Trophy room'],[10,'Museum curator']],n=>`Win ${n} championships in one career.`);
+milestones('worlds','Trophies',[[1,'World champion'],[3,'World dynasty'],[5,'The final boss']],n=>`Win Worlds ${n} time${n===1?'':'s'} in one career.`);
+milestones('msi','Trophies',[[1,'Midseason statement'],[3,'Spring belongs to us']],n=>`Win MSI ${n} time${n===1?'':'s'} in one career.`);
+milestones('regional','Trophies',[[1,'Local heroes'],[5,'Regional royalty'],[10,'Home advantage']],n=>`Win ${n} regional split championships in one career.`);
+one('golden-road','The Golden Road','Trophies','Win Spring, MSI, Summer and Worlds with one club in the same year.');
+one('repeat-worlds','Run it back','Trophies','Win Worlds in consecutive years with the same club.');
+one('four-regions','Passport full of trophies','Trophies','Win a regional championship in all four regions during one career.');
+one('perfect-split','No blemishes','Competition','Finish a regular split unbeaten, playing every scheduled series.');
+one('perfect-worlds','A perfect knockout run','Competition','Win Worlds without dropping a knockout game, playing quarters, semis and final.');
+milestones('reverse','Secrets',[[1,'The 0–2 comfort zone'],[2,'Right where we wanted them']],n=>`Win ${n} BO5 series after losing the first two games in one career.`);
+milestones('overall','Development',[[80,'A good player'],[90,'World class'],[95,'Generational'],[100,'The theoretical GOAT']],n=>`Have a player reach ${n} overall while at your club.`);
+for(const skill of ['Mechanics','Communication','Macro','Teamfighting'])one('skill-'+skill,{'Mechanics':'Hands diff','Communication':'One voice','Macro':'Five moves ahead','Teamfighting':'Everyone together'}[skill],'Development',`Have a player reach 90 ${skill} while at your club.`);
+milestones('growth','Development',[[5,'Room to grow'],[10,'A different player'],[20,'Built from the ground up']],n=>`Develop an owned player ${n} OVR above their original generated rating.`);
+one('academy-starter','Graduation day','Development','Start a player you drafted into your academy.');
+one('all-rounder','No weak side','Development','Own a player with at least 85 in all four skills.');
+one('perfect-form','Feeling unstoppable','Development','Have a player reach 100 Form at your club.');
+one('five-nineties','Superteam','Development','Field five starters with at least 90 OVR each.');
+milestones('chemistry','Connections',[[70,'Getting the band together'],[90,'A shared language']],n=>`Reach ${n} team chemistry.`);
+one('duo-max','Mind readers','Connections','Reach 100 familiarity between two starters.');
+milestones('tenure','Connections',[[52,'A familiar face'],[100,'Club institution'],[150,'Part of the badge']],n=>`Keep a player for ${n} tracked matchweeks at one club.`);
+milestones('traits','Collection',[[10,'People person'],[25,'Personality scout'],[50,'Character encyclopedia']],n=>`See ${n} distinct player traits across your careers.`);
+milestones('raretraits','Collection',[[1,'Something different'],[5,'Uncommon company'],[10,'Rare character']],n=>`See ${n} distinct rare personality traits across your careers.`);
+milestones('eggs','Secrets',[[1,'Curiosity rewarded'],[4,'Nothing gets past you'],[7,'Behind the scenes']],n=>`Discover ${n} different easter eggs across your careers.`);
+milestones('links','Connections',[[1,'Hidden chemistry'],[3,'Secret playbook'],[10,'The complete hidden playbook']],n=>`Unlock ${n} hidden composition links in one career.`);
+milestones('scouted','Club building',[[5,'Doing the homework'],[20,'Eyes everywhere'],[50,'No stone unturned']],n=>`Fully scout ${n} players in one career.`);
+milestones('networks','Club building',[[1,'Local expertise'],[4,'Worldwide network']],n=>`Build ${n} elite regional scouting networks at one club.`);
+milestones('funds','Club building',[[500000,'Rainy-day fund'],[1000000,'Seven figures']],n=>`Hold $${n.toLocaleString('en-US')} in club funds.`);
+milestones('clubs','Club building',[[2,'A fresh start'],[4,'Journeyman']],n=>`Manage ${n} different clubs in one career.`);
+one('rested','Fresh legs','Club building','Have all five starters at zero fatigue.');
+one('mvp-ten','The headline act','Competition','Have one player earn ten individual match MVPs for you.');
+one('rating-perfect','A perfect game','Competition','Have a player receive a 100 match-performance rating.');
+one('desk','Open drawer policy','Secrets','Find the manager’s desk.',true);
+one('former','Keep the receipt','Secrets','Meet a former player on the opposing starting roster.',true);
+one('chat','Definitely a private channel','Secrets','Find the academy group chat.',true);
+one('jersey','We kept your size','Secrets','Bring a former player back to your club.',true);
+one('mascot','Expert analysis','Secrets','Ask the mascot for a roster opinion.',true);
+one('bench','The legend nobody sees','Secrets','Discover a long-serving substitute’s fan following.',true);
+one('prospect','One more bubble','Secrets','Find the natestryker prospect.',true);
+one('signed-prospect','An unusual signature','Secrets','Recruit the natestryker prospect to your club.',true);
+one('scrims','Champions behind closed doors','Secrets','Open a Worlds scrim report.',true);
+export const emptyAchievementBook=()=>({unlocked:{},progress:{},seenTraits:[],eggs:[]});
+export function mergeAchievementBooks(a=emptyAchievementBook(),b=emptyAchievementBook()){
+ const out={unlocked:{...(a.unlocked||{})},progress:{...(a.progress||{})},seenTraits:[...new Set([...(a.seenTraits||[]),...(b.seenTraits||[])])],eggs:[...new Set([...(a.eggs||[]),...(b.eggs||[])])]};
+ for(const [id,v] of Object.entries(b.unlocked||{}))if(ACHIEVEMENTS.some(x=>x.id===id)&&!out.unlocked[id])out.unlocked[id]=v;
+ for(const [id,v] of Object.entries(b.progress||{}))if(Number.isFinite(v))out.progress[id]=Math.max(out.progress[id]||0,v);
+ out.progress.traits=out.seenTraits.length;out.progress.raretraits=out.seenTraits.filter(t=>RARE_TRAITS.includes(t)).length;out.progress.eggs=out.eggs.length;
+ for(const a of ACHIEVEMENTS)if((out.progress[a.metric]||0)>=a.goal&&!out.unlocked[a.id])out.unlocked[a.id]={date:new Date().toISOString(),source:'Across careers'};
+ return out;
+}
