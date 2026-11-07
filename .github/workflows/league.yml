@@ -19,6 +19,7 @@ jobs:
     timeout-minutes: 35
     outputs:
       collection: ${{ steps.collect.outcome }}
+      publication: ${{ steps.publish.outcome }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -35,7 +36,15 @@ jobs:
           RIOT_GAME_NAME: ${{ vars.RIOT_GAME_NAME }}
           RIOT_TAG_LINE: ${{ vars.RIOT_TAG_LINE }}
           RIOT_PLATFORM: ${{ vars.RIOT_PLATFORM || 'na1' }}
+          RIOT_BACKFILL_PAGES: ${{ vars.RIOT_BACKFILL_PAGES || '2' }}
         run: node scripts/league/collect.mjs
+      - name: Build compact frontend from permanent archives
+        id: publish
+        if: ${{ always() && !cancelled() && steps.collect.outcome != 'skipped' }}
+        continue-on-error: true
+        env:
+          RIOT_ACCOUNTS: ${{ vars.RIOT_ACCOUNTS }}
+        run: node scripts/league/publish.mjs
       - name: Persist data even after an interrupted collection
         id: persist
         if: ${{ always() && !cancelled() }}
@@ -54,7 +63,7 @@ jobs:
             done
           fi
       - name: Preserve emergency archive after collection or commit failure
-        if: ${{ always() && !cancelled() && (steps.collect.outcome == 'failure' || steps.persist.outcome == 'failure') }}
+        if: ${{ always() && !cancelled() && (steps.collect.outcome == 'failure' || steps.persist.outcome == 'failure' || steps.publish.outcome == 'failure') }}
         uses: actions/upload-artifact@v4
         with:
           name: league-recovery-${{ github.run_id }}-${{ github.run_attempt }}
@@ -63,7 +72,7 @@ jobs:
       - name: Prepare static website
         run: |
           mkdir _site
-          rsync -a --exclude='.git' --exclude='.github' --exclude='scripts' --exclude='_site' --exclude='node_modules' ./ _site/
+          rsync -a --exclude='.git' --exclude='.github' --exclude='scripts' --exclude='_site' --exclude='node_modules' --exclude='/data/league/accounts/*/matches/' --exclude='/data/league/matches/' --exclude='/data/league/accounts/*/state.json' --exclude='/data/league/accounts/*/pending.json' ./ _site/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
@@ -73,10 +82,12 @@ jobs:
         env:
           COLLECTION: ${{ steps.collect.outcome }}
           PERSISTENCE: ${{ steps.persist.outcome }}
+          PUBLICATION: ${{ steps.publish.outcome }}
         run: |
           echo '## League archive update' >> "$GITHUB_STEP_SUMMARY"
-          echo "Collection: $COLLECTION. Repository persistence: $PERSISTENCE." >> "$GITHUB_STEP_SUMMARY"
+          echo "Collection: $COLLECTION. Frontend build: $PUBLICATION. Repository persistence: $PERSISTENCE." >> "$GITHUB_STEP_SUMMARY"
           echo 'Failed downloads remain in pending.json and are retried. Download a recovery artifact if persistence failed.' >> "$GITHUB_STEP_SUMMARY"
+          node scripts/league/report.mjs >> "$GITHUB_STEP_SUMMARY"
   deploy:
     needs: update
     runs-on: ubuntu-latest
@@ -96,8 +107,9 @@ jobs:
         env:
           UPDATE: ${{ needs.update.result }}
           COLLECTION: ${{ needs.update.outputs.collection }}
+          PUBLICATION: ${{ needs.update.outputs.publication }}
         run: |
-          if [ "$UPDATE" != success ] || [ "$COLLECTION" != success ]; then
+          if [ "$UPDATE" != success ] || [ "$COLLECTION" != success ] || [ "$PUBLICATION" != success ]; then
             echo '::error::League archive update failed or was interrupted. Inspect collection, persistence, pending IDs and recovery artifact. The last successful site remains available.'
             exit 1
           fi

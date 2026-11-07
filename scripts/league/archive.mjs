@@ -7,12 +7,12 @@ import {pathToFileURL} from 'node:url';
 export async function readJson(path,fallback){
   try{return JSON.parse(await readFile(path,'utf8'));}catch(e){if(e.code==='ENOENT')return fallback;throw e;}
 }
-export async function writeJson(path,value,{immutable=false}={}){
+export async function writeJson(path,value,{immutable=false,compact=false}={}){
   await mkdir(dirname(path),{recursive:true});
   const temporary=`${path}.${randomUUID()}.tmp`;
   const handle=await open(temporary,'wx');
   try{
-    await handle.writeFile(JSON.stringify(value,null,2)+'\n');
+    await handle.writeFile(JSON.stringify(value,null,compact?undefined:2)+'\n');
     await handle.sync();
   }finally{await handle.close();}
   try{

@@ -14,9 +14,11 @@ export function client(key, fetcher = fetch, pause = sleep) {
       let response;
       try { response = await fetcher(`https://${host}.api.riotgames.com${path}`, {headers:{'X-Riot-Token':key}, signal:AbortSignal.timeout(30000)}); }
       catch { if (attempt === 5) throw new Error('Riot connection failed after retries'); await pause(2000 * 2 ** attempt); continue; }
-      if (response.ok) return response.json();
+      if (response.ok) {try{return await response.json();}catch{if(attempt===5)throw new Error('Riot returned invalid JSON after retries');await pause(2000*2**attempt);continue;}}
       if (response.status === 429 || response.status >= 500) {
-        await pause(Math.max(1000 * Number(response.headers.get('retry-after') || 0), 2000 * 2 ** attempt));
+        const retry=response.headers.get('retry-after'), seconds=Number(retry);
+        const retryMs=Number.isFinite(seconds)?seconds*1000:Math.max(0,Date.parse(retry)-Date.now()) || 0;
+        await pause(Math.max(retryMs, 2000 * 2 ** attempt));
         continue;
       }
       throw new Error(`Riot HTTP ${response.status}. Check key, Riot ID, platform and API availability.`);
@@ -45,11 +47,15 @@ export async function collect(env = process.env, root = resolve('data/league'), 
   const {RIOT_API_KEY:key, RIOT_GAME_NAME:name, RIOT_TAG_LINE:tag, RIOT_PLATFORM:platform = 'na1'} = env;
   if (!key || !name || !tag || !routes[platform]) throw new Error('Set RIOT_API_KEY, RIOT_GAME_NAME, RIOT_TAG_LINE and a supported RIOT_PLATFORM.');
   const api = apiOverride || client(key), region = routes[platform], enc = encodeURIComponent;
+  const pageBudget=Number(env.RIOT_BACKFILL_PAGES || 2);
+  if(!Number.isInteger(pageBudget)||pageBudget<1||pageBudget>5)throw new Error('RIOT_BACKFILL_PAGES must be between 1 and 5.');
+  const deadline=Date.now()+Number(env.RIOT_ACCOUNT_BUDGET_SECONDS || 420)*1000;
   const account = await api(region,`/riot/account/v1/accounts/by-riot-id/${enc(name)}/${enc(tag)}`);
   const state = await load(join(root,'state.json'),{});
   if (state.puuid && (state.puuid !== account.puuid || state.platform !== platform)) throw new Error('Account/platform changed. Use a separate data directory to preserve history.');
   const pollEnd=Math.floor(Date.now()/1000);
   state.puuid=account.puuid;state.platform=platform;
+  state.lastAttemptAt=new Date().toISOString();state.lastError=null;
   state.backfillEnd ||= pollEnd;
   // Establish identity and a fixed backfill window even if this first run is interrupted.
   await save(join(root,'state.json'),state);
@@ -60,9 +66,11 @@ export async function collect(env = process.env, root = resolve('data/league'), 
   const snapshots = await load(join(root,'ranked.json'),[]);
   const now = new Date().toISOString();
   snapshots.push({at:now,entries:entries.map(({queueType,tier,rank,leaguePoints,wins,losses})=>({queueType,tier,rank,leaguePoints,wins,losses}))});
+  snapshots.sort((a,b)=>Date.parse(a.at)-Date.parse(b.at));
   await save(join(root,'ranked.json'),snapshots);
   const directory = join(root,'matches'); await mkdir(directory,{recursive:true});
   const known = new Set((await readdir(directory)).filter(x=>x.endsWith('.json')).map(x=>x.slice(0,-5)));
+  const initialKnown=known.size;
   // A stable time window + persisted offset backfills incrementally without losing new matches.
   const end = state.backfillEnd;
   const pendingPath=join(root,'pending.json');
@@ -83,10 +91,17 @@ export async function collect(env = process.env, root = resolve('data/league'), 
     const ids = await discover(`startTime=${Math.max(0,(state.lastPoll || end)-86400)}&endTime=${pollEnd}&start=${start}`);
     if(ids.length < 100) break;
   }
-  let offset = state.backfillOffset || 0, done = state.backfillDone || false;
-  if(!done) {const ids = await discover(`endTime=${end}&start=${offset}`); offset += ids.length; done = ids.length < 100;}
+  let offset = state.backfillOffset || 0, exhausted=state.backfillExhausted ?? state.backfillDone ?? false;
+  for(let page=0;!exhausted && page<pageBudget && Date.now()<deadline;page++){
+    const ids=await discover(`endTime=${end}&start=${offset}`);
+    offset+=ids.length;exhausted=ids.length<100;
+    Object.assign(state,{backfillOffset:offset,backfillExhausted:exhausted,backfillDone:false,lastProgressAt:new Date().toISOString()});
+    await save(join(root,'state.json'),state);
+    console.log(`Backfill ${name}#${tag}: offset=${offset}, page=${page+1}/${pageBudget}, IDs=${ids.length}, pending=${pending.size}, exhausted=${exhausted}`);
+  }
   const failures=[];
   for(const id of pending){
+    if(Date.now()>=deadline){console.log(`Account time budget reached; ${pending.size} IDs checkpointed for the next run.`);break;}
     try{
       if(!/^[A-Z0-9]+_\d+$/.test(id))throw new Error('Invalid pending match ID');
       if(!known.has(id)){
@@ -98,12 +113,17 @@ export async function collect(env = process.env, root = resolve('data/league'), 
       pending.delete(id);await save(pendingPath,[...pending]);
     }catch(e){failures.push(id);console.error(`Match ${id}: ${e.message}`);}
   }
-  if(failures.length)throw new Error(`${failures.length} match downloads pending; archive and polling cursors retained. See pending.json.`);
+  const done=exhausted && pending.size===0;
+  Object.assign(state,{backfillOffset:offset,backfillExhausted:exhausted,backfillDone:done,pendingCount:pending.size});
+  if(known.size>initialKnown)state.lastProgressAt=new Date().toISOString();
+  if(failures.length){state.lastError=`${failures.length} match downloads pending`;await save(join(root,'state.json'),state);throw new Error(`${failures.length} match downloads pending; archive and polling cursors retained. See pending.json.`);}
   const matches = [];
   for (const file of await readdir(directory)) if(file.endsWith('.json')) {const record=await load(join(directory,file));validateMatch(record,file.slice(0,-5));matches.push(record.match);}
   matches.sort((a,b)=>b.date-a.date);
   await save(join(root,'public.json'),{updatedAt:now,profile:{riotId:`${account.gameName}#${account.tagLine}`,level:summoner.summonerLevel,platform},backfillComplete:done,matches,statistics:summarizeArchive(matches),ranked:snapshots,mastery:mastery.map(({championId,championLevel,championPoints})=>({championId,championLevel,championPoints}))});
-  await save(join(root,'state.json'),{puuid:account.puuid,platform,backfillEnd:end,backfillOffset:offset,backfillDone:done,lastPoll:Math.floor(new Date(now).getTime()/1000)});
+  if(!pending.size)state.lastPoll=pollEnd;
+  state.lastSuccessAt=now;
+  await save(join(root,'state.json'),state);
   console.log(`Saved ${matches.length} unique matches and ${snapshots.length} ranked observations.`);
 }
 export function parseAccounts(env){
@@ -122,7 +142,7 @@ export function parseAccounts(env){
   return accounts;
 }
 export function combineAccounts(accounts){
-  const matches=accounts.flatMap(a=>a.matches.map(m=>({...m,accountId:a.id,accountName:a.profile?.riotId || a.label,recordId:`${a.id}--${m.id}`}))).sort((a,b)=>b.date-a.date);
+  const matches=accounts.flatMap(a=>(a.matches || []).map(m=>({...m,accountId:a.id,accountName:a.profile?.riotId || a.label,recordId:`${a.id}--${m.id}`}))).sort((a,b)=>b.date-a.date);
   return {updatedAt:accounts.map(a=>a.updatedAt).filter(Boolean).sort().at(-1) || null,accounts,matches,statistics:summarizeArchive(matches),
     backfillComplete:accounts.every(a=>a.backfillComplete),ranked:[],mastery:[]};
 }
@@ -150,9 +170,14 @@ export async function collectAll(env=process.env,root=resolve('data/league'),api
     }
     try {
       await collect({...env,RIOT_GAME_NAME:a.gameName,RIOT_TAG_LINE:a.tagLine,RIOT_PLATFORM:a.platform || 'na1'},directory,api);
-    } catch(e){failures.push(a.id);console.error(`Account ${a.id}: ${e.message}`);}
+    } catch(e){failures.push(a.id);console.error(`Account ${a.id}: ${e.message}`);const failedState=await load(join(directory,'state.json'),null);if(failedState){failedState.lastError=e.message;await save(join(directory,'state.json'),failedState);}}
     const summary=await load(join(directory,'public.json'),{updatedAt:null,profile:null,matches:[],ranked:[],mastery:[],backfillComplete:false});
     results.push({...summary,id:a.id,label:`${a.gameName}#${a.tagLine}`,collectionFailed:failures.includes(a.id)});
+  }
+  const resolvedIdentities=new Set();
+  for(const a of config){
+    const state=await load(join(root,'accounts',a.id,'state.json'),{});
+    if(state.puuid){const identity=`${state.platform}:${state.puuid}`;if(resolvedIdentities.has(identity))throw new Error('Two configured IDs resolve to the same Riot account; existing combined summary retained.');resolvedIdentities.add(identity);}
   }
   await save(join(root,'public.json'),combineAccounts(results));
   if(failures.length) throw new Error(`Collection incomplete for: ${failures.join(', ')}. Other accounts and existing archives are preserved.`);

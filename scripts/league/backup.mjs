@@ -19,7 +19,7 @@ export async function createBackup(outputParent,{repository=process.cwd()}={}){
   // A bundle includes committed Git history but no remotes, auth configuration or environment.
   execFileSync('git',['bundle','create',join(destination,'repository.bundle'),'--all'],{cwd:repository,stdio:'pipe'});
   files.push('repository.bundle');
-  await writeFile(join(destination,'RESTORE.txt'),'Verify: node scripts/league/backup.mjs verify <this-folder>\nRestore repository: git clone <this-folder>/repository.bundle recovered-site\nThen copy this folder\'s data/league over recovered-site/data/league to recover the snapshot, including any uncommitted match downloads. Review and commit. Reconfigure repository secrets manually; no credentials are included. See LEAGUE-ARCHIVE.md in the restored repository.\n');
+  await writeFile(join(destination,'RESTORE.txt'),'Verify: node scripts/league/backup.mjs verify <this-folder>\nRestore repository: git clone <this-folder>/repository.bundle recovered-site\nThen copy this folder\'s data/league over recovered-site/data/league to recover the snapshot, including any uncommitted match downloads. Rebuild with node scripts/league/publish.mjs. Review and commit. Reconfigure repository secrets manually; no credentials are included. See LEAGUE-OPERATIONS.md in the restored repository.\n');
   files.push('RESTORE.txt');
   const manifest={schemaVersion:1,createdAt:new Date().toISOString(),commit:execFileSync('git',['rev-parse','HEAD'],{cwd:repository,encoding:'utf8'}).trim(),files:[]};
   for(const file of files)manifest.files.push({path:file.replaceAll('\\','/'),sha256:sha256(await readFile(join(destination,file)))});

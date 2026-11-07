@@ -59,6 +59,8 @@ test('pending IDs survive disappearing from Riot lists; successes persist despit
    const api=apiWith(()=>['NA1_1','NA1_2','NA1_3'],async id=>{if(id==='NA1_2'&&failed)throw new Error('404');return raw(id);});
    await assert.rejects(collect(env,root,api),/downloads pending/);
    assert.deepEqual(await readJson(join(root,'pending.json')),['NA1_2']);
+   assert.equal((await readJson(join(root,'state.json'))).backfillDone,false);
+   assert.equal((await readJson(join(root,'state.json'))).backfillExhausted,true);
    assert.equal((await readdir(join(root,'matches'))).length,2);
    assert.equal((await readJson(join(root,'state.json'))).lastPoll,undefined);
    failed=false;await collect(env,root,apiWith(()=>[],async id=>raw(id)));

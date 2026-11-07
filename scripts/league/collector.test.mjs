@@ -109,6 +109,10 @@ test('public item catalog maps IDs to names and fails safely on unavailable data
  await assert.rejects(loadItemNames(async()=>Response.json([])),/Invalid/);
 });
 test('retries 429 with Retry-After; authentication fails without leaking key',async()=>{let calls=0;const waits=[];const api=client('test-secret',async()=>++calls===1 ? new Response('',{status:429,headers:{'Retry-After':'3'}}) : Response.json({ok:true}),async ms=>waits.push(ms));assert.deepEqual(await api('na1','/test'),{ok:true});assert.ok(waits.includes(3000));await assert.rejects(client('test-secret',async()=>new Response('',{status:403}),async()=>{})('na1','/test'),/HTTP 403/);});
+test('a truncated successful JSON response is retried before returning data',async()=>{
+ let calls=0;const api=client('test-secret',async()=>++calls===1?new Response('{broken',{status:200}):Response.json({complete:true}),async()=>{});
+ assert.deepEqual(await api('na1','/test'),{complete:true});assert.equal(calls,2);
+});
 test('persists once, takes periodic rank snapshots and rejects account mixing',async()=>{
  const root=await mkdtemp(join(tmpdir(),'league-test-'));let matchCalls=0;
  const env={RIOT_API_KEY:'test-secret',RIOT_GAME_NAME:'name',RIOT_TAG_LINE:'tag',RIOT_PLATFORM:'na1'};
