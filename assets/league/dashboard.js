@@ -145,9 +145,13 @@ async function main(){
     }
   }
   function history(){
-    const count=Math.max(1,Math.ceil(filtered.length/pageSize));page=Math.min(page,count-1);
+    const count=Math.max(1,Math.ceil(filtered.length/pageSize));page=Math.max(0,Math.min(page,count-1));
     $('match-count').textContent=`${filtered.length} matching matches`;
-    $('page').textContent=`${page+1} / ${count}`;$('previous').disabled=page===0;$('next').disabled=page===count-1;
+    $('page').textContent=`${page+1} / ${count}`;
+    $('page-input').value=String(page+1);$('page-input').max=String(count);$('page-total').textContent=String(count);
+    $('page-input').disabled=filtered.length===0;$('page-go').disabled=filtered.length===0;
+    $('first').disabled=$('previous').disabled=page===0;
+    $('last').disabled=$('next').disabled=page===count-1;
     $('matches').innerHTML=filtered.slice(page*pageSize,page*pageSize+pageSize).map(m=>`<details class="match" id="match-${escape(m.recordId)}"><summary><strong>${escape(m.champion)}</strong> / ${escape(m.accountName)} · <span class="${m.win?'win':'loss'}">${m.remake?'Remake':m.win?'Victory':'Defeat'}</span> · ${m.kills}/${m.deaths}/${m.assists} · ${escape(queueName(m.queue))}${isHistoryOnly(m)?' / History only - excluded from stats':''} · ${escape(new Date(m.date).toLocaleString())}</summary><div class="match-body">${data.schemaVersion!==2 || m.detailLoaded?matchDetails(m):'<p class="muted">Loading match details...</p>'}</div></details>`).join('') || '<p>No matches match these filters.</p>';
     $('matches').querySelectorAll('details.match').forEach(element=>{
       const m=filtered.find(m=>`match-${m.recordId}`===element.id);
@@ -203,7 +207,17 @@ async function main(){
     const link=event.target.closest('a.record-link');
     if(link && link.hash===location.hash && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey){event.preventDefault();openLinkedMatch();}
   });
-  $('previous').addEventListener('click',()=>{page--;history();});$('next').addEventListener('click',()=>{page++;history();});render();openLinkedMatch();
+  function goToPage(value){
+    const requested=Number(value);
+    if(String(value).trim() && Number.isFinite(requested))page=Math.trunc(requested)-1;
+    history();
+  }
+  $('first').addEventListener('click',()=>goToPage(1));
+  $('last').addEventListener('click',()=>goToPage(Math.max(1,Math.ceil(filtered.length/pageSize))));
+  $('previous').addEventListener('click',()=>goToPage(page));
+  $('next').addEventListener('click',()=>goToPage(page+2));
+  $('page-jump').addEventListener('submit',event=>{event.preventDefault();goToPage($('page-input').value);});
+  render();openLinkedMatch();
   loadItemManifest().then(manifest=>{
     itemCatalog=manifest.items;
     const names=Object.fromEntries(Object.entries(itemCatalog).map(([id,item])=>[id,item.name]));itemNames=names;

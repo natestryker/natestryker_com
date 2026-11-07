@@ -141,3 +141,23 @@ test('personal records link to the highest multi-kill match, including a quadra 
   assert.ok(!ids.get('records').innerHTML.includes('Most pentakills'));
  }
 });
+test('both history views support first/last and manual page jumps, bounded by filtered results',async()=>{
+ for(const file of ['league.html','match-history.html']){
+   const {ids}=await renderPage(file);
+   const pages=file==='league.html'?3:2;
+   assert.equal(ids.get('first').disabled,true);assert.equal(ids.get('last').disabled,false);
+   ids.get('last').listeners.click();assert.equal(ids.get('page').textContent,`${pages} / ${pages}`);
+   assert.equal(ids.get('page-input').value,String(pages));assert.equal(ids.get('last').disabled,true);
+   ids.get('first').listeners.click();assert.equal(ids.get('page').textContent,`1 / ${pages}`);
+   for(const [value,expected] of [['2',2],['9999',pages],['0',1],['',1],['not-a-number',1]]){
+     ids.get('page-input').value=value;let prevented=false;
+     ids.get('page-jump').listeners.submit({preventDefault(){prevented=true;}});
+     assert.equal(prevented,true);assert.equal(ids.get('page').textContent,`${expected} / ${pages}`);
+     assert.equal(ids.get('page-input').value,String(expected));
+   }
+   ids.get('last').listeners.click();
+   ids.get('champion-search').value='Ahri';ids.get('champion-search').listeners.input();
+   assert.equal(ids.get('page').textContent,'1 / 1');
+   for(const id of ['first','previous','next','last','page-input','page-go'])assert.equal(ids.get(id).disabled,true,id);
+ }
+});
