@@ -19,6 +19,9 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--orange-hover);outli
 .homepage-main{flex:1}
 .welcome{text-align:center;padding:93px 0 58px}
 .welcome h1{font-size:clamp(53px,8vw,92px);letter-spacing:-3.8px;line-height:1.05;margin:0 0 15px;font-weight:800}
+.welcome-heading{display:flex;align-items:center;justify-content:center;gap:clamp(12px,3vw,30px)}
+.welcome-surprise{width:clamp(80px,18vw,150px);height:auto;flex-shrink:0;margin-bottom:15px}
+.welcome-surprise[hidden]{display:none}
 .accent{color:var(--orange)}
 .welcome p{font-size:16px;color:var(--muted);margin:0}
 .home-cta{display:inline-flex;align-items:center;justify-content:center;min-height:46px;margin-top:8px;padding:12px 21px;border:1px solid #73573f;border-radius:8px;background:#1a2130;color:var(--orange-hover);font-size:16px;font-weight:700;text-decoration:none;transition:background .2s,border-color .2s,transform .2s}
@@ -71,6 +74,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--orange-hover);outli
 .secret-indicator{color:#91e3c0}
 .secret-hidden-label{color:#777c9b}
 .secret-main{padding:80px 0 95px}
+.secret-home{position:absolute;top:18px;left:21px}
 .secret-hub{text-align:center}
 .secret-hub h1{font-size:clamp(23px,3.2vw,31px);letter-spacing:-.7px;margin:0 0 14px;font-weight:750}
 .secret-subtitle{font-size:13px;color:#a4a7bf;line-height:1.8;margin:0}
