@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1120"><meta name="description" content="Search Nate's League of Legends match history across all tracked accounts.">
+  <title>Match History | natestryker.com</title>
+  <link rel="icon" href="images/favicon.png"><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="assets/league/league.css">
+  <script type="module" src="assets/league/dashboard.js"></script>
+</head>
+<body class="site-page match-history-page" data-view="history">
+  <header class="site-header"><div class="wrap header-inner"><a class="brand" href="index.html">natestryker.com</a><nav class="nav-links" aria-label="Main navigation"><a href="about.html">About Me</a><a href="games.html">Game-Stuff</a><a href="creations.html">Creations</a><a href="archive.html">Archive</a><a href="league.html" class="active" aria-current="page">Account Tracker</a></nav></div></header>
+  <main class="wrap inside-main league-main history-main">
+    <div class="page-intro"><p class="eyebrow">/ League of Legends</p><div class="tracker-title"><h1>Match history</h1><a class="title-arrow" href="league.html" aria-label="Back to Tracker" title="Back to Tracker">&#8592;</a></div><p id="profile" class="intro-copy" hidden></p><p id="status" role="status" hidden></p></div>
+    <noscript>Enable JavaScript to explore the tracker. <a href="data/league/public.json">Download the statistics JSON</a>.</noscript>
+    <div id="dashboard" hidden>
+      <section class="surface-panel tracker-panel"><h2>Search matches</h2><div class="filters"><label>Account<select id="account"><option value="">All accounts</option></select></label><label>Search role, date or match ID<input id="search" type="search" placeholder="MIDDLE, 2026-11"></label><label>Champion<input id="champion-search" type="search" placeholder="e.g. Zoe"></label><label>Item<input id="item-search" type="search" list="item-options" placeholder="e.g. Sorcerer's Shoes" aria-describedby="item-hint"><datalist id="item-options"></datalist></label><label>Queue<select id="queue"><option value="">All queues</option></select></label><label>Result<select id="result"><option value="">All results</option><option value="win">Wins</option><option value="loss">Losses</option><option value="remake">Remakes</option></select></label></div><p id="item-hint" class="muted" role="status">Loading item names...</p><p class="muted">Search matches across all accounts, or filter by account, champion, item, queue and result. ARAM and Arena appear here for history only and never count toward tracker statistics.</p></section>
+      <section class="surface-panel tracker-panel"><h2>Match history</h2><p id="match-count" role="status"></p><div id="matches"></div><div class="pager"><button id="previous">Previous</button><span id="page"></span><button id="next">Next</button></div></section>
+    </div>
+    <p class="muted riot-notice">Nate's League Tracker is not endorsed by Riot Games and does not reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games and all associated properties are trademarks or registered trademarks of Riot Games, Inc.</p>
+  </main><footer class="site-footer"><div class="wrap footer-inner"><span>© 2026 Nate · natestryker.com</span><a href="league.html">Back to Tracker</a></div></footer>
+</body></html>

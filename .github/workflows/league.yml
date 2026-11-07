@@ -1,0 +1,66 @@
+name: League tracker
+on:
+  schedule:
+    - cron: '17,47 * * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['league.html', 'match-history.html', 'assets/league/**', 'scripts/league/**', '.github/workflows/league.yml']
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: league-pages
+  cancel-in-progress: false
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test scripts/league/*.test.mjs
+      - name: Collect Riot data
+        id: collect
+        continue-on-error: true
+        env:
+          RIOT_API_KEY: ${{ secrets.RIOT_API_KEY }}
+          RIOT_ACCOUNTS: ${{ vars.RIOT_ACCOUNTS }}
+          RIOT_GAME_NAME: ${{ vars.RIOT_GAME_NAME }}
+          RIOT_TAG_LINE: ${{ vars.RIOT_TAG_LINE }}
+          RIOT_PLATFORM: ${{ vars.RIOT_PLATFORM || 'na1' }}
+        run: node scripts/league/collect.mjs
+      - name: Persist data even after an interrupted collection
+        if: always()
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/league
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update League match archive and ranked snapshots'
+            git pull --rebase origin main
+            git push
+          fi
+      - name: Prepare static website
+        run: |
+          mkdir _site
+          rsync -a --exclude='.git' --exclude='.github' --exclude='scripts' --exclude='_site' --exclude='node_modules' ./ _site/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - name: Report collection failure
+        if: steps.collect.outcome == 'failure'
+        run: echo '::warning::Riot collection failed. Existing data is preserved; inspect the collection step.'
+  deploy:
+    needs: update
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deployment
