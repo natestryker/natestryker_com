@@ -1,6 +1,8 @@
-import { mkdir, readFile, writeFile, readdir, rename, cp } from 'node:fs/promises';
+import { mkdir, readdir } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import {readJson as load,writeJson as save,validateMatch} from './archive.mjs';
+import {summarizeArchive} from '../../assets/league/stats.mjs';
 
 export const routes = {na1:'americas',br1:'americas',la1:'americas',la2:'americas',euw1:'europe',eun1:'europe',tr1:'europe',ru:'europe',kr:'asia',jp1:'asia',oc1:'sea',ph2:'sea',sg2:'sea',th2:'sea',tw2:'sea',vn2:'sea',me1:'europe'};
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -39,8 +41,6 @@ export function normalize(raw, puuid) {
     doubleKills:p.doubleKills, tripleKills:p.tripleKills, quadraKills:p.quadraKills, pentaKills:p.pentaKills,
     items:Array.from({length:7},(_,i)=>p[`item${i}`]), challenges:p.challenges || {}};
 }
-async function load(path, fallback) { try {return JSON.parse(await readFile(path,'utf8'));} catch(e) {if(e.code === 'ENOENT') return fallback; throw e;} }
-async function save(path, value) {await mkdir(resolve(path,'..'),{recursive:true}); await writeFile(`${path}.tmp`,JSON.stringify(value,null,2)+'\n'); await rename(`${path}.tmp`,path);}
 export async function collect(env = process.env, root = resolve('data/league'), apiOverride) {
   const {RIOT_API_KEY:key, RIOT_GAME_NAME:name, RIOT_TAG_LINE:tag, RIOT_PLATFORM:platform = 'na1'} = env;
   if (!key || !name || !tag || !routes[platform]) throw new Error('Set RIOT_API_KEY, RIOT_GAME_NAME, RIOT_TAG_LINE and a supported RIOT_PLATFORM.');
@@ -48,6 +48,11 @@ export async function collect(env = process.env, root = resolve('data/league'), 
   const account = await api(region,`/riot/account/v1/accounts/by-riot-id/${enc(name)}/${enc(tag)}`);
   const state = await load(join(root,'state.json'),{});
   if (state.puuid && (state.puuid !== account.puuid || state.platform !== platform)) throw new Error('Account/platform changed. Use a separate data directory to preserve history.');
+  const pollEnd=Math.floor(Date.now()/1000);
+  state.puuid=account.puuid;state.platform=platform;
+  state.backfillEnd ||= pollEnd;
+  // Establish identity and a fixed backfill window even if this first run is interrupted.
+  await save(join(root,'state.json'),state);
   const puuid = enc(account.puuid);
   const summoner = await api(platform,`/lol/summoner/v4/summoners/by-puuid/${puuid}`);
   const entries = await api(platform,`/lol/league/v4/entries/by-puuid/${puuid}`);
@@ -59,28 +64,45 @@ export async function collect(env = process.env, root = resolve('data/league'), 
   const directory = join(root,'matches'); await mkdir(directory,{recursive:true});
   const known = new Set((await readdir(directory)).filter(x=>x.endsWith('.json')).map(x=>x.slice(0,-5)));
   // A stable time window + persisted offset backfills incrementally without losing new matches.
-  const end = state.backfillEnd || Math.floor(Date.now()/1000);
-  async function ingest(query) {
+  const end = state.backfillEnd;
+  const pendingPath=join(root,'pending.json');
+  const pending=new Set(await load(pendingPath,[]));
+  async function discover(query) {
     const ids = await api(region,`/lol/match/v5/matches/by-puuid/${puuid}/ids?${query}&count=100`);
+    if(!Array.isArray(ids)) throw new Error('Invalid match ID list');
     for (const id of ids) {
       if (!/^[A-Z0-9]+_\d+$/.test(id)) throw new Error('Invalid match ID');
-      if (known.has(id)) continue;
-      const raw = await api(region,`/lol/match/v5/matches/${id}`);
-      await save(join(directory,`${id}.json`),{match:normalize(raw,account.puuid),raw}); known.add(id);
+      if (!known.has(id))pending.add(id);
     }
+    // Persist every discovered ID before requesting details; retry it even if Riot's ID list changes.
+    await save(pendingPath,[...pending]);
     return ids;
   }
   // Scan every page since the previous successful poll (with a one-day overlap).
   for(let start=0;;start+=100) {
-    const ids = await ingest(`startTime=${Math.max(0,(state.lastPoll || end)-86400)}&start=${start}`);
+    const ids = await discover(`startTime=${Math.max(0,(state.lastPoll || end)-86400)}&endTime=${pollEnd}&start=${start}`);
     if(ids.length < 100) break;
   }
   let offset = state.backfillOffset || 0, done = state.backfillDone || false;
-  if(!done) {const ids = await ingest(`endTime=${end}&start=${offset}`); offset += ids.length; done = ids.length < 100;}
+  if(!done) {const ids = await discover(`endTime=${end}&start=${offset}`); offset += ids.length; done = ids.length < 100;}
+  const failures=[];
+  for(const id of pending){
+    try{
+      if(!/^[A-Z0-9]+_\d+$/.test(id))throw new Error('Invalid pending match ID');
+      if(!known.has(id)){
+        const raw=await api(region,`/lol/match/v5/matches/${id}`);
+        const record={schemaVersion:1,collectedAt:new Date().toISOString(),match:normalize(raw,account.puuid),raw};
+        validateMatch(record,id);
+        await save(join(directory,`${id}.json`),record,{immutable:true});known.add(id);
+      }
+      pending.delete(id);await save(pendingPath,[...pending]);
+    }catch(e){failures.push(id);console.error(`Match ${id}: ${e.message}`);}
+  }
+  if(failures.length)throw new Error(`${failures.length} match downloads pending; archive and polling cursors retained. See pending.json.`);
   const matches = [];
-  for (const file of await readdir(directory)) if(file.endsWith('.json')) matches.push((await load(join(directory,file))).match);
+  for (const file of await readdir(directory)) if(file.endsWith('.json')) {const record=await load(join(directory,file));validateMatch(record,file.slice(0,-5));matches.push(record.match);}
   matches.sort((a,b)=>b.date-a.date);
-  await save(join(root,'public.json'),{updatedAt:now,profile:{riotId:`${account.gameName}#${account.tagLine}`,level:summoner.summonerLevel,platform},backfillComplete:done,matches,ranked:snapshots,mastery:mastery.map(({championId,championLevel,championPoints})=>({championId,championLevel,championPoints}))});
+  await save(join(root,'public.json'),{updatedAt:now,profile:{riotId:`${account.gameName}#${account.tagLine}`,level:summoner.summonerLevel,platform},backfillComplete:done,matches,statistics:summarizeArchive(matches),ranked:snapshots,mastery:mastery.map(({championId,championLevel,championPoints})=>({championId,championLevel,championPoints}))});
   await save(join(root,'state.json'),{puuid:account.puuid,platform,backfillEnd:end,backfillOffset:offset,backfillDone:done,lastPoll:Math.floor(new Date(now).getTime()/1000)});
   console.log(`Saved ${matches.length} unique matches and ${snapshots.length} ranked observations.`);
 }
@@ -100,8 +122,8 @@ export function parseAccounts(env){
   return accounts;
 }
 export function combineAccounts(accounts){
-  return {updatedAt:accounts.map(a=>a.updatedAt).filter(Boolean).sort().at(-1) || null,accounts,
-    matches:accounts.flatMap(a=>a.matches.map(m=>({...m,accountId:a.id,accountName:a.profile?.riotId || a.label,recordId:`${a.id}--${m.id}`}))).sort((a,b)=>b.date-a.date),
+  const matches=accounts.flatMap(a=>a.matches.map(m=>({...m,accountId:a.id,accountName:a.profile?.riotId || a.label,recordId:`${a.id}--${m.id}`}))).sort((a,b)=>b.date-a.date);
+  return {updatedAt:accounts.map(a=>a.updatedAt).filter(Boolean).sort().at(-1) || null,accounts,matches,statistics:summarizeArchive(matches),
     backfillComplete:accounts.every(a=>a.backfillComplete),ranked:[],mastery:[]};
 }
 export async function collectAll(env=process.env,root=resolve('data/league'),apiOverride){
@@ -115,11 +137,16 @@ export async function collectAll(env=process.env,root=resolve('data/league'),api
     const legacy=await load(join(root,'state.json'),null);
     if(index===0 && legacy && !await load(join(directory,'state.json'),null)){
       await mkdir(directory,{recursive:true});
-      for(const file of ['matches','ranked.json','state.json']){
-        try {await cp(join(root,file),join(directory,file),{recursive:true});} catch(e){if(e.code!=='ENOENT') throw e;}
+      let files=[];
+      try{files=await readdir(join(root,'matches'));}catch(e){if(e.code!=='ENOENT')throw e;}
+      for(const file of files.filter(file=>file.endsWith('.json'))){
+        const record=await load(join(root,'matches',file));validateMatch(record,file.slice(0,-5));
+        await save(join(directory,'matches',file),record,{immutable:true});
       }
+      await save(join(directory,'ranked.json'),await load(join(root,'ranked.json'),[]),{immutable:true});
       const old=await load(join(root,'public.json'),null);
-      if(old && !old.accounts) await save(join(directory,'public.json'),old);
+      if(old && !old.accounts) await save(join(directory,'public.json'),old,{immutable:true});
+      await save(join(directory,'state.json'),legacy,{immutable:true});
     }
     try {
       await collect({...env,RIOT_GAME_NAME:a.gameName,RIOT_TAG_LINE:a.tagLine,RIOT_PLATFORM:a.platform || 'na1'},directory,api);

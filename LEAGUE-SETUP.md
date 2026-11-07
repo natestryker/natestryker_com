@@ -56,7 +56,11 @@ If upgrading an already populated single-account tracker, put that original acco
 5. Check all three account names and their last-collected timestamps. The initial run collects up to 100 historical match IDs per account, plus new matches. Later runs backfill another page per account until Riot's available history is exhausted. Large archives take multiple runs.
 6. The arrow beside Tracker opens the wider match-history-only page and carries your current filters. Each connected account has its own expandable arrow under Ranked progress. Open a match for detailed stats, try champion/queue/result filters, and expand graph data for an accessible table of exact values.
 
-If collection fails, the workflow still preserves downloaded matches and deploys the last complete dashboard. Inspect the **Collect Riot data** step; a warning indicates collection did not complete even if deployment is green. 401/403 usually means an invalid, expired, or unauthorized key; edit the existing repository secret to replace it. 404 often means the wrong Riot ID or platform. 429 and server errors retry with backoff. A failed upload, git push, or deployment fails its job. Do not delete archives to fix an API outage.
+If collection fails, completed downloaded matches are retained and the last complete dashboard remains available. The **health** job marks the overall workflow failed, even if Pages deployment succeeds. Inspect the **Collect Riot data** and **Persist data** steps, the run summary, pending IDs, and any recovery artifact. 401/403 usually means an invalid, expired, or unauthorized key; edit the existing repository secret to replace it. 404 often means the wrong Riot ID/platform or an unavailable match. 429 and server errors retry with backoff. Do not delete archives or clear pending IDs to fix an API outage.
+
+## 6. Enable long-term backups and failure notifications
+
+Read [LEAGUE-ARCHIVE.md](LEAGUE-ARCHIVE.md) for the durability audit, step-by-step notifications, weekly backup download, independent off-repository copies, and restore instructions. Include `.github/workflows/league-backup.yml` when committing the project. One successful backup downloaded and kept outside GitHub is essential for protection against repository loss.
 
 ## Data and limitations
 

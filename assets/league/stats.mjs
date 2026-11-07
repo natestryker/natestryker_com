@@ -10,6 +10,12 @@ export function aggregate(matches) {
   const wins = games.filter(m=>m.win).length;
   return {games:n,wins,losses:n-wins,winRate:n ? wins/n*100 : 0,kda:sum('kills')+sum('assists') ? (sum('kills')+sum('assists'))/Math.max(1,sum('deaths')) : 0,cs:n ? sum('csPerMinute')/n : 0,damage:n ? sum('damage')/n : 0};
 }
+export function summarizeArchive(matches){
+  const eligible=matches.filter(countsForStats);
+  const totals=games=>({...aggregate(games),...Object.fromEntries(['kills','deaths','assists','cs','damage','gold','duration'].map(key=>[`${key}Total`,games.reduce((sum,m)=>sum+(Number(m[key]) || 0),0)]))});
+  const years=[...new Set(eligible.map(m=>new Date(m.date).getUTCFullYear()))].sort();
+  return {yearBasis:'UTC',lifetime:totals(eligible),years:Object.fromEntries(years.map(year=>[year,totals(eligible.filter(m=>new Date(m.date).getUTCFullYear()===year))]))};
+}
 export const normalizeItemName = value => String(value).toLowerCase().replace(/['\u2019]/g,'').replace(/\bboots\b/g,'shoes').replace(/[^a-z0-9]+/g,' ').trim();
 export function itemMatches(id, query, names={}) {
   if(!id) return false;

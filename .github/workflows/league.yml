@@ -16,7 +16,9 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 35
+    outputs:
+      collection: ${{ steps.collect.outcome }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -26,6 +28,7 @@ jobs:
       - name: Collect Riot data
         id: collect
         continue-on-error: true
+        timeout-minutes: 25
         env:
           RIOT_API_KEY: ${{ secrets.RIOT_API_KEY }}
           RIOT_ACCOUNTS: ${{ vars.RIOT_ACCOUNTS }}
@@ -34,16 +37,29 @@ jobs:
           RIOT_PLATFORM: ${{ vars.RIOT_PLATFORM || 'na1' }}
         run: node scripts/league/collect.mjs
       - name: Persist data even after an interrupted collection
-        if: always()
+        id: persist
+        if: ${{ always() && !cancelled() }}
         run: |
+          node scripts/league/archive.mjs
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/league
+          git add -- 'data/league/**/*.json' 'data/league/*.json'
           if ! git diff --cached --quiet; then
             git commit -m 'Update League match archive and ranked snapshots'
-            git pull --rebase origin main
-            git push
+            for attempt in 1 2 3; do
+              git pull --rebase origin main
+              if git push origin HEAD:main; then exit 0; fi
+              if [ "$attempt" = 3 ]; then exit 1; fi
+              sleep 5
+            done
           fi
+      - name: Preserve emergency archive after collection or commit failure
+        if: ${{ always() && !cancelled() && (steps.collect.outcome == 'failure' || steps.persist.outcome == 'failure') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: league-recovery-${{ github.run_id }}-${{ github.run_attempt }}
+          path: data/league/**/*.json
+          retention-days: 30
       - name: Prepare static website
         run: |
           mkdir _site
@@ -52,9 +68,15 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
-      - name: Report collection failure
-        if: steps.collect.outcome == 'failure'
-        run: echo '::warning::Riot collection failed. Existing data is preserved; inspect the collection step.'
+      - name: Collection report
+        if: ${{ always() && !cancelled() }}
+        env:
+          COLLECTION: ${{ steps.collect.outcome }}
+          PERSISTENCE: ${{ steps.persist.outcome }}
+        run: |
+          echo '## League archive update' >> "$GITHUB_STEP_SUMMARY"
+          echo "Collection: $COLLECTION. Repository persistence: $PERSISTENCE." >> "$GITHUB_STEP_SUMMARY"
+          echo 'Failed downloads remain in pending.json and are retried. Download a recovery artifact if persistence failed.' >> "$GITHUB_STEP_SUMMARY"
   deploy:
     needs: update
     runs-on: ubuntu-latest
@@ -64,3 +86,18 @@ jobs:
     steps:
       - uses: actions/deploy-pages@v4
         id: deployment
+  health:
+    needs: update
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Fail the run when collection or repository persistence failed
+        env:
+          UPDATE: ${{ needs.update.result }}
+          COLLECTION: ${{ needs.update.outputs.collection }}
+        run: |
+          if [ "$UPDATE" != success ] || [ "$COLLECTION" != success ]; then
+            echo '::error::League archive update failed or was interrupted. Inspect collection, persistence, pending IDs and recovery artifact. The last successful site remains available.'
+            exit 1
+          fi

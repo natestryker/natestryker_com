@@ -127,5 +127,5 @@ test('an interrupted collection retains matches and resumes safely',async()=>{
  const root=await mkdtemp(join(tmpdir(),'league-resume-'));let fail=true;
  const env={RIOT_API_KEY:'test-secret',RIOT_GAME_NAME:'name',RIOT_TAG_LINE:'tag'};
  const api=async(_,path)=>{if(path.includes('/accounts/'))return {puuid:'player'};if(path.includes('/summoners/'))return {};if(path.includes('/entries/')||path.includes('/champion-masteries/'))return [];if(path.includes('/ids?'))return ['NA1_123','NA1_124'];if(path.endsWith('/NA1_123'))return raw;if(fail)throw new Error('temporary outage');return {...raw,metadata:{matchId:'NA1_124'}};};
- try{await assert.rejects(collect(env,root,api),/temporary outage/);assert.equal((await readdir(join(root,'matches'))).length,1);fail=false;await collect(env,root,api);assert.equal(JSON.parse(await readFile(join(root,'public.json'))).matches.length,2);}finally{await rm(root,{recursive:true,force:true});}
+ try{await assert.rejects(collect(env,root,api),/downloads pending/);assert.equal((await readdir(join(root,'matches'))).length,1);fail=false;await collect(env,root,api);assert.equal(JSON.parse(await readFile(join(root,'public.json'))).matches.length,2);}finally{await rm(root,{recursive:true,force:true});}
 });
