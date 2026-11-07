@@ -2,7 +2,7 @@ import { mkdir, readdir } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import {readJson as load,writeJson as save,validateMatch} from './archive.mjs';
-import {summarizeArchive} from '../../assets/league/stats.mjs';
+import {summarizeArchive,highestMultiKill} from '../../assets/league/stats.mjs';
 
 export const routes = {na1:'americas',br1:'americas',la1:'americas',la2:'americas',euw1:'europe',eun1:'europe',tr1:'europe',ru:'europe',kr:'asia',jp1:'asia',oc1:'sea',ph2:'sea',sg2:'sea',th2:'sea',tw2:'sea',vn2:'sea',me1:'europe'};
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -40,7 +40,7 @@ export function normalize(raw, puuid) {
     vision:p.visionScore, wards:p.wardsPlaced, controlWards:p.visionWardsBoughtInGame,
     healing:p.totalHeal, objectiveDamage:p.damageDealtToObjectives, turretDamage:p.damageDealtToTurrets,
     killParticipation:teamKills ? (p.kills+p.assists)/teamKills*100 : 0,
-    doubleKills:p.doubleKills, tripleKills:p.tripleKills, quadraKills:p.quadraKills, pentaKills:p.pentaKills,
+    doubleKills:p.doubleKills, tripleKills:p.tripleKills, quadraKills:p.quadraKills, pentaKills:p.pentaKills,largestMultiKill:highestMultiKill(p),
     items:Array.from({length:7},(_,i)=>p[`item${i}`]), challenges:p.challenges || {}};
 }
 export async function collect(env = process.env, root = resolve('data/league'), apiOverride) {

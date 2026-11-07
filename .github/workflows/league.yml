@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['league.html', 'match-history.html', 'assets/league/**', 'scripts/league/**', '.github/workflows/league.yml']
+    paths: ['*.html', '*.js', '*.css', '*.png', '*.svg', '*.ico', 'CNAME', 'images/**', 'media/**', 'assets/**', 'creations/**', 'games/**', 'Under-the-Rift/dist/**', 'Image-to-Minecraft-Converter/dist/**', 'scripts/**', '.github/workflows/league.yml']
 permissions:
   contents: write
   pages: write
@@ -72,8 +72,10 @@ jobs:
       - name: Prepare static website
         run: |
           mkdir _site
-          rsync -a --exclude='.git' --exclude='.github' --exclude='scripts' --exclude='_site' --exclude='node_modules' --exclude='/data/league/accounts/*/matches/' --exclude='/data/league/matches/' --exclude='/data/league/accounts/*/state.json' --exclude='/data/league/accounts/*/pending.json' ./ _site/
+          rsync -a --exclude='.git' --exclude='.github' --exclude='.aws' --exclude='.codex' --exclude='.agents' --exclude='.vscode' --exclude='.env' --exclude='.env.*' --exclude='*.bundle' --exclude='scripts' --exclude='_site' --exclude='node_modules' --exclude='/data/league/accounts/*/matches/' --exclude='/data/league/matches/' --exclude='/data/league/accounts/*/state.json' --exclude='/data/league/accounts/*/pending.json' ./ _site/
       - uses: actions/configure-pages@v5
+      - name: Check published size and archive exclusions
+        run: node scripts/check-site-size.mjs _site
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

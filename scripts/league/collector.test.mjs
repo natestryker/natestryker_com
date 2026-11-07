@@ -4,10 +4,18 @@ import {mkdtemp,readFile,rm,readdir} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {client,normalize,collect,collectAll,parseAccounts,combineAccounts} from './collect.mjs';
-import {aggregate,filterMatches,countsForStats,isHistoryOnly} from '../../assets/league/stats.mjs';
+import {aggregate,filterMatches,countsForStats,isHistoryOnly,highestMultiKill,multiKillLabel} from '../../assets/league/stats.mjs';
 import {loadItemNames} from '../../assets/league/items.mjs';
 const player={puuid:'player',teamId:100,championName:'Zoe',championId:142,win:true,kills:10,deaths:0,assists:5,totalMinionsKilled:180,neutralMinionsKilled:20,totalDamageDealtToChampions:30000};
 const raw={metadata:{matchId:'NA1_123'},info:{participants:[player],gameStartTimestamp:1800000000000,gameEndTimestamp:1800001200000,gameDuration:1200,queueId:420}};
+test('highest multi-kill measures kill-chain size rather than the count of multi-kills',()=>{
+ assert.equal(highestMultiKill({doubleKills:20,quadraKills:1,pentaKills:0}),4);
+ assert.equal(highestMultiKill({pentaKills:3}),5);
+ assert.equal(highestMultiKill({largestMultiKill:3,doubleKills:12}),3);
+ assert.equal(multiKillLabel(4),'Quadra kill');assert.equal(multiKillLabel(5),'Pentakill');
+ const response={...raw,info:{...raw.info,participants:[{...player,largestMultiKill:4,quadraKills:1,pentaKills:0}]}};
+ assert.equal(normalize(response,'player').largestMultiKill,4);
+});
 test('ARAM and Arena never affect stats but remain searchable in history across accounts',()=>{
  const ranked={...normalize(raw,'player'),accountId:'main'};
  const excluded=[65,67,100,450,720,1700,1710,2400].map((queue,i)=>({...ranked,queue,accountId:i%2?'alt':'third',kills:999,damage:999999,csPerMinute:99,kda:999}));
@@ -102,9 +110,9 @@ test('item names support autocomplete values, partial names, apostrophes and boo
 });
 test('public item catalog maps IDs to names and fails safely on unavailable data',async()=>{
  const urls=[];
- const names=await loadItemNames(async url=>{urls.push(url);return Response.json(url.endsWith('versions.json')?['16.1.1']:{data:{3020:{name:"Sorcerer's Shoes"},3089:{name:"Rabadon's Deathcap"}}});});
+ const names=await loadItemNames(async url=>{urls.push(url);return Response.json({items:{3020:{name:"Sorcerer's Shoes",icon:'assets/league/items/3020.png'},3089:{name:"Rabadon's Deathcap",icon:'assets/league/items/3089.png'}}});});
  assert.equal(names[3020],"Sorcerer's Shoes");
- assert.ok(urls[1].endsWith('/16.1.1/data/en_US/item.json'));
+ assert.deepEqual(urls,['assets/league/item-catalog.json']);
  await assert.rejects(loadItemNames(async()=>new Response('',{status:503})),/unavailable/);
  await assert.rejects(loadItemNames(async()=>Response.json([])),/Invalid/);
 });

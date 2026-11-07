@@ -28,7 +28,7 @@
     <section class="welcome" aria-labelledby="welcome-title">
       <div class="welcome-heading">
         <h1 id="welcome-title">Welcome</h1>
-        <img id="secret-welcome" class="welcome-surprise" src="YEP.png" alt="Smiling Pepe the Frog" width="300" height="300" hidden>
+        <img id="secret-welcome" class="welcome-surprise" data-src="YEP.png" alt="Smiling Pepe the Frog" width="300" height="300" hidden>
       </div>
       <a class="home-cta" href="Under-the-Rift/dist/index.html">Try my latest game &rarr;</a>
     </section>
@@ -80,6 +80,7 @@
       if (fromSecret) history.replaceState(null, '', location.pathname + location.search);
       if (!(remaining > 0)) return;
       image.addEventListener('error', () => { image.hidden = true; });
+      image.src = image.dataset.src;
       image.hidden = false;
       setTimeout(() => {
         image.hidden = true;

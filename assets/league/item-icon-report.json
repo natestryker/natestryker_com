@@ -1,0 +1,20 @@
+{
+  "generatedAt": "2026-11-07T18:56:16.273Z",
+  "dataDragonVersion": "16.22.1",
+  "currentItemCount": 863,
+  "manifestItemCount": 864,
+  "downloaded": 864,
+  "alreadyPresent": 0,
+  "failedDownloads": [],
+  "referencedItemCount": 402,
+  "legacyItemsFound": {
+    "3097": "16.16.1"
+  },
+  "unresolvedReferencedItemIds": [],
+  "scanStats": {
+    "scannedFiles": 638,
+    "badJsonFiles": 0,
+    "skippedBigFiles": 0
+  },
+  "note": "Unresolved IDs may represent deprecated items, placeholders, or data not present in the sampled historical Data Dragon patches. The manifest never replaces your match archive."
+}

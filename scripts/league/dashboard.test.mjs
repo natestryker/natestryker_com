@@ -5,6 +5,7 @@ import vm from 'node:vm';
 import * as stats from '../../assets/league/stats.mjs';
 import {loadDashboardData} from '../../assets/league/data.mjs';
 import {INDEX_COLUMNS} from '../../assets/league/schema.mjs';
+import {itemBuild,itemSuggestions} from '../../assets/league/items.mjs';
 
 // A small DOM harness checks shared page wiring; this is not a browser layout test.
 async function renderPage(file,{search='',hash='',champions=['Zoe'],matchStats=()=>({}),optimized=false}={}){
@@ -26,7 +27,7 @@ async function renderPage(file,{search='',hash='',champions=['Zoe'],matchStats=(
   for(const [,id] of html.matchAll(/\bid="([^"]+)"/g)) ids.set(id,new Element());
   const accounts=['main','alt','third'].map(id=>({id,label:id,updatedAt:'2026-11-07T12:00:00Z',profile:{riotId:`${id}#NA1`},ranked:[{at:'2026-11-07T12:00:00Z',entries:[{queueType:'RANKED_FLEX_SR',tier:'SILVER',rank:'II',leaguePoints:20,wins:2,losses:3},{queueType:'RANKED_SOLO_5x5',tier:'GOLD',rank:'I',leaguePoints:50,wins:1,losses:1}]}],mastery:[]}));
   const matches=Array.from({length:45},(_,i)=>({id:`NA1_${i}`,recordId:`main--NA1_${i}`,accountId:'main',accountName:'main#NA1',date:1794052800000-i*1000,queue:420,champion:champions[i%champions.length],kills:2,deaths:1,assists:3,kda:5,csPerMinute:7,damage:1000,duration:1200,items:[],win:true,...matchStats(i)}));
-  const document={body:{dataset:{view:file==='match-history.html'?'history':''}},createElement:()=>new Element(),getElementById(id){
+  const document={addEventListener(){},body:{dataset:{view:file==='match-history.html'?'history':''}},createElement:()=>new Element(),getElementById(id){
     if(ids.has(id)) return ids.get(id);
     // Match details are generated through innerHTML in the real browser.
     if(id.startsWith('match-') && ids.get('matches').innerHTML.includes(`id="${id}"`)){
@@ -40,7 +41,7 @@ async function renderPage(file,{search='',hash='',champions=['Zoe'],matchStats=(
     if(url.endsWith('public.json'))return {schemaVersion:2,accounts,matchCount:matches.length,backfillComplete:false,indexes:[{url:'views/index-2026-11-abcd.json',count:matches.length}],updatedAt:'2026-11-07T12:00:00Z'};
     return {schemaVersion:2,columns:INDEX_COLUMNS,rows:matches.map(m=>INDEX_COLUMNS.map(key=>m[key]??null))};
   }});
-  const context=vm.createContext({...stats,document,location,URLSearchParams,console,matchMedia:()=>({matches:true}),window:{addEventListener:(type,handler)=>{listeners[type]=handler;}},fetch:fetcher,loadDashboardData:()=>loadDashboardData(fetcher),loadItemNames:async()=>({3020:"Sorcerer's Shoes"})});
+  const context=vm.createContext({...stats,itemBuild,itemSuggestions,document,location,URLSearchParams,console,matchMedia:()=>({matches:true}),window:{addEventListener:(type,handler)=>{listeners[type]=handler;}},fetch:fetcher,loadDashboardData:()=>loadDashboardData(fetcher),loadItemManifest:async()=>({items:{3020:{name:"Sorcerer's Shoes",icon:'assets/league/items/3020.png'}}})});
   let script=await readFile(new URL('../../assets/league/dashboard.js',import.meta.url),'utf8');
   script=script.replace(/^import .*;\r?\n/gm,'').replace(/main\(\)\.catch[\s\S]*$/,'');
   vm.runInContext(script,context);
@@ -55,6 +56,7 @@ test('tracker links to history with filters and gives each account a persistent 
   assert.equal(graph.className,'rank-account');assert.equal(graph.open,false);
   graph.open=true;graph.listeners.toggle();
   ids.get('champion-search').value='Zoe';ids.get('champion-search').listeners.input();
+  assert.equal(ids.get('rank-graph').children[0],graph,'Text filters should not rebuild ranked plots');
   assert.equal(ids.get('rank-graph').children[0].open,true);
   assert.equal(ids.get('history-link').href,'match-history.html?champion-search=Zoe');
   assert.equal((ids.get('matches').innerHTML.match(/<details class="match"/g)||[]).length,20);
@@ -129,4 +131,13 @@ test('both pages initialize, search and calculate records using the optimized ma
     ids.get('champion-search').value='Ahri';ids.get('champion-search').listeners.input();
     assert.equal(ids.get('match-count').textContent,'0 matching matches');
   }
+});
+test('personal records link to the highest multi-kill match, including a quadra without pentakills',async()=>{
+ for(const optimized of [false,true]){
+  const {ids}=await renderPage('league.html',{optimized,matchStats:i=>({largestMultiKill:i===3?4:2,pentaKills:0})});
+  const record=ids.get('records').innerHTML.split('<div class="stat record">').find(card=>card.includes('<small>Highest multi-kill</small>'));
+  assert.match(record,/<strong>Quadra kill<\/strong>/);
+  assert.match(record,/#match-main--NA1_3/);
+  assert.ok(!ids.get('records').innerHTML.includes('Most pentakills'));
+ }
 });

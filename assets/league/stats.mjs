@@ -4,6 +4,10 @@ export const queueName = id => queues[id] || `Queue ${id}`;
 const historyOnlyQueues = new Set([65,67,100,450,720,1700,1710,2400]);
 export const isHistoryOnly = match => historyOnlyQueues.has(Number(match.queue)) || ['ARAM','CHERRY'].includes(String(match.gameMode || '').toUpperCase());
 export const countsForStats = match => !match.remake && !isHistoryOnly(match);
+export function highestMultiKill(match){
+  return Math.max(Number(match.largestMultiKill) || 0,match.pentaKills>0?5:0,match.quadraKills>0?4:0,match.tripleKills>0?3:0,match.doubleKills>0?2:0,match.kills>0?1:0);
+}
+export const multiKillLabel=value=>['No multi-kill','Single kill','Double kill','Triple kill','Quadra kill','Pentakill'][value] || `${value}-kill`;
 export function aggregate(matches) {
   const games = matches.filter(countsForStats), n = games.length;
   const sum = key => games.reduce((s,m)=>s+(m[key] || 0),0);

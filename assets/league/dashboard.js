@@ -1,5 +1,5 @@
-import {aggregate,filterMatches,queueName,countsForStats,isHistoryOnly} from './stats.mjs';
-import {loadItemNames} from './items.mjs';
+import {aggregate,filterMatches,queueName,countsForStats,isHistoryOnly,highestMultiKill,multiKillLabel} from './stats.mjs';
+import {loadItemManifest,itemBuild} from './items.mjs';
 import {loadDashboardData,loadMatchDetails,loadRankedHistory} from './data.mjs';
 const $ = id=>document.getElementById(id);
 const historyPage=document.body.dataset.view==='history';
@@ -27,10 +27,14 @@ function chart(target,series,labels) {
 }
 async function main(){
   const data=await loadDashboardData();
-  let itemNames={};
+  let itemNames={},itemCatalog={},chosenItem=null;
+  document.addEventListener('error',event=>{
+    const icon=event.target;
+    if(icon.matches?.('img[data-item-icon]')){icon.hidden=true;if(icon.nextElementSibling)icon.nextElementSibling.hidden=false;}
+  },true);
   const accounts=data.accounts || [{id:'legacy',profile:data.profile,ranked:data.ranked,mastery:data.mastery,updatedAt:data.updatedAt}];
   const accountName=a=>a.profile?.riotId || a.label || 'Account';
-  data.matches=data.matches.map(m=>({...m,accountId:m.accountId || 'legacy',accountName:m.accountName || data.profile?.riotId || 'Account',recordId:m.recordId || m.id}));
+  data.matches=data.matches.map(m=>({...m,largestMultiKill:highestMultiKill(m),accountId:m.accountId || 'legacy',accountName:m.accountName || data.profile?.riotId || 'Account',recordId:m.recordId || m.id}));
   accounts.forEach(a=>{const option=document.createElement('option');option.value=a.id;option.textContent=accountName(a);$('account').append(option);});
   if(data.accounts){$('profile').hidden=false;$('profile').textContent=accounts.map(accountName).join(' / ');}
 
@@ -42,6 +46,7 @@ async function main(){
   const total=aggregate(data.matches);
   if(!historyPage) $('summary').innerHTML=stat('Collected games',number(total.games,0),'ARAM, Arena and remakes excluded')+stat('Wins / losses',`${total.wins} / ${total.losses}`)+stat('Win rate',`${number(total.winRate)}%`)+stat('KDA',number(total.kda,2))+stat('CS / min',number(total.cs,2))+stat('Avg champion damage',number(total.damage,0));
   const expandedRanks=new Set(),rankRequests=new Map(),detailRequests=new Map();
+  let renderedRankAccount=null;
   function renderAccounts(){
     const selected=accounts.filter(a=>!$('account').value || a.id===$('account').value);
     $('ranked').replaceChildren();$('rank-graph').replaceChildren();
@@ -124,7 +129,7 @@ async function main(){
   });
   $('champions-toggle')?.addEventListener('click',()=>{championsExpanded=!championsExpanded;renderChampions();});
   function matchDetails(m){
-    return `<div class="match-details">${Object.entries({'Match ID':m.id,Account:m.accountName,Role:m.role,Duration:`${Math.floor(m.duration/60)}:${String(Math.floor(m.duration%60)).padStart(2,'0')}`,KDA:number(m.kda,2),CS:m.cs,'CS / min':number(m.csPerMinute,2),'Champion damage':number(m.damage,0),'Damage taken':number(m.damageTaken,0),Gold:number(m.gold,0),Vision:m.vision,'Wards placed':m.wards,'Control wards':m.controlWards,Healing:number(m.healing,0),'Objective damage':number(m.objectiveDamage,0),'Turret damage':number(m.turretDamage,0),'Kill participation':`${number(m.killParticipation)}%`,'Double / triple / quadra / penta':`${m.doubleKills}/${m.tripleKills}/${m.quadraKills}/${m.pentaKills}`,Patch:m.patch,Items:(m.items || []).filter(id=>id>0).map(id=>itemNames[id] || `Item #${id}`).join(', ') || 'None'}).map(([k,v])=>`<div>${escape(k)}: <strong>${escape(v)}</strong></div>`).join('')}</div>${m.challenges && Object.keys(m.challenges).length?`<details class="table-scroll"><summary>Advanced challenges</summary>${table(['Challenge','Value'],Object.entries(m.challenges).filter(([,v])=>typeof v==='number' || typeof v==='string').map(([k,v])=>[k,v]))}</details>`:''}`;
+    return `${itemBuild(m.items,itemCatalog)}<div class="match-details">${Object.entries({'Match ID':m.id,Account:m.accountName,Role:m.role,Duration:`${Math.floor(m.duration/60)}:${String(Math.floor(m.duration%60)).padStart(2,'0')}`,KDA:number(m.kda,2),CS:m.cs,'CS / min':number(m.csPerMinute,2),'Champion damage':number(m.damage,0),'Damage taken':number(m.damageTaken,0),Gold:number(m.gold,0),Vision:m.vision,'Wards placed':m.wards,'Control wards':m.controlWards,Healing:number(m.healing,0),'Objective damage':number(m.objectiveDamage,0),'Turret damage':number(m.turretDamage,0),'Kill participation':`${number(m.killParticipation)}%`,'Double / triple / quadra / penta':`${m.doubleKills}/${m.tripleKills}/${m.quadraKills}/${m.pentaKills}`,Patch:m.patch}).map(([k,v])=>`<div>${escape(k)}: <strong>${escape(v)}</strong></div>`).join('')}</div>${m.challenges && Object.keys(m.challenges).length?`<details class="table-scroll"><summary>Advanced challenges</summary>${table(['Challenge','Value'],Object.entries(m.challenges).filter(([,v])=>typeof v==='number' || typeof v==='string').map(([k,v])=>[k,v]))}</details>`:''}`;
   }
   async function fillMatch(element,m){
     const body=element.querySelector('.match-body');
@@ -150,25 +155,29 @@ async function main(){
     });
   }
   function render(){
-    page=0;filtered=filterMatches(data.matches,$('search').value,$('queue').value,$('result').value,$('champion-search').value,$('item-search').value,itemNames).filter(m=>!$('account').value || m.accountId===$('account').value);
+    page=0;filtered=filterMatches(data.matches,$('search').value,$('queue').value,$('result').value,$('champion-search').value,chosenItem && $('item-search').value===itemNames[chosenItem]?chosenItem:$('item-search').value,itemNames).filter(m=>!$('account').value || m.accountId===$('account').value);
     if($('history-link')){
       const params=new URLSearchParams();
       filterIds.forEach(id=>{if($(id).value) params.set(id,$(id).value);});
+      if(chosenItem && $('item-search').value===itemNames[chosenItem])params.set('item-id',chosenItem);
       $('history-link').href=`match-history.html${params.size?'?'+params:''}`;
     }
     if(historyPage){history();return;}
-    renderAccounts();
-    const games=filtered.filter(countsForStats), champions=[...new Set(games.map(m=>m.champion))];
-    championStats=champions.map(name=>({name,...aggregate(games.filter(m=>m.champion===name))})).sort((a,b)=>b.games-a.games || a.name.localeCompare(b.name));
+    if(renderedRankAccount!==$('account').value){renderAccounts();renderedRankAccount=$('account').value;}
+    const games=filtered.filter(countsForStats),byChampion=new Map();
+    for(const match of games){if(!byChampion.has(match.champion))byChampion.set(match.champion,[]);byChampion.get(match.champion).push(match);}
+    championStats=[...byChampion].map(([name,matches])=>({name,...aggregate(matches)})).sort((a,b)=>b.games-a.games || a.name.localeCompare(b.name));
     renderChampions();
     const recent=games.slice(0,30).reverse();chart($('performance'),[{name:'KDA',color:'#ff974b',values:recent.map(m=>m.kda)},{name:'CS/min',color:'#75dfbf',values:recent.map(m=>m.csPerMinute)}],recent.map(m=>`${new Date(m.date).toLocaleDateString()} ${m.champion} ${m.accountName} ${m.id}`));
-    $('records').innerHTML=[['Most kills','kills'],['Most assists','assists'],['Highest KDA','kda'],['Most damage','damage'],['Best CS/min','csPerMinute'],['Highest vision','vision'],['Longest game (min)','duration'],['Most pentakills','pentaKills']].map(([label,key])=>{
+    $('records').innerHTML=[['Most kills','kills'],['Most assists','assists'],['Highest KDA','kda'],['Most damage','damage'],['Best CS/min','csPerMinute'],['Highest vision','vision'],['Longest game (min)','duration'],['Highest multi-kill','largestMultiKill']].map(([label,key])=>{
       const best=games.reduce((best,m)=>!best||m[key]>best[key]?m:best,null);
       if(!best) return stat(label,'-','No games');
-      return `<div class="stat record"><small>${escape(label)}</small><strong>${escape(number(key==='duration'?best[key]/60:best[key],2))}</strong><small>${escape(best.champion)} / ${escape(queueName(best.queue))}</small><small>${escape(best.accountName)}</small><time datetime="${escape(new Date(best.date).toISOString())}">${escape(new Date(best.date).toLocaleString())}</time><small>${escape(best.id)}</small><a class="record-link" href="#match-${encodeURIComponent(best.recordId)}" aria-label="${escape(`View ${label} match: ${best.champion}, ${new Date(best.date).toLocaleString()}, ${best.id}`)}">View match <span aria-hidden="true">&#8599;</span></a></div>`;
+      const recordValue=key==='largestMultiKill'?multiKillLabel(best[key]):number(key==='duration'?best[key]/60:best[key],2);
+      return `<div class="stat record"><small>${escape(label)}</small><strong>${escape(recordValue)}</strong><small>${escape(best.champion)} / ${escape(queueName(best.queue))}</small><small>${escape(best.accountName)}</small><time datetime="${escape(new Date(best.date).toISOString())}">${escape(new Date(best.date).toLocaleString())}</time><small>${escape(best.id)}</small><a class="record-link" href="#match-${encodeURIComponent(best.recordId)}" aria-label="${escape(`View ${label} match: ${best.champion}, ${new Date(best.date).toLocaleString()}, ${best.id}`)}">View match <span aria-hidden="true">&#8599;</span></a></div>`;
     }).join('');history();
   }
   const initialFilters=new URLSearchParams(location.search);
+  if(/^\d{3,6}$/.test(initialFilters.get('item-id') || ''))chosenItem=initialFilters.get('item-id');
   filterIds.forEach(id=>{if(initialFilters.has(id)) $(id).value=initialFilters.get(id);});
   filterIds.forEach(id=>$(id).addEventListener(id.endsWith('search')?'input':'change',render));
   function openLinkedMatch(){
@@ -195,8 +204,9 @@ async function main(){
     if(link && link.hash===location.hash && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey){event.preventDefault();openLinkedMatch();}
   });
   $('previous').addEventListener('click',()=>{page--;history();});$('next').addEventListener('click',()=>{page++;history();});render();openLinkedMatch();
-  loadItemNames().then(names=>{
-    itemNames=names;
+  loadItemManifest().then(manifest=>{
+    itemCatalog=manifest.items;
+    const names=Object.fromEntries(Object.entries(itemCatalog).map(([id,item])=>[id,item.name]));itemNames=names;
     [...new Set(Object.values(names))].sort().forEach(name=>{
       const option=document.createElement('option');option.value=name;$('item-options').append(option);
     });

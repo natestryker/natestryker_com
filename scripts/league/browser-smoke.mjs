@@ -34,14 +34,22 @@ try{
   await command('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
   await command('Page.navigate',{url:`${url}/league.html`});
   await until("document.querySelectorAll('#champions tbody tr').length===5 && document.querySelectorAll('#matches > details').length>0");
+  assert.equal(await evaluate("document.querySelectorAll('#matches img[data-item-icon]').length"),0);
+  assert.equal(requests.filter(path=>path.includes('/assets/league/items/')).length,0);
+  console.log('Initial tracker: zero item PNG downloads; compact local item catalog enabled.');
   assert.equal(await evaluate("document.getElementById('ranked').children.length"),3);
   assert.ok(!requests.some(url=>url.includes('/matches/') || url.includes('/views/details/')));
   assert.ok(!requests.some(url=>url.includes('/ranked.json')));
   await evaluate("document.getElementById('matches').scrollIntoView({behavior:'instant'})");
   const sidebar=await evaluate("({top:document.querySelector('.tracker-search').getBoundingClientRect().top,bottom:document.querySelector('.tracker-search').getBoundingClientRect().bottom,height:innerHeight})");
   assert.ok(sidebar.top>=0 && sidebar.bottom<=sidebar.height,JSON.stringify(sidebar));
+  assert.ok(await evaluate("[...document.querySelectorAll('img[data-item-icon]')].every(img=>img.src.startsWith(location.origin+'/assets/league/items/'))"));
+  assert.ok(!requests.some(url=>url.includes('ddragon.leagueoflegends.com') || url.includes('api.riotgames.com')));
   await evaluate("document.querySelector('#matches > details').open=true");
   await until("document.querySelector('#matches > details .match-details')!==null");
+  await until("[...document.querySelector('#matches > details').querySelectorAll('img[data-item-icon]')].some(img=>img.complete && img.naturalWidth>0)");
+  assert.equal(await evaluate("document.querySelectorAll('#matches > details:first-child .item-build').length"),1);
+  assert.equal(await evaluate("document.querySelector('#matches > details .match-details').textContent.includes('Items:')"),false);
   assert.equal(requests.filter(url=>url.includes('/views/details/')).length,1);
   assert.ok(!requests.some(url=>url.includes('/matches/')));
   await evaluate("document.querySelector('#rank-graph > details').open=true");
@@ -50,6 +58,13 @@ try{
   await evaluate("document.querySelector('button[data-sort=damage]').click();document.getElementById('champions-toggle').click()");
   assert.ok(await evaluate("document.querySelectorAll('#champions tbody tr').length>5"));
   assert.equal(await evaluate("document.querySelector('button[data-sort=damage]').closest('th').getAttribute('aria-sort')"),'descending');
+  await evaluate("document.getElementById('item-search').value='sorcerer boots';document.getElementById('item-search').dispatchEvent(new Event('input'))");
+  assert.equal(await evaluate("document.querySelectorAll('#item-preview').length"),0);
+  assert.equal(await evaluate("document.querySelectorAll('#matches summary img[data-item-icon]').length"),0);
+  await evaluate("document.querySelector('#matches > details').open=true");
+  await until("document.querySelector('#matches > details .match-details')!==null");
+  assert.ok(await evaluate("document.querySelector('#matches > details .item-build img[src$=\"/3020.png\"]')!==null"));
+  assert.ok(await evaluate("new URL(document.getElementById('history-link').href).searchParams.get('item-search')==='sorcerer boots'"));
   await command('Page.navigate',{url:`${url}/match-history.html?champion-search=Zoe`});
   await until("document.querySelectorAll('#matches > details').length>0");
   assert.equal(await evaluate("document.getElementById('champion-search').value"),'Zoe');
@@ -57,7 +72,18 @@ try{
   await command('Page.navigate',{url:`${url}/league.html`});
   await until("document.querySelectorAll('#matches > details').length>0");
   assert.ok(await evaluate('document.documentElement.scrollWidth<=innerWidth'));
-  console.log('Chrome QA passed: desktop/mobile rendering, sticky sidebar, champion sorting/expansion, filtered history, lazy match details and ranked history.');
+  await command('Page.navigate',{url:`${url}/index.html`});
+  await until("document.readyState==='complete'");
+  assert.equal(await evaluate("document.getElementById('secret-welcome').getAttribute('src')"),null);
+  assert.ok(await evaluate("!performance.getEntriesByType('resource').some(entry=>entry.name.endsWith('/YEP.png'))"));
+  await command('Page.navigate',{url:`${url}/index.html?reward-test=1#secret-welcome`});
+  await until("document.getElementById('secret-welcome').naturalWidth>0");
+  assert.equal(await evaluate("document.getElementById('secret-welcome').hidden"),false);
+  await command('Page.navigate',{url:`${url}/games.html`});
+  await until("document.readyState==='complete'");
+  assert.ok(await evaluate("[...document.querySelectorAll('video')].every(video=>video.preload==='none')"));
+  assert.ok(await evaluate("!performance.getEntriesByType('resource').some(entry=>/\\.(mp4|webm)(?:$|[?])/.test(entry.name))"));
+  console.log('Chrome QA passed: desktop/mobile rendering, sticky sidebar, champion sorting/expansion, filtered history, lazy details/ranks, local item PNGs and text item filter. No browser Riot/CDN requests.');
 }finally{
   if(socket?.readyState===1){try{await command('Browser.close');}catch{}socket.close();}
   browser?.kill();await new Promise(r=>server.close(r));
