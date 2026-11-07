@@ -2,13 +2,13 @@
   "puuid": "mAwTHR_SclZEQm9OsxFrD5qi4A8HGlVPxFOqNb0DeEn7mYPWuLiu70R-YKW1dm0wQiCiymGJbrmfhQ",
   "platform": "na1",
   "backfillEnd": 1794074694,
-  "backfillOffset": 400,
-  "backfillDone": false,
-  "lastPoll": 1794079711,
-  "lastAttemptAt": "2026-11-07T19:28:31.000Z",
+  "backfillOffset": 404,
+  "backfillDone": true,
+  "lastPoll": 1794088252,
+  "lastAttemptAt": "2026-11-07T21:50:52.006Z",
   "lastError": null,
-  "backfillExhausted": false,
-  "lastProgressAt": "2026-11-07T19:33:52.329Z",
+  "backfillExhausted": true,
+  "lastProgressAt": "2026-11-07T21:51:05.425Z",
   "pendingCount": 0,
-  "lastSuccessAt": "2026-11-07T19:28:35.398Z"
+  "lastSuccessAt": "2026-11-07T21:50:56.433Z"
 }
