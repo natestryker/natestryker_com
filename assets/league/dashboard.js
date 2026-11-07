@@ -217,6 +217,9 @@ async function main(){
   $('previous').addEventListener('click',()=>goToPage(page));
   $('next').addEventListener('click',()=>goToPage(page+2));
   $('page-jump').addEventListener('submit',event=>{event.preventDefault();goToPage($('page-input').value);});
+  $('page-input').addEventListener('keydown',event=>{
+    if(event.key==='Enter'){event.preventDefault();goToPage($('page-input').value);}
+  });
   render();openLinkedMatch();
   loadItemManifest().then(manifest=>{
     itemCatalog=manifest.items;

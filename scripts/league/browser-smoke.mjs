@@ -1,6 +1,6 @@
 // Optional local browser QA. Uses an installed Chrome; no packages or API credentials required.
 import {createServer} from 'node:http';
-import {readFile,mkdtemp,rm} from 'node:fs/promises';
+import {readFile,mkdtemp,rm,writeFile} from 'node:fs/promises';
 import {resolve,join,extname,relative,sep} from 'node:path';
 import {tmpdir} from 'node:os';
 import {spawn} from 'node:child_process';
@@ -21,6 +21,31 @@ const url=`http://127.0.0.1:${server.address().port}`;
 function command(method,params={}){return new Promise((resolve,reject)=>{const id=++serial;pending.set(id,{resolve,reject});socket.send(JSON.stringify({id,method,params}));});}
 async function evaluate(expression){const value=await command('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(value.exceptionDetails)throw new Error(JSON.stringify(value.exceptionDetails));return value.result.value;}
 async function until(expression){for(let i=0;i<150;i++){if(await evaluate(expression))return;await wait(100);}throw new Error(`Browser wait expired: ${expression}`);}
+async function checkPagination(screenshot){
+  const count=await evaluate("Number(document.getElementById('page-input').max)");
+  assert.ok(count>1,'Real archive should have multiple pages');
+  const first=await evaluate("document.querySelector('#matches > details').id");
+  await evaluate("document.getElementById('last').click()");
+  await until(`document.getElementById('page-input').value==='${count}'`);
+  assert.equal(await evaluate("document.getElementById('last').disabled"),true);
+  assert.notEqual(await evaluate("document.querySelector('#matches > details').id"),first);
+  await evaluate("document.getElementById('page-input').value='2';document.getElementById('page-go').click()");
+  assert.equal(await evaluate("document.getElementById('page-input').value"),'2');
+  await evaluate("document.getElementById('page-input').value='1';document.getElementById('page-input').focus()");
+  await command('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
+  await command('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
+  await until("document.getElementById('page-input').value==='1' && document.getElementById('first').disabled");
+  assert.equal(await evaluate("document.querySelector('#matches > details').id"),first);
+  await evaluate("document.querySelector('.pager').scrollIntoView({block:'center',behavior:'instant'})");
+  const bounds=await evaluate("(()=>{const r=document.querySelector('.pager-controls').getBoundingClientRect();return {x:r.left+scrollX,y:r.top+scrollY,width:r.width,height:r.height,inputWidth:document.getElementById('page-input').getBoundingClientRect().width,viewport:innerWidth};})()");
+  assert.ok(bounds.width<420 && bounds.width<=bounds.viewport,bounds.width);
+  assert.equal(bounds.inputWidth,46);
+  if(screenshot){
+    const capture=await command('Page.captureScreenshot',{format:'png',captureBeyondViewport:true,clip:{x:bounds.x,y:bounds.y,width:bounds.width,height:bounds.height,scale:1}});
+    await writeFile(join(tmpdir(),screenshot),Buffer.from(capture.data,'base64'));
+  }
+  console.log(`Pagination verified: last (${count}/${count}), Go, Enter, first page; control width=${bounds.width}px.`);
+}
 try{
   browser=spawn(process.env.CHROME_PATH || 'C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--disable-gpu','--disable-background-networking','--no-first-run','--no-default-browser-check','--remote-debugging-port=0',`--user-data-dir=${profile}`,'about:blank'],{stdio:'ignore',windowsHide:true});
   let port;
@@ -40,6 +65,7 @@ try{
   assert.equal(await evaluate("document.getElementById('ranked').children.length"),3);
   assert.ok(!requests.some(url=>url.includes('/matches/') || url.includes('/views/details/')));
   assert.ok(!requests.some(url=>url.includes('/ranked.json')));
+  await checkPagination('league-pager-desktop.png');
   await evaluate("document.getElementById('matches').scrollIntoView({behavior:'instant'})");
   const sidebar=await evaluate("({top:document.querySelector('.tracker-search').getBoundingClientRect().top,bottom:document.querySelector('.tracker-search').getBoundingClientRect().bottom,height:innerHeight})");
   assert.ok(sidebar.top>=0 && sidebar.bottom<=sidebar.height,JSON.stringify(sidebar));
@@ -68,10 +94,12 @@ try{
   await command('Page.navigate',{url:`${url}/match-history.html?champion-search=Zoe`});
   await until("document.querySelectorAll('#matches > details').length>0");
   assert.equal(await evaluate("document.getElementById('champion-search').value"),'Zoe');
+  await checkPagination();
   await command('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});
   await command('Page.navigate',{url:`${url}/league.html`});
   await until("document.querySelectorAll('#matches > details').length>0");
   assert.ok(await evaluate('document.documentElement.scrollWidth<=innerWidth'));
+  await checkPagination('league-pager-mobile.png');
   await command('Page.navigate',{url:`${url}/index.html`});
   await until("document.readyState==='complete'");
   assert.equal(await evaluate("document.getElementById('secret-welcome').getAttribute('src')"),null);

@@ -155,6 +155,9 @@ test('both history views support first/last and manual page jumps, bounded by fi
      assert.equal(prevented,true);assert.equal(ids.get('page').textContent,`${expected} / ${pages}`);
      assert.equal(ids.get('page-input').value,String(expected));
    }
+   ids.get('page-input').value='2';let enterHandled=false;
+   ids.get('page-input').listeners.keydown({key:'Enter',preventDefault(){enterHandled=true;}});
+   assert.equal(enterHandled,true);assert.equal(ids.get('page-input').value,'2');
    ids.get('last').listeners.click();
    ids.get('champion-search').value='Ahri';ids.get('champion-search').listeners.input();
    assert.equal(ids.get('page').textContent,'1 / 1');
