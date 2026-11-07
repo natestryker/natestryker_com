@@ -2,20 +2,6 @@
 
 A static browser-local image converter with live 3D, real Minecraft textures, editable blueprints, a bottom-up build guide, materials and binary schematic exports.
 
-## Run in VS Code
-
-Open this folder and run:
-
-```sh
-python3 -m http.server 8080 --directory dist
-```
-
-Windows: `py -m http.server 8080 --directory dist`. Open `http://localhost:8080`. VS Code Live Server can also serve `dist/index.html`. Do not double-click HTML: modules, workers and JSON need a web server. No build, package installation, backend, account or API key is required. All runtime dependencies and textures are bundled.
-
-## Deploy on GitHub Pages or natestryker.com
-
-Copy the **contents of `dist/`** into your Pages repository's published root, or into a subdirectory such as `creations/blockloom/`. Preserve the files, `vendor/` and `textures/` together. For your personal site, link a Creations card to `/creations/blockloom/`, commit and push through your existing Pages workflow. Relative asset paths support subdirectories. Do not copy the development-only `.openai/` configuration into your personal repository.
-
 ## Implemented
 
 - Local image upload/drop; up to 30 MB. Saved source downsampled to 1600 pixels maximum on its longest side.
