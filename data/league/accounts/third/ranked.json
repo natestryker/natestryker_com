@@ -61,5 +61,68 @@
         "losses": 65
       }
     ]
+  },
+  {
+    "at": "2026-11-07T21:51:19.003Z",
+    "entries": [
+      {
+        "queueType": "RANKED_FLEX_SR",
+        "tier": "EMERALD",
+        "rank": "I",
+        "leaguePoints": 75,
+        "wins": 28,
+        "losses": 21
+      },
+      {
+        "queueType": "RANKED_SOLO_5x5",
+        "tier": "MASTER",
+        "rank": "I",
+        "leaguePoints": 774,
+        "wins": 94,
+        "losses": 65
+      }
+    ]
+  },
+  {
+    "at": "2026-11-08T01:27:13.509Z",
+    "entries": [
+      {
+        "queueType": "RANKED_FLEX_SR",
+        "tier": "EMERALD",
+        "rank": "I",
+        "leaguePoints": 75,
+        "wins": 28,
+        "losses": 21
+      },
+      {
+        "queueType": "RANKED_SOLO_5x5",
+        "tier": "MASTER",
+        "rank": "I",
+        "leaguePoints": 774,
+        "wins": 94,
+        "losses": 65
+      }
+    ]
+  },
+  {
+    "at": "2026-11-08T07:59:31.623Z",
+    "entries": [
+      {
+        "queueType": "RANKED_FLEX_SR",
+        "tier": "EMERALD",
+        "rank": "I",
+        "leaguePoints": 75,
+        "wins": 28,
+        "losses": 21
+      },
+      {
+        "queueType": "RANKED_SOLO_5x5",
+        "tier": "MASTER",
+        "rank": "I",
+        "leaguePoints": 774,
+        "wins": 94,
+        "losses": 65
+      }
+    ]
   }
 ]
