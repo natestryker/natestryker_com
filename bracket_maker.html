@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Bracket Maker | natestryker.com</title><meta name="theme-color" content="#0b1120"><link rel="icon" type="image/png" href="images/favicon.png"><link rel="stylesheet" href="style.css">
+<style>
+  :root{color-scheme:dark;--bg:#0a0f17;--pane:#121b27;--card:#17212e;--edge:#304051;--text:#f1f5f9;--muted:#8fa0b2;--accent:#f17b35;--accent-bg:#3a251f;--success:#49d6a2;--success-bg:#153b32;--danger:#f18b86}
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(ellipse at 100% -10%,#253042 0,transparent 43%),radial-gradient(ellipse at -20% 40%,#172333 0,transparent 35%),var(--bg);font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--text);min-height:100vh}
+  button,input{font:inherit}
+  button{cursor:pointer}
+  .page{max-width:1450px;margin:0 auto;padding:27px 28px 60px}
+  .header{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:25px}
+  .eyebrow{color:var(--accent);font-size:11px;font-weight:800;letter-spacing:.19em;text-transform:uppercase}
+  h1{font-size:clamp(29px,3.4vw,43px);letter-spacing:-.045em;line-height:1.05;margin:8px 0}
+  .sub{color:var(--muted);margin:5px 0 0}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap}
+  .tool{border:1px solid var(--edge);background:#192534;color:var(--text);padding:9px 12px;border-radius:10px;transition:background .15s,border-color .15s;white-space:nowrap}
+  .tool:hover{background:#243348;border-color:#607188}
+  .tool.critical{color:#f2b1ab}
+  .overview{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;margin:0 0 19px;background:linear-gradient(100deg,#1f2c3b,#111b27);border:1px solid var(--edge);border-radius:15px;padding:15px 18px;align-items:center}
+  .overview strong{font-size:18px}
+  .progress{background:#2c3b4a;border-radius:99px;height:6px;margin-top:11px;overflow:hidden;max-width:420px}
+  .progress>span{display:block;background:linear-gradient(90deg,var(--accent),#ffd18f);width:0%;height:100%;transition:width .18s}
+  .overview .small{font-size:12px;color:var(--muted)}
+  .champion{font-size:16px;font-weight:800;color:#fbd19f;text-align:right}
+  .setup{background:#101924;border:1px solid var(--edge);border-radius:15px;margin-bottom:28px;padding:16px 18px 18px}
+  .setuphead{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:13px;flex-wrap:wrap}
+  h2{font-size:20px;letter-spacing:-.025em;margin:0}
+  .hint{color:var(--muted);font-size:12px}
+  .players{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+  .playerbox{display:flex;align-items:center;background:var(--card);border:1px solid var(--edge);border-radius:10px;padding:7px 9px;gap:10px;min-width:0}
+  .seedlabel{font-size:12px;color:var(--accent);font-weight:800;flex:none;width:21px}
+  .playerbox input{color:var(--text);background:transparent;border:0;outline:none;min-width:0;flex:1;font-weight:600;max-width:100%}
+  .playerbox input:focus{box-shadow:0 1px 0 var(--accent)}
+  .record{font-variant-numeric:tabular-nums;font-size:11px;color:var(--muted);white-space:nowrap}
+  .bracket{margin-top:26px}
+  .sectionhead{display:flex;align-items:center;gap:12px;margin:0 0 15px}
+  .sectionhead .line{flex:1;border-top:1px solid var(--edge)}
+  .sectionhead .extra{color:var(--muted);font-size:12px}
+  .cols{display:flex;align-items:stretch;gap:15px;overflow-x:auto;padding:2px 2px 18px;scrollbar-color:#354558 transparent}
+  .round{min-width:251px;flex:1;max-width:370px;display:flex;flex-direction:column;gap:13px}
+  .roundhead{font-size:11px;color:#acb8c7;letter-spacing:.1em;text-transform:uppercase;font-weight:800;display:flex;justify-content:space-between;margin:0 1px 1px;gap:6px}
+  .roundhead span{letter-spacing:0;color:#77899c;font-weight:600;text-transform:none}
+  .matchlist{flex:1;display:flex;flex-direction:column;justify-content:space-around;gap:16px}
+  .match{background:linear-gradient(#1a2635,#16212e);border:1px solid #334252;border-radius:12px;padding:11px 11px 10px;box-shadow:0 4px 12px #00000016;min-width:0}
+  .match.complete{border-color:#3d655a}
+  .matchmeta{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:11px;font-weight:800;letter-spacing:.04em;margin:0 1px 8px}
+  .matchmeta em{font-size:10px;font-style:normal;color:#d0ad8b;background:#39281f;border:1px solid #5e412e;padding:1px 6px;border-radius:5px}
+  .slot{display:flex;align-items:center;gap:8px;padding:6px;border-radius:7px;min-height:30px;background:#101a27;margin-bottom:4px;min-width:0}
+  .slot.won{background:var(--success-bg)}
+  .slot.lost{opacity:.65}
+  .slot.empty{color:#738497}
+  .number{color:#e8a77c;font-size:10px;font-weight:800;min-width:18px}
+  .name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1}
+  .slot.empty .name{font-weight:400;font-style:italic;font-size:12px}
+  .score{font-variant-numeric:tabular-nums;text-align:center;min-width:22px;font-weight:900;font-size:15px;color:#8495a7}
+  .slot.won .score{color:var(--success)}
+  .slot.lost .score{color:#a9b7c5}
+  .options{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin-top:9px}
+  .result{background:#233345;color:#aabbd0;border:1px solid #36495b;border-radius:6px;font-size:11px;font-weight:800;padding:5px 0;min-width:0}
+  .result:hover:enabled{background:#35495c;color:white;border-color:#647b91}
+  .result.active{background:#184d3f;color:#9cf5d0;border-color:#4e997e}
+  .result:disabled{opacity:.29;cursor:not-allowed}
+  .resetmatch{font-size:11px;color:#abb9c7;border:0;background:none;display:block;margin:7px 0 0;padding:0;text-decoration:underline;text-underline-offset:2px}
+  .resetmatch:hover{color:white}
+  .lockedtext{color:#8494a4;font-size:11px;margin:9px 0 0}
+  .finals .round{max-width:450px}
+  .finals .cols{gap:18px}
+  .round.faded .match{opacity:.52;border-style:dashed}
+  .note{font-size:12px;color:var(--muted);margin-top:12px}
+  .footer{margin-top:28px;color:#8091a2;font-size:12px;border-top:1px solid var(--edge);padding-top:17px}
+  .championcard{background:linear-gradient(120deg,#624123,#2a2a28);border:1px solid #a47b3b;color:#ffe2ab;border-radius:14px;padding:18px;margin:17px 0 6px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .championcard b{font-size:24px;display:block;letter-spacing:-.02em}
+  .championcard small{color:#edc78a;font-size:11px;font-weight:800;letter-spacing:.1em}
+  @media(max-width:950px){.players{grid-template-columns:repeat(2,minmax(0,1fr))}.round{flex:none;width:264px}.page{padding:20px 16px 50px}}
+  @media(max-width:560px){.players{grid-template-columns:1fr}.overview{grid-template-columns:1fr}.champion{text-align:left}.setup{padding:13px}.header{align-items:flex-start}.round{width:260px}}
+  @media print{body{background:white;color:#18202a}.page{max-width:100%;padding:0}.toolbar,.options,.resetmatch,.footer,.hint,.progress{display:none!important}.setup{break-after:avoid}.cols{overflow:visible;gap:9px}.round{min-width:0}.match{background:white;border:1px solid #929ba5;break-inside:avoid;box-shadow:none}.slot{background:#eee}.slot.won{background:#d7efe0}.matchmeta,.roundhead,.sectionhead .extra,.name,.score,.seedlabel,.hint,.record{color:#232323}.bracket{break-inside:avoid}.sub{color:#444}.overview{background:white}.playerbox{background:white}.playerbox input{color:black}}
+  :root{--bg:#0b1120;--pane:#111b2f;--card:#17243a;--edge:#304058;--text:#f4f7fc;--muted:#a8b7cd;--accent:#e36a16}
+  body{background:var(--bg);font-family:Arial,Helvetica,sans-serif}
+  .page{width:min(calc(100% - 42px),1600px);max-width:none;padding:48px 0 60px;flex:1}
+  .header h1{font-size:clamp(36px,4vw,52px);margin:12px 0 18px}
+  .overview,.setup,.match{background:var(--pane);border-color:var(--edge)}
+  .tool,.result{background:var(--card);border-color:var(--edge)}
+  .tool:hover{border-color:var(--accent);background:#17243a}
+  .tournament-layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:28px;align-items:start}
+  .setup{margin:0;padding:20px}.setuphead{display:flex;flex-direction:column;align-items:stretch;gap:12px}.setuphead h2{font-size:19px}
+  .hint{margin:0;line-height:1.65}.players{grid-template-columns:1fr}.playerbox{gap:7px}
+  .page [hidden]{display:none!important}
+  .count-label{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px}
+  select{font:inherit;background:var(--bg);color:var(--text);border:1px solid var(--edge);border-radius:7px;padding:8px}
+  select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+  .bracket-area{min-width:0}.bracket:first-child{margin-top:0}.sectionhead{flex-wrap:wrap}.round{min-width:220px}.slot{background:#0b1120}.number{color:var(--orange-hover)}
+  @media(max-width:800px){.tournament-layout{grid-template-columns:1fr}.players{grid-template-columns:repeat(2,minmax(0,1fr))}.page{padding-top:30px}.setuphead{display:flex}.round{min-width:240px}}
+  @media(max-width:480px){.players{grid-template-columns:1fr}.page{width:calc(100% - 28px)}}
+  @media print{.site-header{display:none}.tournament-layout{display:block}.players{grid-template-columns:repeat(4,1fr)}.setuphead button,.count-label{display:none}.page{width:100%}.cols{overflow:visible}.round{min-width:0}.overview,.setup,.match{background:white}}
+</style>
+</head>
+<body class="site-page"><header class="site-header"><div class="wrap header-inner"><a class="brand" href="index.html">natestryker.com</a><nav class="nav-links" aria-label="Main navigation"><a href="about.html">About Me</a><a href="games.html">Game-Stuff</a><a href="creations.html" class="active">Creations</a><a href="archive.html">Archive</a><a href="league.html">Account Tracker</a></nav></div></header>
+<main class="page">
+  <header class="header">
+    <div><div class="eyebrow">Tournament control</div><h1>Bracket Maker</h1><p class="sub"><span id="formatSummary">Double elimination</span> <span aria-hidden="true">·</span> <span id="seriesSummary">Best of 3 series</span> <span aria-hidden="true">·</span> Automatic advancement</p></div>
+    <div class="toolbar">
+      <button type="button" id="export" class="tool">Export backup</button>
+      <label class="tool" for="importfile" style="cursor:pointer">Import backup</label><input type="file" id="importfile" accept="application/json,.json" hidden>
+      <button type="button" id="print" class="tool">Print</button>
+      <button type="button" id="reset" class="tool critical">Reset scores</button>
+    </div>
+  </header>
+  <div class="overview"><div><strong id="progressText" aria-live="polite">0 of 14 series complete</strong><div class="small" id="remainingText">Ready for opening round</div><div class="progress"><span id="bar"></span></div></div><div class="champion" id="championLine">🏆 Championship pending</div></div>
+  <div class="tournament-layout"><section class="setup"><div class="setuphead"><h2>Players & seeding</h2><p class="hint">Enter names in seed order. Highest seeds receive any byes.</p><label class="count-label" for="participantCount">Participants <select id="participantCount"></select></label><label class="count-label" for="eliminationFormat">Format <select id="eliminationFormat"><option value="double">Double elimination</option><option value="single">Single elimination</option></select></label><label class="count-label" for="seriesLength">Matches <select id="seriesLength"><option value="1">BO1</option><option value="3" selected>BO3</option></select></label><label class="count-label" for="finalLength"><span id="finalLengthLabel">Grand final</span> <select id="finalLength"><option value="1">BO1</option><option value="3" selected>BO3</option><option value="5">BO5</option></select></label><label class="count-label" id="resetLengthControl" for="resetLength">Bracket reset <select id="resetLength"><option value="1">BO1</option><option value="3" selected>BO3</option><option value="5">BO5</option></select></label><button type="button" id="randomSeeds" class="tool">Random seeds</button><p class="hint">Changing the count, format, or seeds clears scores. Changing a series length clears affected scores and dependent results.</p></div><div class="players" id="players"></div></section>
+  <div class="bracket-area"><section class="bracket"><div class="sectionhead"><h2 id="upperTitle">Upper bracket</h2><div class="line"></div></div><div class="cols" id="upper"></div></section>
+  <section class="bracket" id="lowerSection"><div class="sectionhead"><h2>Lower bracket</h2><span class="extra">One loss → lower bracket; two losses → eliminated</span><div class="line"></div></div><div class="cols" id="lower"></div></section>
+  <section class="bracket finals" id="finalsSection"><div class="sectionhead"><h2>Grand final</h2><span class="extra">Lower-bracket winner must win twice</span><div class="line"></div></div><div class="cols" id="finals"></div><p class="note">The reset final unlocks only if the lower-bracket finalist wins the first grand final. Each final uses its selected series length.</p></section>
+  <div id="championCard"></div></div></div><div class="footer">Scores and names save automatically on this device. Use <b>Export backup</b> to save a file you can move between browsers. Clicking a different result updates later matches and clears invalid downstream scores.</div>
+</main>
+<script>
+(() => {
+  'use strict';
+  const storageKey = 'bo3-8-double-elim-v1';
+  let specs=[], rounds={};
+  const empty = () => ({format:'double',seriesLength:3,finalLength:3,resetLength:3,names:Array.from({length:8},(_,i)=>'Player '+(i+1)),results:{}});
+  let state = load();
+  function load(){
+    try{return validate(JSON.parse(localStorage.getItem(storageKey)))}catch(e){return empty()}
+  }
+  function validate(obj){
+    if(!obj || !Array.isArray(obj.names) || obj.names.length<4 || obj.names.length>16 || !obj.names.every(x=>typeof x==='string'))return empty();
+    const seriesLength=obj.seriesLength===1?1:3;
+    const finalLength=[1,3,5].includes(obj.finalLength)?obj.finalLength:3;
+    const resetLength=[1,3,5].includes(obj.resetLength)?obj.resetLength:3;
+    const results={};
+    if(obj.results && typeof obj.results==='object')for(const [id,r] of Object.entries(obj.results)){
+      if(r && Array.isArray(r.entrants) && r.entrants.length===2 && r.entrants.every(v=>Number.isInteger(v)&&v>=0&&v<obj.names.length) && Number.isInteger(r.a)&&Number.isInteger(r.b)&&((r.a>=1&&r.a<=3&&r.b>=0&&r.b<r.a)||(r.b>=1&&r.b<=3&&r.a>=0&&r.a<r.b)))results[id]={entrants:r.entrants.slice(),a:r.a,b:r.b};
+    }
+    return {format:obj.format==='single'?'single':'double',seriesLength,finalLength,resetLength,names:obj.names.map(x=>x.slice(0,75)),results};
+  }
+  function bestOf(spec){
+    if(spec.id==='RESET')return state.resetLength;
+    if(spec.id==='GF'||(state.format==='single'&&spec.id===specs.at(-1).id))return state.finalLength;
+    return state.seriesLength;
+  }
+  function validScore(result,spec){
+    const wins=(bestOf(spec)+1)/2;
+    return Number.isInteger(result.a)&&Number.isInteger(result.b)&&((result.a===wins&&result.b>=0&&result.b<wins)||(result.b===wins&&result.a>=0&&result.a<wins));
+  }
+  function buildBracket(){
+    specs=[];rounds={upper:[],lower:[],final:[['Grand final','BO'+state.finalLength],['Bracket reset','BO'+state.resetLength+' if needed']]};
+    const size=2**Math.ceil(Math.log2(state.names.length)), depth=Math.log2(size);
+    let order=[1,2];
+    while(order.length<size)order=order.flatMap(seed=>[seed,order.length*2+1-seed]);
+    const ref=(type,id)=>({type,id});
+    const add=(id,phase,round,slot,a,b)=>{const s={id,phase,round,slot,a,b};specs.push(s);return s};
+    const upper=[];let uid=0,lid=0;
+    for(let r=0;r<depth;r++){
+      const group=[];const count=size/2**(r+1);
+      rounds.upper.push([r===depth-1?(state.format==='single'?'Final':'Upper final'):r===0?'Opening round':(state.format==='single'?'Round ':'Upper round ')+(r+1),count+' matches']);
+      for(let i=0;i<count;i++)group.push(add('W'+(++uid),'upper',r,i,r===0?ref('seed',order[2*i]-1):ref('win',upper[r-1][2*i].id),r===0?ref('seed',order[2*i+1]-1):ref('win',upper[r-1][2*i+1].id)));
+      upper.push(group);
+    }
+    if(state.format==='single'){rounds.final=[];return;}
+    let previous=[];let lr=0;
+    const lowerRound=(count,make)=>{const group=[];rounds.lower.push(['Lower round '+(lr+1),count+' matches']);for(let i=0;i<count;i++){const [a,b]=make(i);group.push(add('L'+(++lid),'lower',lr,i,a,b))}lr++;return group};
+    previous=lowerRound(size/4,i=>[ref('lose',upper[0][2*i].id),ref('lose',upper[0][2*i+1].id)]);
+    for(let r=1;r<depth;r++){
+      const prior=previous, incoming=upper[r];
+      previous=lowerRound(incoming.length,i=>[ref('win',prior[i].id),ref('lose',incoming[incoming.length>1?(i^1):i].id)]);
+      if(r<depth-1){const prior=previous;previous=lowerRound(prior.length/2,i=>[ref('win',prior[2*i].id),ref('win',prior[2*i+1].id)])}
+    }
+    const a=ref('win',upper.at(-1)[0].id),b=ref('win',previous[0].id);
+    add('GF','final',0,0,a,b);add('RESET','final',1,0,a,b).conditional=true;
+  }  function save(){try{localStorage.setItem(storageKey,JSON.stringify(state))}catch(e){/* file remains usable without storage */}}
+  function escapeHtml(str){return String(str).replace(/[&<>"']/g, ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}
+  function slotName(src){if(src.type==='seed')return 'Seed '+(src.id+1);return (src.type==='win'?'Winner of ':'Loser of ')+src.id}
+  // Compute every match in dependency order. Invalidate scores if participants have changed.
+  function calculate(){
+    const map={};
+    let resetEnabled=false;
+    let dirty=false;
+    for(const spec of specs){
+      const person = src => src.type==='seed'?(src.id<state.names.length?src.id:-1):(map[src.id]?.[src.type==='win'?'winner':'loser']??null);
+      const a=person(spec.a), b=person(spec.b);
+      const enabled=!spec.conditional||resetEnabled;
+      let result=state.results[spec.id];
+      const playable=enabled && a!==null && b!==null && a>=0 && b>=0 && a!==b;
+      if(result && (!validScore(result,spec) || !playable || result.entrants[0]!==a || result.entrants[1]!==b)){
+        delete state.results[spec.id];result=null;dirty=true;
+      }
+      let winner=null,loser=null;
+      if(playable && result){winner=result.a>result.b?a:b;loser=result.a>result.b?b:a}
+      if(enabled && a!==null && b!==null && (a===-1 || b===-1)){winner=a===-1?b:a;loser=-1;}
+      map[spec.id]={spec,a,b,enabled,playable,result,winner,loser};
+      if(spec.id==='GF' && winner!==null && winner===b)resetEnabled=true;
+    }
+    if(dirty)save();
+    const champion=state.format==='single'?map[specs.at(-1).id].winner:(map.RESET.winner ?? (map.GF.winner===map.GF.a?map.GF.winner:null));
+    return {map,champion,resetEnabled};
+  }
+  function matchHtml(m){
+    const {spec,a,b,result,playable,enabled,winner}=m;
+    const row=(person,src,score)=>{
+      const filled=person!==null && person>=0;
+      const won=result && person===winner, lost=result && person!==winner;
+      return `<div class="slot ${!filled?'empty':won?'won':lost?'lost':''}" title="${filled?escapeHtml(state.names[person]):escapeHtml(person===-1?"Bye":slotName(src))}">
+        <span class="number">${filled?'#'+(person+1):'—'}</span><span class="name">${filled?escapeHtml(state.names[person]||'Player '+(person+1)):escapeHtml(person===-1?"Bye":slotName(src))}</span><span class="score">${result?score:'–'}</span></div>`;
+    };
+    const wins=(bestOf(spec)+1)/2;
+    const options=[...Array.from({length:wins},(_,i)=>[wins,i]),...Array.from({length:wins},(_,i)=>[wins-1-i,wins])];
+    return `<article class="match ${result?'complete':''}" data-match="${spec.id}">
+      <div class="matchmeta"><span>${spec.id} ${spec.id==='GF'?'· FINAL':spec.id==='RESET'?'· DECIDER':''}</span><em>BO${bestOf(spec)}</em></div>
+      ${row(a,spec.a,result?.a)}${row(b,spec.b,result?.b)}
+      <div class="options" style="grid-template-columns:repeat(${wins===1?2:wins===3?3:4},minmax(0,1fr))">${options.map(([x,y])=>`<button type="button" class="result ${result?.a===x&&result?.b===y?'active':''}" data-match="${spec.id}" data-a="${x}" data-b="${y}" ${!playable?'disabled':''} aria-label="${spec.id} result ${x} to ${y}" title="${x}–${y}">${x}–${y}</button>`).join('')}</div>
+      ${result?`<button type="button" class="resetmatch" data-clear="${spec.id}">Clear result</button>`:(!enabled?'<div class="lockedtext">Requires a final reset</div>':!playable?'<div class="lockedtext">'+(a===-1||b===-1?'Bye · automatic advancement':'Waiting for both players')+'</div>':'')}
+    </article>`;
+  }
+  function createRounds(section,computed){
+    return rounds[section].map(([title,count],round)=>{
+      const ms=specs.filter(s=>s.phase===section && s.round===round);
+      const faded=section==='final'&&round===1&&!computed.resetEnabled;
+      return `<div class="round ${faded?'faded':''}"><div class="roundhead">${title}<span>${count}</span></div><div class="matchlist">${ms.map(s=>matchHtml(computed.map[s.id])).join('')}</div></div>`
+    }).join('');
+  }
+  function ensureInputs(){
+    const parent=document.getElementById('players');
+    if(parent.children.length===state.names.length)return;parent.innerHTML="";
+    for(let i=0;i<state.names.length;i++){
+      const box=document.createElement('label');box.className='playerbox';
+      box.innerHTML=`<span class="seedlabel">#${i+1}</span><input type="text" maxlength="75" data-player="${i}" aria-label="Seed ${i+1} name" spellcheck="false"><span class="record" id="record${i}">0–0</span>`;
+      parent.append(box);
+    }
+  }
+    document.getElementById('players').addEventListener('input',e=>{
+      if(!e.target.matches('[data-player]'))return;
+      state.names[+e.target.dataset.player]=e.target.value;save();render(false);
+    });
+  function render(updateInputs=true){
+    buildBracket();ensureInputs();document.getElementById("participantCount").value=state.names.length;
+    const single=state.format==='single';
+    document.getElementById('eliminationFormat').value=state.format;
+    for(const key of ['seriesLength','finalLength','resetLength'])document.getElementById(key).value=state[key];
+    document.getElementById('resetLengthControl').hidden=single;
+    document.getElementById('finalLengthLabel').textContent=single?'Final':'Grand final';
+    document.getElementById('seriesSummary').textContent='BO'+state.seriesLength+' matches / BO'+state.finalLength+' final'+(single?'':' / BO'+state.resetLength+' reset');
+    document.getElementById('formatSummary').textContent=single?'Single elimination':'Double elimination';
+    document.getElementById('upperTitle').textContent=single?'Single-elimination bracket':'Upper bracket';
+    document.getElementById('lowerSection').hidden=single;
+    document.getElementById('finalsSection').hidden=single;
+    const computed=calculate(),matches=Object.values(computed.map);
+    const total=state.format==='single'?state.names.length-1:2*state.names.length-2+(computed.resetEnabled?1:0), done=matches.filter(m=>m.result).length;
+    const records=Array.from({length:state.names.length},()=>[0,0]);
+    for(const m of matches)if(m.result){records[m.winner][0]++;records[m.loser][1]++}
+    for(let i=0;i<state.names.length;i++){
+      const input=document.querySelector(`[data-player="${i}"]`);
+      if(updateInputs && input!==document.activeElement)input.value=state.names[i];
+      document.getElementById('record'+i).textContent=records[i].join('–');
+    }
+    document.getElementById('upper').innerHTML=createRounds('upper',computed);
+    document.getElementById('lower').innerHTML=createRounds('lower',computed);
+    document.getElementById('finals').innerHTML=createRounds('final',computed);
+    document.getElementById('progressText').textContent=done+' of '+total+' series complete';
+    document.getElementById('remainingText').textContent=computed.champion!==null?'Tournament finished':(total-done)+' series remaining';
+    document.getElementById('bar').style.width=(100*done/total)+'%';
+    const label=computed.champion===null?'🏆 Championship pending':'🏆 '+(state.names[computed.champion]||'Player '+(computed.champion+1));
+    document.getElementById('championLine').textContent=label;
+    document.getElementById('championCard').innerHTML=computed.champion===null?'':`<div class="championcard"><div><small>TOURNAMENT CHAMPION</small><b>${escapeHtml(state.names[computed.champion]||'Player '+(computed.champion+1))}</b><div>Seed ${computed.champion+1} · ${records[computed.champion][0]} series wins, ${records[computed.champion][1]} losses</div></div><div style="font-size:48px" aria-hidden="true">🏆</div></div>`;
+  }
+  document.addEventListener('click',e=>{
+    const btn=e.target.closest('.result[data-match],.resetmatch[data-clear]');
+    if(!btn)return;
+    if(btn.dataset.clear){delete state.results[btn.dataset.clear]}else{
+      const match=calculate().map[btn.dataset.match];
+      if(!match?.playable)return;
+      state.results[btn.dataset.match]={entrants:[match.a,match.b],a:+btn.dataset.a,b:+btn.dataset.b};
+    }
+    save();render();
+  });
+  document.getElementById('reset').addEventListener('click',()=>{if(!confirm('Clear every match result? Player names will stay.'))return;state.results={};save();render()});
+  document.getElementById('print').addEventListener('click',()=>window.print());
+  document.getElementById('export').addEventListener('click',()=>{
+    calculate();
+    const blob=new Blob([JSON.stringify({version:2,...state},null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob),anchor=document.createElement('a');anchor.href=url;anchor.download=state.format+'-elimination-bracket.json';anchor.click();setTimeout(()=>URL.revokeObjectURL(url),2000);
+  });
+  document.getElementById('importfile').addEventListener('change',async e=>{
+    const file=e.target.files[0];if(!file)return;
+    try{const data=JSON.parse(await file.text());if(!data||!Array.isArray(data.names)||data.names.length<4||data.names.length>16||!data.names.every(x=>typeof x==="string"))throw new Error('Invalid bracket file');
+      if(!confirm('Replace current players and results with this backup?'))return;
+      state=validate(data);save();render();
+    }catch(err){alert('Could not import that file: '+err.message)}finally{e.target.value=''}
+  });
+  const countSelect=document.getElementById('participantCount');
+  countSelect.innerHTML=Array.from({length:13},(_,i)=>`<option value="${i+4}">${i+4} players</option>`).join('');
+  countSelect.addEventListener('change',()=>{
+    const count=Number(countSelect.value);
+    state.names=Array.from({length:count},(_,i)=>state.names[i]??'Player '+(i+1));state.results={};save();render();
+  });
+  document.getElementById('eliminationFormat').addEventListener('change',e=>{
+    state.format=e.target.value==='single'?'single':'double';state.results={};save();render();
+  });
+  for(const key of ['seriesLength','finalLength','resetLength'])document.getElementById(key).addEventListener('change',e=>{
+    const value=Number(e.target.value);
+    state[key]=(key==='seriesLength'?[1,3]:[1,3,5]).includes(value)?value:3;
+    render();save();
+  });
+  document.getElementById('randomSeeds').addEventListener('click',()=>{
+    for(let i=state.names.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[state.names[i],state.names[j]]=[state.names[j],state.names[i]]}
+    state.results={};save();render();
+  });
+  render();
+})();
+</script>
+</body>
+</html>

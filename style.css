@@ -236,3 +236,5 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--orange-hover);outli
 .foddian-card small{font-size:11px;color:var(--muted);margin-top:7px}
 @media(max-width:750px){.game-milestones{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:20px}.foddian-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:550px){.game-section{margin-bottom:47px;padding-bottom:46px}.game-story{padding:19px}.game-story p{font-size:14px}.game-stat-grid{grid-template-columns:1fr;gap:9px}.game-stat{padding:16px 18px;gap:6px}.game-stat strong{font-size:29px}.game-milestones{grid-template-columns:repeat(2,minmax(0,1fr))}.game-clips{grid-template-columns:1fr}.foddian-grid{grid-template-columns:1fr}.foddian-card{min-height:125px}.game-jump{gap:8px}.game-jump a{font-size:11px;padding:8px 11px}}
+
+.creation-art.bracket-art{background:radial-gradient(circle at center,#493124 0,#292432 58%,#152131 100%);color:var(--orange-hover)}
