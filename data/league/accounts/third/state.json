@@ -4,11 +4,11 @@
   "backfillEnd": 1794075012,
   "backfillOffset": 338,
   "backfillDone": true,
-  "lastPoll": 1794281725,
-  "lastAttemptAt": "2026-11-10T03:35:25.125Z",
+  "lastPoll": 1794311355,
+  "lastAttemptAt": "2026-11-10T11:49:15.220Z",
   "lastError": null,
   "backfillExhausted": true,
   "lastProgressAt": "2026-11-10T03:35:32.435Z",
   "pendingCount": 0,
-  "lastSuccessAt": "2026-11-10T03:35:29.409Z"
+  "lastSuccessAt": "2026-11-10T11:49:19.315Z"
 }
