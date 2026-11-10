@@ -250,5 +250,26 @@
         "losses": 11
       }
     ]
+  },
+  {
+    "at": "2026-11-10T03:35:22.036Z",
+    "entries": [
+      {
+        "queueType": "RANKED_SOLO_5x5",
+        "tier": "DIAMOND",
+        "rank": "IV",
+        "leaguePoints": 55,
+        "wins": 13,
+        "losses": 14
+      },
+      {
+        "queueType": "RANKED_FLEX_SR",
+        "tier": "DIAMOND",
+        "rank": "IV",
+        "leaguePoints": 64,
+        "wins": 17,
+        "losses": 11
+      }
+    ]
   }
 ]
