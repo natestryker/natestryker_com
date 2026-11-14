@@ -2,6 +2,16 @@
 
 Browser-local esports management game built with plain HTML/CSS and JavaScript ES modules. Serve `dist/` through a static web server; `npm test` runs the deterministic engine tests.
 
+## Captains and highlighted draft prospects
+
+Special prospects always lead available academy draft lists and AI draft priority, with purple names and a Captain badge. Role filters still apply. Existing special players receive Captain on load without changing their skills or signature passives.
+
+Every club has one automatically chosen captain, including academy and bench players in the club's continuous-service history. A special player takes priority; otherwise, the oldest player within two matchweeks of the longest-serving player's arrival is captain. Exact age ties prefer longer service, then stable player ID. Renewals, academy promotions and demotions preserve tenure; release, free agency and transfers start a fresh stint when the player joins a club. Existing saves recover service dates from club-history records where available.
+
+The captain adds Communication × 0.015 percentage points to tactical-call success (up to +1.5 percentage points). Previews and resolution use the same bounded chance. Trust-the-players decisions also use that ability-based chance; player-controlled checks retain their direct success/failure outcome. The roster and tactical match screen show the captain and the boost. Ordinary Captain traits are labelled Leadership to distinguish innate leadership from the current appointment. Selection and rendering consume no simulation RNG.
+
+Validation: all 148 automated tests pass, including captain selection, near-tenure age ties, actual call outcomes, acquisition dates, migration, special draft priority and the 36-season simulation. Desktop and 390px mobile Chrome checks pass for all three special prospects, highlighted names, Captain badges, drafting, saved captain selection and the call-chance display. No browser exceptions were observed.
+
 ## Roster development, contracts and special prospects
 
 Academy fixtures now build persistent pair connections, including a Communication-training bonus and a small development-league advantage. Connections carry through promotions and transfers, soften while former teammates are apart, and retain a quarter of their recorded peak even after long absences. Player profiles show connections within the appropriate squad.

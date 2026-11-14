@@ -2,9 +2,9 @@ import {RARE_TRAITS,SPECIAL_TRAITS,SECRET_COMBOS,SKILLS,PERSONALITY,TRAITS} from
 import {starters,overall,effectiveSkill,chemistry,composition,teamRating,getPlayer,careerStats,regionalPortrait} from './engine.js';
 export const SECRET_NAMES={desk:'The manager’s desk',former:'Hope you kept the receipt',reverse:'The 0–2 comfort zone',chat:'Academy group chat',jersey:'The old jersey',mascot:'An unqualified opinion',bench:'The perfect benchwarmer',prospect:'One more bubble',toast:'Four shots, one obsession',vdupard:'The grand duelist',scrims:'Scrim world champions'};
 export const SECRET_PROSPECTS={
- natestryker:{name:'natestryker',role:'MID',niches:['Artillery mage','Control mage'],traits:['OneMoreBubble','StarCartographer']},
- toast:{name:'Toast',role:'ADC',niches:['Lane bully','Hypercarry'],traits:['Jhinaholic']},
- vdupard:{name:'Vdupard',role:'TOP',niches:['Duelist','Bruiser'],traits:['FioraMain']}
+ natestryker:{name:'natestryker',role:'MID',niches:['Artillery mage','Control mage'],traits:['OneMoreBubble','StarCartographer','Captain']},
+ toast:{name:'Toast',role:'ADC',niches:['Lane bully','Hypercarry'],traits:['Jhinaholic','Captain']},
+ vdupard:{name:'Vdupard',role:'TOP',niches:['Duelist','Bruiser'],traits:['FioraMain','Captain']}
 };
 export const secretRandom=x=>{x.seed=(Math.imul(1664525,x.seed)+1013904223)>>>0;return x.seed/4294967296;};
 export function ensureDiscoveries(s){
@@ -12,6 +12,7 @@ export function ensureDiscoveries(s){
  const q=s.discoveries.prospect;
  // Preserve already-generated legacy drafts and the lifetime cap; retry future drafts.
  if(!Object.hasOwn(q,'lastRollYear')){const p=s.players.find(p=>p.secretProspect);q.spawned=!!p||q.spawned;q.id=p?.id||q.id;q.kind=p?.secretKind||(q.spawned?'natestryker':null);q.eligible=true;q.year=Math.max(q.year,s.year+(s.draft?.pool?.length?1:0));q.lastRollYear=s.draft?.pool?.length?s.year:null;if(p)p.secretKind??=q.kind;}
+ const prospect=q.spawned?getPlayer(s,q.id):null;if(prospect?.secretProspect&&!prospect.traits.includes('Captain'))prospect.traits.push('Captain');
  return s.discoveries;
 }
 export function discover(s,id){const x=ensureDiscoveries(s);if(x.found[id])return false;x.found[id]={year:s.year,step:s.step};return true;}
