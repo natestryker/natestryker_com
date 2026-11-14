@@ -12,7 +12,7 @@ test('item scanner recognizes raw slots and compact index item arrays without em
  assert.deepEqual([...collectIds(data)].sort(),['1001','3020','3089','3097','3364']);
 });
 test('icons use numeric IDs, local PNGs, names, lazy loading and safe fallbacks',async()=>{
- const manifest=await loadItemManifest(async url=>{assert.equal(url,'assets/league/item-catalog.json');return Response.json({items:{3020:{name:"Sorcerer's Shoes",icon:'assets/league/items/3020.png'},9999:{name:'Unknown',icon:'https://example.invalid/tracking.png'}}});});
+ const manifest=await loadItemManifest(async url=>{assert.equal(url,'/assets/league/item-catalog.json');return Response.json({items:{3020:{name:"Sorcerer's Shoes",icon:'assets/league/items/3020.png'},9999:{name:'Unknown',icon:'https://example.invalid/tracking.png'}}});});
  assert.equal(manifest.items[9999].icon,null);
  const icon=itemIcon(3020,manifest.items);assert.match(icon,/assets\/league\/items\/3020.png/);assert.match(icon,/loading="lazy"/);assert.match(icon,/Sorcerer&#39;s Shoes/);
  assert.ok(!itemIcon(0,manifest.items).includes('<img'));
@@ -41,7 +41,7 @@ test('compact item catalog preserves every name and falls back locally during de
  const requests=[];
  const loaded=await loadItemManifest(async url=>{requests.push(url);return requests.length===1?new Response('',{status:404}):Response.json(manifest);});
  assert.equal(Object.keys(loaded.items).length,Object.keys(manifest.items).length);
- assert.deepEqual(requests,['assets/league/item-catalog.json','assets/league/item-manifest.json']);
+ assert.deepEqual(requests,['/assets/league/item-catalog.json','/assets/league/item-manifest.json']);
 });
 test('lossless PNG optimizer preserves decoded pixels, dimensions and every non-image chunk',async()=>{
  const original=await readFile(new URL('../../assets/league/items/3330.png',import.meta.url));

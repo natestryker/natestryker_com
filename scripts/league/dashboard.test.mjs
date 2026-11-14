@@ -27,7 +27,7 @@ async function renderPage(file,{search='',hash='',champions=['Zoe'],matchStats=(
   for(const [,id] of html.matchAll(/\bid="([^"]+)"/g)) ids.set(id,new Element());
   const accounts=['main','alt','third'].map(id=>({id,label:id,updatedAt:'2026-11-07T12:00:00Z',profile:{riotId:`${id}#NA1`},ranked:[{at:'2026-11-07T12:00:00Z',entries:[{queueType:'RANKED_FLEX_SR',tier:'SILVER',rank:'II',leaguePoints:20,wins:2,losses:3},{queueType:'RANKED_SOLO_5x5',tier:'GOLD',rank:'I',leaguePoints:50,wins:1,losses:1}]}],mastery:[]}));
   const matches=Array.from({length:45},(_,i)=>({id:`NA1_${i}`,recordId:`main--NA1_${i}`,accountId:'main',accountName:'main#NA1',date:1794052800000-i*1000,queue:420,champion:champions[i%champions.length],kills:2,deaths:1,assists:3,kda:5,csPerMinute:7,damage:1000,duration:1200,items:[],win:true,...matchStats(i)}));
-  const document={addEventListener(){},body:{dataset:{view:file==='match-history.html'?'history':''}},createElement:()=>new Element(),getElementById(id){
+  const document={addEventListener(){},body:{dataset:{view:file==='match-history/index.html'?'history':''}},createElement:()=>new Element(),getElementById(id){
     if(ids.has(id)) return ids.get(id);
     // Match details are generated through innerHTML in the real browser.
     if(id.startsWith('match-') && ids.get('matches').innerHTML.includes(`id="${id}"`)){
@@ -50,7 +50,7 @@ async function renderPage(file,{search='',hash='',champions=['Zoe'],matchStats=(
   return {ids,listeners,location};
 }
 test('tracker links to history with filters and gives each account a persistent ranked arrow',async()=>{
-  const {ids}=await renderPage('league.html');
+  const {ids}=await renderPage('league/index.html');
   assert.equal(ids.get('rank-graph').children.length,3);
   const graph=ids.get('rank-graph').children[0];
   assert.equal(graph.className,'rank-account');assert.equal(graph.open,false);
@@ -58,11 +58,11 @@ test('tracker links to history with filters and gives each account a persistent 
   ids.get('champion-search').value='Zoe';ids.get('champion-search').listeners.input();
   assert.equal(ids.get('rank-graph').children[0],graph,'Text filters should not rebuild ranked plots');
   assert.equal(ids.get('rank-graph').children[0].open,true);
-  assert.equal(ids.get('history-link').href,'match-history.html?champion-search=Zoe');
+  assert.equal(ids.get('history-link').href,'/match-history/?champion-search=Zoe');
   assert.equal((ids.get('matches').innerHTML.match(/<details class="match"/g)||[]).length,20);
 });
 test('history-only page supports filters, larger pagination and deep links without dashboard elements',async()=>{
-  const {ids}=await renderPage('match-history.html',{search:'?champion-search=Zoe',hash:'#match-main--NA1_44'});
+  const {ids}=await renderPage('match-history/index.html',{search:'?champion-search=Zoe',hash:'#match-main--NA1_44'});
   assert.equal(ids.has('rank-graph'),false);assert.equal(ids.has('records'),false);
   assert.equal(ids.get('champion-search').value,'Zoe');
   assert.equal(ids.get('page').textContent,'2 / 2');
@@ -73,7 +73,7 @@ test('history-only page supports filters, larger pagination and deep links witho
   assert.equal(ids.get('match-count').textContent,'0 matching matches');
 });
 test('champion table starts with the top five and expands without resetting match history',async()=>{
-  const {ids}=await renderPage('league.html',{champions:['Zoe','Ahri','Lux','Annie','Vex','Orianna','Syndra','Neeko']});
+  const {ids}=await renderPage('league/index.html',{champions:['Zoe','Ahri','Lux','Annie','Vex','Orianna','Syndra','Neeko']});
   const rows=()=>ids.get('champions').innerHTML.split('<tbody>')[1].split('</tbody>')[0].match(/<tr>/g)?.length || 0;
   assert.equal(rows(),5);
   assert.match(ids.get('champion-count').textContent,/Top 5 of 8/);
@@ -88,7 +88,7 @@ test('champion table starts with the top five and expands without resetting matc
   assert.equal(rows(),1);assert.equal(ids.get('champions-toggle').hidden,true);
 });
 test('every account shows Solo/Duo before Flex with the timestamp below its rank rows',async()=>{
-  const {ids}=await renderPage('league.html');
+  const {ids}=await renderPage('league/index.html');
   assert.equal(ids.get('ranked').children.length,3);
   for(const panel of ids.get('ranked').children){
     assert.equal(panel.className,'ranked-profile');
@@ -98,7 +98,7 @@ test('every account shows Solo/Duo before Flex with the timestamp below its rank
   }
 });
 test('every champion column sorts both ways using numeric values and retains sorting after filtering',async()=>{
-  const {ids}=await renderPage('league.html',{
+  const {ids}=await renderPage('league/index.html',{
     champions:['Zoe','Ahri','Lux','Annie','Vex','Orianna','Syndra','Neeko'],
     matchStats:i=>({win:i%3!==0,kills:(i+1)*2,deaths:i%4+1,assists:i%7+1,damage:(45-i)*850,csPerMinute:(i%13)+1})
   });
@@ -123,18 +123,18 @@ test('every champion column sorts both ways using numeric values and retains sor
   assert.match(ids.get('champion-count').textContent,/Avg damage/);
 });
 test('both pages initialize, search and calculate records using the optimized manifest and indexes',async()=>{
-  for(const file of ['league.html','match-history.html']){
+  for(const file of ['league/index.html','match-history/index.html']){
     const {ids}=await renderPage(file,{optimized:true});
     assert.equal(ids.get('match-count').textContent,'45 matching matches');
     assert.match(ids.get('status').textContent,/Partial collected history/);
-    if(file==='league.html'){assert.match(ids.get('summary').innerHTML,/Collected games/);assert.match(ids.get('records').innerHTML,/View match/);}
+    if(file==='league/index.html'){assert.match(ids.get('summary').innerHTML,/Collected games/);assert.match(ids.get('records').innerHTML,/View match/);}
     ids.get('champion-search').value='Ahri';ids.get('champion-search').listeners.input();
     assert.equal(ids.get('match-count').textContent,'0 matching matches');
   }
 });
 test('personal records link to the highest multi-kill match, including a quadra without pentakills',async()=>{
  for(const optimized of [false,true]){
-  const {ids}=await renderPage('league.html',{optimized,matchStats:i=>({largestMultiKill:i===3?4:2,pentaKills:0})});
+  const {ids}=await renderPage('league/index.html',{optimized,matchStats:i=>({largestMultiKill:i===3?4:2,pentaKills:0})});
   const record=ids.get('records').innerHTML.split('<div class="stat record">').find(card=>card.includes('<small>Highest multi-kill</small>'));
   assert.match(record,/<strong>Quadra kill<\/strong>/);
   assert.match(record,/#match-main--NA1_3/);
@@ -142,9 +142,9 @@ test('personal records link to the highest multi-kill match, including a quadra 
  }
 });
 test('both history views support first/last and manual page jumps, bounded by filtered results',async()=>{
- for(const file of ['league.html','match-history.html']){
+ for(const file of ['league/index.html','match-history/index.html']){
    const {ids}=await renderPage(file);
-   const pages=file==='league.html'?3:2;
+   const pages=file==='league/index.html'?3:2;
    assert.equal(ids.get('first').disabled,true);assert.equal(ids.get('last').disabled,false);
    ids.get('last').listeners.click();assert.equal(ids.get('page').textContent,`${pages} / ${pages}`);
    assert.equal(ids.get('page-input').value,String(pages));assert.equal(ids.get('last').disabled,true);

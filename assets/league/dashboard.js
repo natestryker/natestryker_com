@@ -164,7 +164,7 @@ async function main(){
       const params=new URLSearchParams();
       filterIds.forEach(id=>{if($(id).value) params.set(id,$(id).value);});
       if(chosenItem && $('item-search').value===itemNames[chosenItem])params.set('item-id',chosenItem);
-      $('history-link').href=`match-history.html${params.size?'?'+params:''}`;
+      $('history-link').href=`/match-history/${params.size?'?'+params:''}`;
     }
     if(historyPage){history();return;}
     if(renderedRankAccount!==$('account').value){renderAccounts();renderedRankAccount=$('account').value;}

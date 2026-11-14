@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['*.html', '*.js', '*.css', '*.png', '*.svg', '*.ico', 'CNAME', 'images/**', 'media/**', 'assets/**', 'creations/**', 'games/**', 'Under-the-Rift/dist/**', 'Image-to-Minecraft-Converter/dist/**', 'scripts/**', '.github/workflows/league.yml']
+    paths: ['*.html', '*.js', '*.css', '*.png', '*.svg', '*.ico', 'CNAME', 'images/**', 'media/**', 'assets/**', 'about/**', 'archive/**', 'bracket-maker/**', 'league/**', 'match-history/**', 'secret/**', 'RiftGuessr/**', 'creations/**', 'games/**', 'Under-the-Rift/dist/**', 'Image-to-Minecraft-Converter/dist/**', 'scripts/**', '.github/workflows/league.yml']
 permissions:
   contents: write
   pages: write
@@ -26,7 +26,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --test scripts/league/*.test.mjs
+      - run: node --test scripts/site-routes.test.mjs scripts/league/*.test.mjs
         id: tests
       - name: Collect Riot data
         id: collect

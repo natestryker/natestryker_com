@@ -22,7 +22,7 @@ async function fixture(root){
    await writeJson(join(base,'ranked.json'),[{at:'2026-11-07T12:00:00Z',entries:[]},{at:'2026-11-06T12:00:00Z',entries:[]}]);
  }
 }
-function fetchFrom(root,requests){return async url=>{requests.push(url);const path=url.replace(/^data\/league\//,'').split('?')[0];return {ok:true,json:()=>readJson(join(root,path))};};}
+function fetchFrom(root,requests){return async url=>{requests.push(url);const path=url.replace(/^\/data\/league\//,'').split('?')[0];return {ok:true,json:()=>readJson(join(root,path))};};}
 test('compact publication preserves every raw byte; indexes give accurate three-account totals and lazy details',async()=>{
  const root=await temp();try{
    await fixture(root);const original=await readFile(join(root,'accounts/main/matches/NA1_1.json'));

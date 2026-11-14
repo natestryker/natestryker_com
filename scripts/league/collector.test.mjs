@@ -112,7 +112,7 @@ test('public item catalog maps IDs to names and fails safely on unavailable data
  const urls=[];
  const names=await loadItemNames(async url=>{urls.push(url);return Response.json({items:{3020:{name:"Sorcerer's Shoes",icon:'assets/league/items/3020.png'},3089:{name:"Rabadon's Deathcap",icon:'assets/league/items/3089.png'}}});});
  assert.equal(names[3020],"Sorcerer's Shoes");
- assert.deepEqual(urls,['assets/league/item-catalog.json']);
+ assert.deepEqual(urls,['/assets/league/item-catalog.json']);
  await assert.rejects(loadItemNames(async()=>new Response('',{status:503})),/unavailable/);
  await assert.rejects(loadItemNames(async()=>Response.json([])),/Invalid/);
 });

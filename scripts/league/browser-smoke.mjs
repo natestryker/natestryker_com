@@ -1,6 +1,6 @@
 // Optional local browser QA. Uses an installed Chrome; no packages or API credentials required.
 import {createServer} from 'node:http';
-import {readFile,mkdtemp,rm,writeFile} from 'node:fs/promises';
+import {readFile,mkdtemp,rm,writeFile,stat} from 'node:fs/promises';
 import {resolve,join,extname,relative,sep} from 'node:path';
 import {tmpdir} from 'node:os';
 import {spawn} from 'node:child_process';
@@ -10,10 +10,11 @@ const root=resolve('.'),profile=await mkdtemp(join(tmpdir(),'league-browser-'));
 const requests=[],pending=new Map();let browser,socket,serial=0;
 const server=createServer(async(req,res)=>{
   try{
-    const path=resolve(root,'.'+decodeURIComponent(new URL(req.url,'http://localhost').pathname));
-    if(!path.startsWith(root+sep))throw new Error('Invalid path');
+    const requestUrl=new URL(req.url,'http://localhost');let path=resolve(root,'.'+decodeURIComponent(requestUrl.pathname));
+    if(path!==root&&!path.startsWith(root+sep))throw new Error('Invalid path');
+    if((await stat(path)).isDirectory()){if(!requestUrl.pathname.endsWith('/')){res.writeHead(301,{Location:requestUrl.pathname+'/'+requestUrl.search});res.end();return;}path=join(path,'index.html');}
     const body=await readFile(path);
-    res.writeHead(200,{'Content-Type':({'.html':'text/html','.mjs':'text/javascript','.js':'text/javascript','.css':'text/css','.json':'application/json','.png':'image/png'})[extname(path)] || 'application/octet-stream'});res.end(body);
+    res.writeHead(200,{'Content-Type':({'.html':'text/html','.mjs':'text/javascript','.js':'text/javascript','.css':'text/css','.json':'application/json','.png':'image/png','.jpg':'image/jpeg','.svg':'image/svg+xml','.webp':'image/webp','.webm':'video/webm','.mp4':'video/mp4'})[extname(path)] || 'application/octet-stream'});res.end(body);
   }catch{res.writeHead(404);res.end();}
 });
 await new Promise(r=>server.listen(0,'127.0.0.1',r));
@@ -57,7 +58,7 @@ try{
   socket.addEventListener('message',event=>{const message=JSON.parse(event.data);if(message.method==='Network.requestWillBeSent')requests.push(message.params.request.url);if(message.id){const p=pending.get(message.id);pending.delete(message.id);if(message.error)p.reject(new Error(message.error.message));else p.resolve(message.result);}});
   await command('Page.enable');await command('Runtime.enable');await command('Network.enable');
   await command('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
-  await command('Page.navigate',{url:`${url}/league.html`});
+  await command('Page.navigate',{url:`${url}/league/`});
   await until("document.querySelectorAll('#champions tbody tr').length===5 && document.querySelectorAll('#matches > details').length>0");
   assert.equal(await evaluate("document.querySelectorAll('#matches img[data-item-icon]').length"),0);
   assert.equal(requests.filter(path=>path.includes('/assets/league/items/')).length,0);
@@ -91,23 +92,23 @@ try{
   await until("document.querySelector('#matches > details .match-details')!==null");
   assert.ok(await evaluate("document.querySelector('#matches > details .item-build img[src$=\"/3020.png\"]')!==null"));
   assert.ok(await evaluate("new URL(document.getElementById('history-link').href).searchParams.get('item-search')==='sorcerer boots'"));
-  await command('Page.navigate',{url:`${url}/match-history.html?champion-search=Zoe`});
+  await command('Page.navigate',{url:`${url}/match-history/?champion-search=Zoe`});
   await until("document.querySelectorAll('#matches > details').length>0");
   assert.equal(await evaluate("document.getElementById('champion-search').value"),'Zoe');
   await checkPagination();
   await command('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});
-  await command('Page.navigate',{url:`${url}/league.html`});
+  await command('Page.navigate',{url:`${url}/league/`});
   await until("document.querySelectorAll('#matches > details').length>0");
   assert.ok(await evaluate('document.documentElement.scrollWidth<=innerWidth'));
   await checkPagination('league-pager-mobile.png');
-  await command('Page.navigate',{url:`${url}/index.html`});
+  await command('Page.navigate',{url:`${url}/`});
   await until("document.readyState==='complete'");
   assert.equal(await evaluate("document.getElementById('secret-welcome').getAttribute('src')"),null);
   assert.ok(await evaluate("!performance.getEntriesByType('resource').some(entry=>entry.name.endsWith('/YEP.png'))"));
-  await command('Page.navigate',{url:`${url}/index.html?reward-test=1#secret-welcome`});
+  await command('Page.navigate',{url:`${url}/?reward-test=1#secret-welcome`});
   await until("document.getElementById('secret-welcome').naturalWidth>0");
   assert.equal(await evaluate("document.getElementById('secret-welcome').hidden"),false);
-  await command('Page.navigate',{url:`${url}/games.html`});
+  await command('Page.navigate',{url:`${url}/games/`});
   await until("document.readyState==='complete'");
   assert.ok(await evaluate("[...document.querySelectorAll('video')].every(video=>video.preload==='none')"));
   assert.ok(await evaluate("!performance.getEntriesByType('resource').some(entry=>/\\.(mp4|webm)(?:$|[?])/.test(entry.name))"));

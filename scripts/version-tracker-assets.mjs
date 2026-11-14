@@ -15,7 +15,7 @@ export async function versionTrackerAssets(root=process.cwd()){
     if(!/\.(mjs|js)$/.test(file.name))continue;
     await writeFile(join(directory,file.name),file.source.replace(imports,(_,prefix,path,quote)=>`${prefix}${path}?v=${version}${quote}`));
   }
-  for(const name of ['league.html','match-history.html']){
+  for(const name of ['league/index.html','match-history/index.html']){
     const file=join(root,name),html=await readFile(file,'utf8');
     await writeFile(file,html.replace(/(assets\/league\/(?:dashboard\.js|league\.css))(?:\?v=[^"']*)?/g,`$1?v=${version}`));
   }

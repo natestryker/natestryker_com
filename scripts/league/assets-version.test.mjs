@@ -11,9 +11,10 @@ test('built tracker pages and module imports get matching versions that change w
    await writeFile(join(root,'assets/league/dashboard.js'),"import {x} from './stats.mjs'; console.log(x);\n");
    await writeFile(join(root,'assets/league/stats.mjs'),'export const x=1;\n');
    await writeFile(join(root,'assets/league/league.css'),'.pager{display:flex}\n');
-   for(const file of ['league.html','match-history.html'])await writeFile(join(root,file),'<link href="assets/league/league.css"><script type="module" src="assets/league/dashboard.js?v=old"></script>');
+   for(const directory of ['league','match-history'])await mkdir(join(root,directory),{recursive:true});
+   for(const file of ['league/index.html','match-history/index.html'])await writeFile(join(root,file),'<link href="assets/league/league.css"><script type="module" src="assets/league/dashboard.js?v=old"></script>');
    const first=await versionTrackerAssets(root);
-   for(const file of ['league.html','match-history.html']){
+   for(const file of ['league/index.html','match-history/index.html']){
      const html=await readFile(join(root,file),'utf8');
      assert.ok(html.includes(`league.css?v=${first}`));assert.ok(html.includes(`dashboard.js?v=${first}`));
    }
