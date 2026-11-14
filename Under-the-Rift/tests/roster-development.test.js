@@ -14,6 +14,8 @@ function ui(s){let source=readFileSync(new URL('../dist/app.js',import.meta.url)
 
 test('academy fixtures build every academy pair at the same rate as main-team connections',()=>{
  const s=drafted();E.finishDraft(s);const ps=E.academy(s),main=E.starters(s),ai=E.academy(s,1);
+ // Keep this fixture focused on academy matches rather than automatic call-ups.
+ for(const p of E.starters(s,1))for(const skill of E.SKILLS)p.skills[skill]=100;
  ps.forEach(p=>p.focus='Balanced');main.forEach(p=>p.focus='Balanced');ps[0].focus='Communication';
  const before=E.familiarity(s,main[0].id,main[1].id);
  E.enterMatchday(s);E.fastForward(s);assert.ok(E.finishMatchday(s));

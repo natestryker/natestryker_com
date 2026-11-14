@@ -44,9 +44,9 @@ test('wave and ward checks roundtrip and decide the actual match moment exactly 
 });
 
 test('initial scout reports have stable off-center estimates and narrower reports reveal the truth',()=>{
- const s=setup(),players=s.players.filter(p=>p.team!==s.team).slice(0,200),seed=s.seed,before=JSON.stringify(s);let asymmetric=0;
+ const s=setup(),players=s.players.filter(p=>p.team<0).slice(0,200),seed=s.seed,before=JSON.stringify(s);let asymmetric=0;
  const reports=players.map(p=>{const report=E.scoutEstimate(s,p);assert.ok(report.low<=E.overall(p)&&report.high>=E.overall(p));assert.ok(report.low>=50&&report.high<=100);asymmetric+=report.estimate!==E.overall(p);return report;});
- assert.ok(asymmetric>120);assert.equal(s.seed,seed);assert.equal(JSON.stringify(s),before);
+ assert.ok(asymmetric>players.length*.6);assert.equal(s.seed,seed);assert.equal(JSON.stringify(s),before);
  for(const [i,p] of players.entries()){
   assert.deepEqual(E.scoutEstimate(s,p),reports[i]);p.scout=1;const middle=E.scoutEstimate(s,p);
   assert.ok(middle.low>=reports[i].low&&middle.high<=reports[i].high);assert.ok(middle.high-middle.low<reports[i].high-reports[i].low);
@@ -65,11 +65,11 @@ test('hidden traits stay out of search, scout files, profiles and the discovery 
  p.scout=2;api.dossier(p.id);assert.match(nodes['#modal'].innerHTML,/Final Boss/);api.query('FinalBoss');assert.ok(api.marketPlayers().includes(p.name));assert.ok(s.discoveries.seenTraits.includes('FinalBoss'));
 });
 
-test('the GCD uses the same scouting ranges while keeping contracts public',()=>{
+test('the GCD shows exact signed-player ratings while keeping traits behind scouting',()=>{
  const s=setup(),p=E.starters(s,1)[0],{api}=ui(s);p.scout=0;
  const row=api.globalContractDatabase().split(`data-gcd-player="${p.id}"`)[1].split('</tr>')[0];
- assert.ok(row.includes(`<b>${E.scoutingLabel(s,p)}</b>`));assert.ok(row.includes('$'+p.contract.salary.toLocaleString('en-US')+'/yr'));
- for(const skill of E.SKILLS)assert.ok(row.includes(E.scoutingLabel(s,p,skill)));
+ assert.ok(row.includes(`<b>${E.overall(p)}</b>`));assert.equal(E.scoutingComplete(s,p),false);assert.ok(row.includes('$'+p.contract.salary.toLocaleString('en-US')+'/yr'));
+ for(const skill of E.SKILLS)assert.ok(row.includes(E.effectiveSkill(p,skill).toFixed(1)));
  p.team=s.team;assert.equal(E.knownTraits(s,p).length,p.traits.length);assert.equal(E.scoutingLabel(s,p),String(E.overall(p)));
 });
 

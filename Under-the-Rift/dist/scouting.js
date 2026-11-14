@@ -9,7 +9,7 @@ export const scoutingComplete=(s,p)=>p.team===s.team||p.scout>=2;
 // screen was opened. The real value is contained in an asymmetric interval.
 export function scoutEstimate(s,p,skill=null){
  const value=skill?effectiveSkill(p,skill):overall(p);
- if(scoutingComplete(s,p))return {low:value,high:value,estimate:value,exact:true};
+ if(p.team>=0||scoutingComplete(s,p))return {low:value,high:value,estimate:value,exact:true};
  const level=scoutTerms(s,p).level,min=skill?1:50,max=100,v=Math.round(value),broad=10-level*2;
  const salt=`${p.id}|${p.draftYear||2026}|${s.team}|${skill||'overall'}`;
  const interval=(radius,stage)=>{

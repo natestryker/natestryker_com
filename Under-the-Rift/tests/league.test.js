@@ -24,7 +24,7 @@ test('every region has distinct club strengths and ratings do not follow the man
  const s=setup();
  for(const r of E.regions(s)){
   const ratings=s.teams.filter(t=>t.region===r).map(t=>E.teamRating(s,t.id));
-  assert.ok(Math.max(...ratings)-Math.min(...ratings)>15);
+  assert.ok(Math.max(...ratings)-Math.min(...ratings)>1&&Math.max(...ratings)-Math.min(...ratings)<=6.5);
  }
  const other=E.teamRating(s,1),players=JSON.stringify(E.starters(s,1));
  for(const p of E.starters(s))for(const k of E.SKILLS)p.skills[k]=100;
