@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import * as E from '../dist/engine.js';
-import {FOG_SCENARIOS,FOG_REGIONS,FOG_OBSERVE_MS,FOG_ANSWER_MS,fogChoices,fogScenario,fogPosition} from '../dist/fog-tracking-data.js';
+import {FOG_SCENARIOS,FOG_REGIONS,FOG_OUTCOMES,FOG_OBSERVE_MS,FOG_ANSWER_MS,fogChoices,fogScenario,fogPosition} from '../dist/fog-tracking-data.js';
 import {fogMap} from '../dist/fog-tracking.js';
 
 function state(type,extra={}){
@@ -17,7 +17,7 @@ function score(type,value,extra={}){
 }
 
 // Controlled clock and minimal dialog nodes exercise the real event handlers.
-function mount(type,extra={},random=0){
+function mount(type,extra={},random=0,frameMs=16){
  let now=100,id=0;
  const pending=new Map(),listeners=new Map();
  class Node{
@@ -26,6 +26,7 @@ function mount(type,extra={},random=0){
   get innerHTML(){return this.html;}
   querySelector(selector){if(!this.nodes.has(selector))this.nodes.set(selector,new Node());return this.nodes.get(selector);}
   querySelectorAll(selector){
+   if(selector==='[data-tactical-answer]')return [...this.html.matchAll(/data-tactical-answer="([^"]+)"/g)].map(([,key])=>{const button=this.querySelector('[data-tactical-answer="'+key+'"]');button.dataset={tacticalAnswer:key};return button;});
    if(selector!=='[data-fog-answer]')throw Error('Unexpected selector '+selector);
    return [...this.html.matchAll(/data-fog-answer="([^"]+)"/g)].map(([,key])=>{
     const button=this.querySelector('[data-fog-answer="'+key+'"]');button.dataset={fogAnswer:key};return button;
@@ -41,8 +42,8 @@ function mount(type,extra={},random=0){
  dialog.close=()=>{dialog.open=false;listeners.get('close')?.();};
  const schedule=(fn,delay)=>{pending.set(++id,{fn,time:now+delay});return id;};
  const math=Object.create(Math);math.random=()=>random;
- const context=vm.createContext({Math:math,performance:{now:()=>now},setTimeout:schedule,clearTimeout:id=>pending.delete(id),requestAnimationFrame:fn=>schedule(fn,16),cancelAnimationFrame:id=>pending.delete(id)});
- const source=['fog-tracking-data.js','fog-tracking.js','skill-checks.js'].map(file=>readFileSync(new URL('../dist/'+file,import.meta.url),'utf8').replace(/^import .*;\r?\n/gm,'').replace(/\bexport /g,'')).join('\n');
+ const context=vm.createContext({Math:math,performance:{now:()=>now},setTimeout:schedule,clearTimeout:id=>pending.delete(id),requestAnimationFrame:fn=>schedule(fn,frameMs),cancelAnimationFrame:id=>pending.delete(id)});
+ const source=['fog-tracking-data.js','fog-tracking.js','tactical-checks-data.js','tactical-checks.js','skill-checks.js'].map(file=>readFileSync(new URL('../dist/'+file,import.meta.url),'utf8').replace(/^import .*;\r?\n/gm,'').replace(/\bexport /g,'')).join('\n');
  vm.runInContext(source+'\nglobalThis.mount=mountSkillCheck;',context);
  const s=state(type,extra),c=s.match.current.skillCheck;
  context.mount(s,{...E,callPreview:()=>({player:{name:'Test player'},call:['JGL','Test call'],up:3,down:2})},dialog,{save(){},resolve(){}});
@@ -56,7 +57,7 @@ function mount(type,extra={},random=0){
   }
   now=end;
  }
- return {s,c,dialog,stage,pending,advance,start:()=>stage().querySelector('#check-start').onclick(),hit:()=>stage().querySelector('button')};
+ return {s,c,dialog,stage,pending,advance,jump:ms=>now+=ms,start:()=>stage().querySelector('#check-start').onclick(),hit:()=>stage().querySelector('button')};
 }
 
 test('timing requires the narrowed target and still rewards Mechanics',()=>{
@@ -103,6 +104,38 @@ test('reaction keeps its ability-based boundaries and explains misses',()=>{
  assert.match(score('reaction',NaN).feedback,/No response/);
 });
 
+test('timing scores the displayed frame on press even when rendering lags behind the clock',()=>{
+ for(const reverse of [false,true])for(const frameMs of [16,80,160]){
+  const h=mount('timing',{reverse},0,frameMs);h.start();h.advance(480);
+  const marker=h.stage().querySelector('#timing-marker'),visible=Number.parseFloat(marker.style.left)/100,hit=h.hit();
+  assert.ok(Math.abs(visible-.5)<.03);
+  h.jump(200); // The screen still shows this frame; clock-based scoring would miss.
+  hit.onpointerdown({button:2,preventDefault(){}});assert.equal(h.c.status,'attempted');
+  let prevented=false;hit.onpointerdown({button:0,preventDefault(){prevented=true;}});
+  assert.equal(prevented,true);assert.equal(h.c.timingPosition,visible);assert.equal(h.c.bonus,.06);
+  assert.equal(h.pending.size,0);assert.match(h.stage().innerHTML,/timing-hit/);
+  assert.ok(h.stage().innerHTML.includes('left:'+visible*100+'%'));
+  hit.onclick();assert.equal(h.c.timingPosition,visible); // Releasing cannot score twice.
+ }
+ const miss=mount('timing');miss.start();miss.advance(400);miss.jump(100);miss.hit().onclick();
+ assert.equal(miss.c.bonus,-.03);assert.match(miss.stage().innerHTML,/timing-miss/);
+ assert.match(miss.c.feedback,/left of the orange zone/);
+});
+
+test('timing keyboard and assistive clicks use the visible marker, with inclusive zone edges',()=>{
+ for(const mode of ['keyboard','click']){
+  const h=mount('timing');h.start();h.advance(480);h.jump(150);
+  const visible=Number.parseFloat(h.stage().querySelector('#timing-marker').style.left)/100;
+  if(mode==='keyboard')h.hit().onkeydown({code:'Enter',repeat:false,preventDefault(){}});else h.hit().onclick();
+  assert.equal(h.c.bonus,.06);assert.equal(h.c.timingPosition,visible);
+ }
+ for(const target of [.3,.5,.7])for(const sign of [-1,1]){
+  const width=E.timingHalfWidth({mechanics:50});
+  assert.equal(score('timing',target+sign*width,{target}).bonus,.06);
+  assert.equal(score('timing',target+sign*(width+.001),{target}).bonus,-.03);
+ }
+});
+
 test('reaction uses a green GO cue and reports keyboard response time',()=>{
  const h=mount('reaction');h.start();
  const key=repeat=>h.hit().onkeydown({code:'Space',repeat,preventDefault(){}});
@@ -140,17 +173,17 @@ test('two feints return to WAIT before GO; closing an attempt cancels timers',()
 });
 
 test('every fog route has one clear destination and all answer positions rotate',()=>{
- assert.equal(FOG_SCENARIOS.length,12);
+ assert.equal(FOG_SCENARIOS.length,30);assert.equal(Object.keys(FOG_REGIONS).length,15);
  for(let scenario=0;scenario<FOG_SCENARIOS.length;scenario++){
   const q=FOG_SCENARIOS[scenario],end=q.path.at(-1),previous=q.path.at(-2),target=FOG_REGIONS[q.target].point;
-  assert.equal(new Set(q.choices).size,4);assert.ok(q.choices.includes(q.target));
+  assert.equal(new Set(q.choices).size,4);assert.ok(q.choices.includes(q.target));assert.ok(q.choices.every(key=>FOG_REGIONS[key]));assert.ok(FOG_OUTCOMES[q.target]);
   const direction=end.map((v,i)=>v-previous[i]),heading=target.map((v,i)=>v-end[i]);
   const angle=(direction[0]*heading[0]+direction[1]*heading[1])/(Math.hypot(...direction)*Math.hypot(...heading));
   assert.ok(angle>.94,'Last heading must point toward '+q.target+' in route '+scenario);
   const positions=new Set();
   for(let variant=0;variant<4;variant++){
    const c={scenario,variant};positions.add(fogChoices(c).indexOf(q.target));
-   assert.equal(score('fog',q.target,c).bonus,.06);
+   const result=score('fog',q.target,c);assert.equal(result.bonus,.06);assert.ok(result.feedback.includes(FOG_OUTCOMES[q.target]));
    assert.equal(score('fog',q.choices.find(x=>x!==q.target),c).bonus,-.03);
   }
   assert.equal(positions.size,4);
@@ -208,4 +241,17 @@ test('fog can be trusted before starting, or closed and reopened without an atte
  const h=mount('fog');h.stage().querySelector('#check-trust').onclick();
  assert.equal(h.c.status,'ready');assert.equal(h.c.bonus,undefined);assert.equal(h.pending.size,0);
  const ready=mount('fog');ready.dialog.close();assert.equal(ready.c.status,'ready');
+});
+
+test('wave and ward checks accept one keyboard or map choice and clean up their answer timers',()=>{
+ for(const type of ['wave','ward']){
+  const h=mount(type);h.start();assert.match(h.stage().innerHTML,type==='wave'?/wave-board/:/ward-board/);
+  assert.equal(h.stage().scrolled,true);const answer=type==='wave'?'freeze':'river';
+  const button=h.stage().querySelectorAll('[data-tactical-answer]').find(b=>b.dataset.tacticalAnswer===answer);
+  h.advance(14999);button.onkeydown({code:'Enter',repeat:false,preventDefault(){}});
+  assert.equal(h.c.bonus,.06);assert.equal(h.pending.size,0);assert.match(h.stage().innerHTML,/Best choice/);
+  button.onclick();assert.equal(h.c.bonus,.06);
+  const timeout=mount(type);timeout.start();timeout.advance(15000);assert.equal(timeout.c.bonus,-.03);assert.match(timeout.c.feedback,/in time/);assert.equal(timeout.pending.size,0);
+  const closed=mount(type);closed.start();closed.dialog.close();assert.equal(closed.c.bonus,-.03);assert.match(closed.c.feedback,/interrupted/);assert.equal(closed.pending.size,0);
+ }
 });

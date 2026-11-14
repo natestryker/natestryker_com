@@ -1,5 +1,6 @@
+import {mountTacticalCheck,tacticalReview} from './tactical-checks.js';
 import {mountFogTracking,fogReview} from './fog-tracking.js';
-// Optional, bounded checks: one attempt per decision, with keyboard-friendly buttons.
+// Optional checks: one attempt per decision, with keyboard-friendly buttons.
 const SCENARIOS=[
  {title:'Cross-map trade',lane:'TOP',enemy:'Five enemies show TOP. Baron is gone. Your bot wave is at their tower.',objective:'BOT TOWER',choices:['Trade bot tower','Walk into top river','Wait at base'],answer:0},
  {title:'River numbers',lane:'MID',enemy:'Two opponents are down for 25 seconds. All five allies are near dragon.',objective:'DRAGON',choices:['Recall together','Secure dragon now','Chase into their base'],answer:1},
@@ -16,7 +17,12 @@ const SCENARIOS=[
 
 ];
 const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const names={timing:'Objective timing',reaction:'Flash reaction',map:'Map read',fog:'Fog-of-war tracking'};
+const names={timing:'Objective timing',reaction:'Flash reaction',map:'Map read',fog:'Fog-of-war tracking',wave:'Wave control',ward:'Ward placement'};
+function timingTrack(c,E,position,id=''){
+ const width=2*E.timingHalfWidth(c)*100,target=(c.target??.5)*100;
+ return `<div class="timingtrack${c.status==='complete'?(c.bonus>0?' timing-hit':' timing-miss'):''}" role="img" aria-label="Orange target from ${(target-width/2).toFixed(1)} to ${(target+width/2).toFixed(1)} percent${position===null?'':'; marker at '+(position*100).toFixed(1)+' percent'}"><div class="timingzone" style="left:${target-width/2}%;width:${width}%"></div>${position===null?'':`<i ${id?`id="${id}"`:''} style="left:${position*100}%"></i>`}</div>`;
+}
+
 export function mountSkillCheck(s,E,dialog,{save,resolve}){
  const c=s.match?.current?.skillCheck;if(!c)return;
  let timer=0,frame=0,stopped=false,start=0,cue=0,cleanupCheck=()=>{};
@@ -26,13 +32,31 @@ export function mountSkillCheck(s,E,dialog,{save,resolve}){
  const close=()=>{if(c.status==='attempted')finish(false);clear();dialog.removeEventListener('close',close);dialog.removeEventListener('cancel',close);};
  dialog.addEventListener('close',close);dialog.addEventListener('cancel',close);
  if(c.status==='attempted'){E.finishSkillCheck(s,false);save();}
- const instructions={timing:'The marker bounces until you stop it. Stop it inside the narrow orange zone. Click, or press Space / Enter. Your player’s Mechanics slightly widens the zone.',reaction:'Wait for the green GO cue, then click or press Space / Enter. Ignore amber HOLD feints; there may be more than one. Early presses fail. Mechanics adds a little reaction-time allowance.',map:'Study the map briefing for four seconds, then choose the strongest response. You have ten seconds to answer.',fog:'Watch the enemy jungler marked J for four seconds. When vision disappears, predict its destination from its last heading. You have eight seconds to choose; one attempt.'};
+ const instructions={wave:'Read the wave, timings and goal. Choose freeze, slow-push, or shove. You have 15 seconds; one attempt.',ward:'Read the enemy approach and existing vision. Choose one safe ward location on the map or with its numbered button. You have 15 seconds; one attempt.',timing:'The marker bounces until you stop it. Stop its center inside the orange zone. Press the button, or Space / Enter. Your press locks the marker you can see. Your player’s Mechanics slightly widens the zone.',reaction:'Wait for the green GO cue, then click or press Space / Enter. Ignore amber HOLD feints; there may be more than one. Early presses fail. Mechanics adds a little reaction-time allowance.',map:'Study the map briefing for four seconds, then choose the strongest response. You have ten seconds to answer.',fog:'Watch the enemy jungler marked J for four seconds. When vision disappears, predict its destination from its last heading. You have eight seconds to choose; one attempt.'};
  function draw(){dialog.innerHTML=`<div class="panelhead"><h2>${esc(c.title||names[c.type])}</h2><button id="check-close" aria-label="Close skill check">✕</button></div><div class="modalbody skillcheck"><div class="agentnote"><b>${c.replacement?'Player leading the moment':'Chosen call'} · ${esc(E.callPreview(s,c.kind).player.name)}</b><p>${c.replacement?'A live execution moment replaces the tactical calls.': '“'+esc(E.callPreview(s,c.kind).call[1])+'”'}</p></div><p>${instructions[c.type]}</p><p class="checkstakes">${c.replacement?'Success: +'+E.callPreview(s,c.kind).up.toFixed(1)+' result points. Miss: −'+E.callPreview(s,c.kind).down.toFixed(1)+' points. Trusting the players resolves from their abilities.':'Optional · success +6 percentage points · miss −3 points to this call’s success chance.'}</p><div id="check-stage"></div></div>`;dialog.querySelector('#check-close').onclick=()=>dialog.close();const stage=dialog.querySelector('#check-stage');
- if(c.status==='complete'){stage.innerHTML=`<h3>${c.result}</h3>${c.feedback?`<p class="checkfeedback">${esc(c.feedback)}</p>`:''}${c.type==='fog'?fogReview(c):''}<p>${c.replacement?'Your execution directly decides this moment’s result points. The whole match still depends on both teams.':'The modifier applies only to this decision. It does not guarantee the play succeeds.'}</p><button class="primary" id="check-resolve">Resolve the moment →</button>`;stage.querySelector('button').onclick=()=>{close();dialog.close();resolve(c.kind);};stage.querySelector('button').focus();return;}
+ if(c.status==='complete'){stage.innerHTML=`<h3>${c.result}</h3>${c.feedback?`<p class="checkfeedback">${esc(c.feedback)}</p>`:''}${c.type==='fog'?fogReview(c):['wave','ward'].includes(c.type)?tacticalReview(c):c.type==='timing'&&c.timingPosition!==undefined?timingTrack(c,E,c.timingPosition):''}<p>${c.replacement?'Your execution directly decides this moment’s result points. The whole match still depends on both teams.':'The modifier applies only to this decision. It does not guarantee the play succeeds.'}</p><button class="primary" id="check-resolve">Resolve the moment →</button>`;stage.querySelector('button').onclick=()=>{close();dialog.close();resolve(c.kind);};stage.querySelector('button').focus();return;}
  stage.innerHTML='<div class="actions"><button class="primary" id="check-start">Start check</button><button id="check-trust">Trust the players</button></div>';
  stage.querySelector('#check-trust').onclick=()=>{close();dialog.close();resolve(c.kind);};
  stage.querySelector('#check-start').onclick=()=>{if(!E.startSkillCheck(s))return;save();stopped=false;
- if(c.type==='timing'){const width=2*E.timingHalfWidth(c)*100,target=(c.target??.5)*100,duration=c.duration||1100;stage.innerHTML=`<div class="timingtrack"><div class="timingzone" style="left:${target-width/2}%;width:${width}%"></div><i id="timing-marker" style="left:${c.reverse?100:0}%"></i></div><button class="primary checkhit">${esc(c.title||'Secure objective')}</button>`;const hit=stage.querySelector('button');const position=()=>{const phase=((performance.now()-start)/duration)%2,value=phase<=1?phase:2-phase;return c.reverse?1-value:value;};bindHit(hit,()=>finish(position()));start=performance.now();const animate=()=>{stage.querySelector('#timing-marker').style.left=position()*100+'%';frame=requestAnimationFrame(animate);};frame=requestAnimationFrame(animate);}
+ if(c.type==='timing'){
+  const duration=c.duration||1100;let visible=c.reverse?1:0;
+  stage.innerHTML=timingTrack(c,E,visible,'timing-marker')+'<p class="timing-live" aria-hidden="true" id="timing-status">Follow the marker</p><button class="primary checkhit">'+esc(c.title||'Secure objective')+'</button>';
+  const marker=stage.querySelector('#timing-marker'),status=stage.querySelector('#timing-status'),hit=stage.querySelector('button');
+  const stop=()=>finish(visible);
+  bindHit(hit,stop);
+  // Click fires on release. Pointer-down captures the frame the player pressed
+  // on; keyboard and assistive clicks share that same displayed coordinate.
+  hit.onpointerdown=event=>{if(event.button!==undefined&&event.button!==0)return;event.preventDefault();stop();};
+  start=performance.now();let wasInside=false;
+  const animate=()=>{
+   const phase=((performance.now()-start)/duration)%2,value=phase<=1?phase:2-phase;
+   visible=c.reverse?1-value:value;marker.style.left=visible*100+'%';
+   const inside=Math.abs(visible-(c.target??.5))<=E.timingHalfWidth(c)+1e-9;
+   if(inside!==wasInside){status.textContent=inside?'Inside orange — press now':'Follow the marker';wasInside=inside;}
+   frame=requestAnimationFrame(animate);
+  };
+  frame=requestAnimationFrame(animate);
+ }
  else if(c.type==='reaction'){
   stage.innerHTML='<button class="reactioncue checkhit">WAIT — watch for green GO</button>';
   const hit=stage.querySelector('button');cue=0;bindHit(hit,()=>finish(cue?performance.now()-cue:-1));
@@ -42,6 +66,7 @@ export function mountSkillCheck(s,E,dialog,{save,resolve}){
   timer=setTimeout(nextCue,850+Math.random()*1500);
  }
  else if(c.type==='fog')cleanupCheck=mountFogTracking(stage,c,{finish});
+ else if(['wave','ward'].includes(c.type))cleanupCheck=mountTacticalCheck(stage,c,{finish});
  else{const q=SCENARIOS[c.scenario],spot={TOP:[70,25],MID:[110,85],BOT:[195,115]}[q.lane];stage.innerHTML=`<div class="mapbrief"><svg viewBox="0 0 220 170" role="img" aria-label="Map briefing: pressure at ${q.lane}"><rect x="5" y="5" width="210" height="160" rx="8" fill="#465955"/><path d="M25 145 V25 H195 M25 145 H195 V25 M25 145 L195 25" fill="none" stroke="#88958b" stroke-width="9"/><path d="M20 65 Q110 110 200 105" fill="none" stroke="#638999" stroke-width="10"/><circle cx="25" cy="145" r="12" fill="#e08443"/><circle cx="195" cy="25" r="12" fill="#a44343"/><circle cx="${spot[0]}" cy="${spot[1]}" r="15" fill="#a44343" stroke="#f4cbb6" stroke-width="2"/><text x="${spot[0]}" y="${spot[1]+4}" text-anchor="middle" fill="#fff" font-size="13">!</text><circle cx="85" cy="110" r="7" fill="#e08443"/><circle cx="65" cy="125" r="7" fill="#e08443"/><text x="15" y="18" fill="#fff" font-size="12">TOP</text><text x="93" y="77" fill="#fff" font-size="12">MID</text><text x="172" y="158" fill="#fff" font-size="12">BOT</text></svg><div><h3>${q.title}</h3><p>${q.enemy}</p><b>Focus: ${q.lane} side</b></div></div><p>Remember the situation…</p>`;timer=setTimeout(()=>{stage.innerHTML=`<h3>What is the best response?</h3><div class="mapanswers">${q.choices.map((x,i)=>({x,i})).sort((a,b)=>((a.i+(c.variant||0))%3)-((b.i+(c.variant||0))%3)).map(({x,i})=>`<button data-answer="${i}">${x}</button>`).join('')}</div>`;stage.querySelectorAll('button').forEach(b=>b.onclick=()=>finish(Number(b.dataset.answer)===q.answer));stage.querySelector('button').focus();timer=setTimeout(()=>finish(false),10000);},4000);}
  };
  }

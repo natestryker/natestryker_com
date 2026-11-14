@@ -93,8 +93,8 @@ test('counteroffers can shorten an overlong offer and survive export/import',()=
 
 test('signature traits change effective skills, overall, training and actual match performance',()=>{
  const s=fresh(),p=E.starters(s)[0];p.skills=Object.fromEntries(E.SKILLS.map(k=>[k,60]));p.traits=[];const normal=E.overall(p);
- p.traits=['FioraMain'];assert.equal(E.effectiveSkill(p,'Mechanics'),78);assert.equal(E.effectiveSkill(p,'Macro'),55);assert.ok(E.overall(p)>normal);
- p.traits=['Jhinaholic'];assert.equal(E.effectiveSkill(p,'Mechanics'),66);assert.equal(E.effectiveSkill(p,'Teamfighting'),70);
+ p.traits=['FioraMain'];assert.equal(E.effectiveSkill(p,'Mechanics'),72);assert.equal(E.effectiveSkill(p,'Macro'),55);assert.ok(E.overall(p)>normal);
+ p.traits=['Jhinaholic'];assert.equal(E.effectiveSkill(p,'Mechanics'),64);assert.equal(E.effectiveSkill(p,'Teamfighting'),67);
  p.skills.Mechanics=99;p.skills.Teamfighting=99;assert.equal(E.effectiveSkill(p,'Mechanics'),100);assert.equal(E.effectiveSkill(p,'Teamfighting'),100);
  for(const [trait,focus] of [['FioraMain','Mechanics'],['Jhinaholic','Teamfighting']]){const a=fresh(),b=structuredClone(a),pa=E.starters(a)[0],pb=E.starters(b)[0];pa.traits=[];pb.traits=[trait];pa.focus=pb.focus=focus;E.training(a);E.training(b);assert.ok(pb.skills[focus]>pa.skills[focus]);}
  const a=drafted(),b=structuredClone(a),pa=E.starters(a)[3],pb=E.starters(b)[3];pa.traits=[];pb.traits=['Jhinaholic'];E.finishDraft(a);E.finishDraft(b);E.enterMatchday(a);E.enterMatchday(b);E.fastForward(a);E.fastForward(b);
@@ -103,7 +103,7 @@ test('signature traits change effective skills, overall, training and actual mat
 
 test('academy profiles show academy partners and displayed skills include signature passives',()=>{
  const s=drafted(),[a,b]=E.academy(s),v=ui(s);s.bonds[key(a,b)]=48;a.traits=['FioraMain'];a.skills.Mechanics=60;a.skills.Macro=60;
- v.openProfile(a.id);const html=v.nodes['#modal'].innerHTML;assert.ok(html.includes(b.name));assert.match(html,/48% familiarity/);assert.match(html,/Mechanics<\/span><b>78/);assert.match(html,/Macro<\/span><b>55/);assert.match(html,/FioraMain/);
+ v.openProfile(a.id);const html=v.nodes['#modal'].innerHTML;assert.ok(html.includes(b.name));assert.match(html,/48% familiarity/);assert.match(html,/Mechanics<\/span><b>72/);assert.match(html,/Macro<\/span><b>55/);assert.match(html,/FioraMain/);
  E.finishDraft(s);assert.match(v.academyView(),/Academy connections/);
 });
 

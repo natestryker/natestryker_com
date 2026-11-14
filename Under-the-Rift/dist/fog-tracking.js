@@ -8,7 +8,7 @@ export function fogMap(c,{elapsed=null,reveal=false,choices=[]}={}){
  const q=fogScenario(c),destination=FOG_REGIONS[q.target];
  const regions=Object.entries(FOG_REGIONS).map(([key,r])=>{
   const number=choices.indexOf(key),correct=reveal&&key===q.target,wrong=reveal&&key===c.answer&&!correct;
-  return `<g class="fog-region${correct?' fog-correct':wrong?' fog-wrong':''}"><circle cx="${r.point[0]}" cy="${r.point[1]}" r="${number>=0||correct||wrong?14:5}"/>${number>=0?`<text x="${r.point[0]}" y="${r.point[1]+4}" class="fog-number">${number+1}</text>`:''}</g>`;
+  return `<g class="fog-region${correct?' fog-correct':wrong?' fog-wrong':''}"><title>${r.label}</title><circle cx="${r.point[0]}" cy="${r.point[1]}" r="${number>=0||correct||wrong?14:5}"/>${number>=0?`<text x="${r.point[0]}" y="${r.point[1]+4}" class="fog-number">${number+1}</text>`:''}${r.short?`<text x="${r.point[0]}" y="${r.point[1]+(number>=0?24:16)}" class="fog-camp-label">${r.short}</text>`:''}</g>`;
  }).join('');
  let tracks='';
  if(reveal){
@@ -36,7 +36,8 @@ export function fogMap(c,{elapsed=null,reveal=false,choices=[]}={}){
 }
 
 export function fogReview(c){
- return `<div class="fog-review">${fogMap(c,{reveal:true})}<p>The dotted line follows J’s route. The gold dot is its last visible position; the green ring marks its destination.</p></div>`;
+ const q=fogScenario(c),answer=c.answer?FOG_REGIONS[c.answer].label:'No destination chosen';
+ return `<div class="fog-read-summary"><span>Your read: <b>${answer}</b></span><span>Actual destination: <b>${FOG_REGIONS[q.target].label}</b></span></div><div class="fog-review">${fogMap(c,{reveal:true})}<p>The dotted line follows J’s route. The gold dot is its last visible position; the green ring marks its destination.</p></div>`;
 }
 
 export function mountFogTracking(stage,c,{finish}){
@@ -44,7 +45,7 @@ export function mountFogTracking(stage,c,{finish}){
  const cleanup=()=>{done=true;clearTimeout(timer);cancelAnimationFrame(frame);};
  const complete=value=>{if(done)return;cleanup();finish(value);};
  let started=0;
- stage.innerHTML=`<div class="fog-layout"><div id="fog-map-host" tabindex="-1" role="group" aria-label="Track the enemy jungler on the map"></div><div class="fog-brief"><span class="tag">LIVE VISION</span><h3>Keep your eyes on J</h3><p>The gold-ringed <b>J</b> is the enemy jungler. M and S are other enemies. Watch J’s direction through the vision gaps.</p><p id="fog-status" role="status">Tracking enemy movements…</p><div class="fog-progress" aria-hidden="true"><i id="fog-progress"></i></div><p class="muted">The map goes dark before you make your call.</p></div></div>`;
+ stage.innerHTML=`<div class="fog-layout"><div id="fog-map-host" tabindex="-1" role="group" aria-label="Track the enemy jungler on the map"></div><div class="fog-brief"><span class="tag">LIVE VISION</span><h3>Keep your eyes on J</h3><p>The gold-ringed <b>J</b> is the enemy jungler. M and S are other enemies. Watch J’s direction through the vision gaps.</p><p>J can head to a lane, objective, jungle camp, river contest, or base reset. Camp names are marked on the map.</p><p id="fog-status" role="status">Tracking enemy movements…</p><div class="fog-progress" aria-hidden="true"><i id="fog-progress"></i></div><p class="muted">The map goes dark before you make your call.</p></div></div>`;
  const host=stage.querySelector('#fog-map-host'),status=stage.querySelector('#fog-status'),progress=stage.querySelector('#fog-progress');
  let previous='';
  const observe=()=>{
@@ -60,9 +61,9 @@ export function mountFogTracking(stage,c,{finish}){
   if(done)return;
   cancelAnimationFrame(frame);
   const choices=fogChoices(c),deadline=performance.now()+FOG_ANSWER_MS;
-  stage.innerHTML=`<div class="fog-layout"><div>${fogMap(c,{choices})}</div><div class="fog-brief"><span class="tag">ENEMY MISSING</span><h3>Where was J heading?</h3><p>Continue the jungler’s last visible direction. Choose the most likely destination.</p><p id="fog-countdown" role="timer" aria-label="Time remaining">8 seconds left</p><div class="fog-progress" aria-hidden="true"><i id="fog-progress"></i></div><div class="fog-answers">${choices.map((key,i)=>`<button data-fog-answer="${key}"><span>${i+1}</span>${FOG_REGIONS[key].label}</button>`).join('')}</div><p class="muted">Choose once · Tab, then Enter / Space</p></div></div>`;
+  stage.innerHTML=`<div class="fog-layout fog-question"><div>${fogMap(c,{choices})}</div><div class="fog-brief"><span class="tag">ENEMY MISSING</span><h3>Where was J heading?</h3><p>Follow J’s last visible heading. Choose its next destination.</p><p id="fog-countdown" role="timer" aria-label="Time remaining">8 seconds left</p><div class="fog-progress" aria-hidden="true"><i id="fog-progress"></i></div><div class="fog-answers">${choices.map((key,i)=>`<button data-fog-answer="${key}"><span>${i+1}</span>${FOG_REGIONS[key].label}</button>`).join('')}</div><p class="muted">Choose once · Tab, then Enter / Space</p></div></div>`;
   stage.querySelectorAll('[data-fog-answer]').forEach(button=>button.onclick=()=>complete(performance.now()>=deadline?NaN:button.dataset.fogAnswer));
-  stage.querySelector('[data-fog-answer]').focus();
+  stage.querySelector('[data-fog-answer]').focus();stage.scrollIntoView({block:'start',behavior:'instant'});
   const countdown=stage.querySelector('#fog-countdown'),bar=stage.querySelector('#fog-progress');
   let seconds=8;
   const tick=()=>{

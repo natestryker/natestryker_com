@@ -1,3 +1,4 @@
+import {knownTraits} from './scouting.js';
 import {RARE_TRAITS,SPECIAL_TRAITS,SECRET_COMBOS,SKILLS,PERSONALITY,TRAITS} from './data.js';
 import {starters,overall,effectiveSkill,chemistry,composition,teamRating,getPlayer,careerStats,regionalPortrait} from './engine.js';
 export const SECRET_NAMES={desk:'The manager’s desk',former:'Hope you kept the receipt',reverse:'The 0–2 comfort zone',chat:'Academy group chat',jersey:'The old jersey',mascot:'An unqualified opinion',bench:'The perfect benchwarmer',prospect:'One more bubble',toast:'Four shots, one obsession',vdupard:'The grand duelist',scrims:'Scrim world champions'};
@@ -16,7 +17,7 @@ export function ensureDiscoveries(s){
  return s.discoveries;
 }
 export function discover(s,id){const x=ensureDiscoveries(s);if(x.found[id])return false;x.found[id]={year:s.year,step:s.step};return true;}
-export function inspectPlayer(s,p){if(!p)return;const x=ensureDiscoveries(s);for(const t of p.traits)if(!x.seenTraits.includes(t))x.seenTraits.push(t);if(p.secretProspect)discover(s,!p.secretKind||p.secretKind==='natestryker'?'prospect':p.secretKind);}
+export function inspectPlayer(s,p){if(!p)return;const x=ensureDiscoveries(s);for(const t of knownTraits(s,p))if(!x.seenTraits.includes(t))x.seenTraits.push(t);if(p.secretProspect)discover(s,!p.secretKind||p.secretKind==='natestryker'?'prospect':p.secretKind);}
 export function seedSecretProspect(s,pool){
  const x=ensureDiscoveries(s),q=x.prospect;if(q.spawned||s.year<q.year||q.lastRollYear===s.year)return;
  q.lastRollYear=s.year;if(secretRandom(x)>=.2)return;

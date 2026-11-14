@@ -82,8 +82,8 @@ test('full senior squads can fund a real upgrade by settling a reserve contract'
  const s=setup(),t=s.teams[1];s.phase='offseason';E.ensureMeta(s);assert.ok(E.openWindow(s).ok);
  for(const other of s.teams)if(other.id!==s.team)other.funds=0;
  t.funds=2000000;t.wageLimit=1000000;
- for(const p of s.players.filter(p=>p.team===t.id))for(const k of E.SKILLS)p.skills[k]=10;
- while(E.squad(s,t.id).length<7){const p=E.createPlayer(s,'SUP',5,t.id,'main');p.contract.role='Rotation';s.players.push(p);}
+ for(const p of s.players.filter(p=>p.team===t.id)){p.traits=[];for(const k of E.SKILLS)p.skills[k]=10;}
+ while(E.squad(s,t.id).length<7){const p=E.createPlayer(s,'SUP',5,t.id,'main');p.traits=[];for(const k of E.SKILLS)p.skills[k]=1;p.contract.role='Rotation';s.players.push(p);}
  const reserves=E.squad(s,t.id).filter(p=>t.lineup[p.role]!==p.id).map(p=>p.id);
  const target=E.createPlayer(s,'MID',95);target.contract=null;s.players.push(target);
  for(let i=0;i<6;i++)assert.ok(E.advanceWindow(s).ok);
@@ -116,14 +116,14 @@ test('roster rumors omit stale, ineligible and unaffordable competing offers',()
  assert.ok(news.some(r=>r.text.includes('release Example')));assert.ok(news.every(r=>!r.text.includes('sign Example')));
 });
 
-test('GCD includes every signed player, exact scores, salaries, expiry and club plans',()=>{
+test('GCD includes every signed player, scouted scores, salaries, expiry and club plans',()=>{
  const s=setup(),screen=ui(s),before=JSON.stringify(s),html=screen.globalContractDatabase();
  assert.match(html,/GCD \(Global Contract Database\)/);assert.equal((html.match(/data-gcd-team=/g)||[]).length,s.teams.length);
  const signed=s.players.filter(p=>p.team>=0);assert.equal((html.match(/data-gcd-player=/g)||[]).length,signed.length);
  for(const p of signed){
   const row=html.split(`data-gcd-player="${p.id}"`)[1].split('</tr>')[0];
   assert.ok(row.includes('$'+p.contract.salary.toLocaleString('en-US')+'/yr'));
-  assert.ok(row.includes(String(p.contract.end)));assert.ok(row.includes(`<b>${E.overall(p)}</b>`));
+  assert.ok(row.includes(String(p.contract.end)));assert.ok(row.includes(`<b>${E.scoutingLabel(s,p)}</b>`));
  }
  assert.equal(JSON.stringify(s),before);screen.tab('gcd');assert.match(screen.marketView(),/Global Contract Database/);
  const p=signed[0];p.name='<img onerror="oops">';p.contract.end=s.year;s.phase='offseason';E.ensureMeta(s);

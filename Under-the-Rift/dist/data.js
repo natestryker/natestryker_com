@@ -22,7 +22,19 @@ Tenacious:{description:'Gains one performance point while behind in a series.',b
 Closer:{description:'Gains one performance point when one win from taking a series.',matchPoint:1},
 FreshMind:{description:'Gains one performance point below 25 fatigue.',fresh:1},
 Encouraging:{description:'Positive performances improve Form 10% more.',positive:1.1},
-Sensitive:{description:'Poor performances affect Form 10% more.',negative:1.1}
+Sensitive:{description:'Poor performances affect Form 10% more.',negative:1.1},
+Coachable:{description:'Communication training is 10% more effective.',skill:'Communication',gain:1.1},
+PatientLearner:{description:'Light training is 12% more effective.',intensity:'Light',pace:1.12},
+RoutineKeeper:{description:'Normal training is 8% more effective and generates 10% less fatigue.',intensity:'Normal',pace:1.08,fatigueNormal:.9},
+Experimenter:{description:'Balanced training is 12% more effective; match performances vary 8% more.',focus:'Balanced',pace:1.12,spread:1.08},
+CalmVoice:{description:'Communication training improves 8% faster; poor games affect Form 10% less.',skill:'Communication',gain:1.08,negative:.9},
+FastStarter:{description:'Gains 1.2 performance points below 25 fatigue.',fresh:1.2},
+SlowBurn:{description:'Gains 1.2 performance points on match point, but loses 0.5 when fresh.',matchPoint:1.2,fresh:-.5},
+Emotional:{description:'Positive Form swings are 18% stronger; negative swings are 15% stronger.',positive:1.18,negative:1.15},
+Workhorse:{description:'Generates 12% less training fatigue.',fatigue:.88,fatigueNormal:.88},
+SoloGrinder:{description:'Mechanics training is 12% more effective.',skill:'Mechanics',gain:1.12},
+Supportive:{description:'Teamfighting training improves 8% faster; recovery restores one extra Form.',skill:'Teamfighting',gain:1.08,recoveryForm:1},
+Stubborn:{description:'Mechanics-focused training is 15% more effective, at the cost of 2 Communication.',focus:'Mechanics',pace:1.15,skills:{Communication:-2}}
 };
 Object.assign(TRAITS,Object.fromEntries(Object.entries(PERSONALITY).map(([name,data])=>[name,data.description])));
 export const LEGACY_PORTRAITS=[0,2,3,4,5,7,8,10,12,14,15];
@@ -102,16 +114,40 @@ StageSpark:{description:'Rare · +1.5 performance on match point; positive Form 
 OldSoul:{description:'Rare · Light training +16%; poor games affect Form 15% less.',intensity:'Light',pace:1.16,negative:.85},
 Relentless:{description:'Rare · Intense training +14%, with 10% less fatigue.',intensity:'Intense',pace:1.14,fatigue:.9},
 PatternReader:{description:'Rare · Macro training +15%; +1 performance when fresh.',skill:'Macro',gain:1.15,fresh:1},
-TeamFirst:{description:'Rare · Communication training +15%; normal training fatigue −20%.',skill:'Communication',gain:1.15,fatigueNormal:.8}
+TeamFirst:{description:'Rare · Communication training +15%; normal training fatigue −20%.',skill:'Communication',gain:1.15,fatigueNormal:.8},
+PhoenixMind:{description:'Rare · +2 performance while behind; poor games affect Form 25% less.',behind:2,negative:.75},
+TempoSetter:{description:'Rare · +3 Macro, +2 Communication; training gains +5%.',skills:{Macro:3,Communication:2},pace:1.05},
+Marathoner:{description:'Rare · Training fatigue −30%; recovery restores one extra Form.',fatigue:.7,fatigueNormal:.7,recoveryForm:1},
+PrecisionArtist:{description:'Rare · Mechanics training +22%; performances vary 20% less.',skill:'Mechanics',gain:1.22,spread:.8},
+PressureProof:{description:'Rare · +2.2 performance on match point; performances vary 20% less.',matchPoint:2.2,spread:.8},
+ScrimCaptain:{description:'Rare · Teamfighting training +20%; private scrim performance +4.',skill:'Teamfighting',gain:1.2,scrim:4},
+RapidAdapter:{description:'Rare · Balanced training gains +22%.',focus:'Balanced',pace:1.22},
+Counterpuncher:{description:'Rare · +2.3 performance while behind and +0.5 when fresh.',behind:2.3,fresh:.5},
+StrategicPatience:{description:'Rare · Macro training +22%; normal training fatigue −15%.',skill:'Macro',gain:1.22,fatigueNormal:.85},
+SteadyHands:{description:'Rare · Performances vary 25% less; positive games improve Form 12% more.',spread:.75,positive:1.12}
 };
 export const SPECIAL_PERSONALITY={OneMoreBubble:{description:'Signature · Mechanics training +20%; +1.5 performance while behind in a series.',skill:'Mechanics',gain:1.2,behind:1.5},StarCartographer:{description:'Signature · Macro training +18%; +1 performance when fresh.',skill:'Macro',gain:1.18,fresh:1},
-Jhinaholic:{description:'Signature · Mechanics +6; Teamfighting +10; Teamfighting training +25%; match performance +1.5 with steadier aim.',skills:{Mechanics:6,Teamfighting:10},skill:'Teamfighting',gain:1.25,performance:1.5,spread:.85},
-FioraMain:{description:'Signature · Mechanics +18; Macro −5; Mechanics training +40%.',skills:{Mechanics:18,Macro:-5},skill:'Mechanics',gain:1.4}};
-Object.assign(PERSONALITY,RARE_PERSONALITY,SPECIAL_PERSONALITY);
-Object.assign(TRAITS,Object.fromEntries(Object.entries({...RARE_PERSONALITY,...SPECIAL_PERSONALITY}).map(([k,v])=>[k,v.description])));
+Jhinaholic:{description:'GOAT · Mechanics +4; Teamfighting +7; Teamfighting training +18%; match performance +1 with steadier aim.',skills:{Mechanics:4,Teamfighting:7},skill:'Teamfighting',gain:1.18,performance:1,spread:.9},
+FioraMain:{description:'GOAT · Mechanics +12; Macro −5; Mechanics training +25%.',skills:{Mechanics:12,Macro:-5},skill:'Mechanics',gain:1.25}};
+export const GENERATIONAL_PERSONALITY={
+OnceInAGeneration:{description:'Generational · All training gains +25%; performances vary 15% less.',pace:1.25,spread:.85},
+Omniscient:{description:'Generational · +6 Macro, +3 Communication; Macro training +30%.',skills:{Macro:6,Communication:3},skill:'Macro',gain:1.3},
+MechanicalProdigy:{description:'Generational · +7 Mechanics; Mechanics training +35%; performances vary 8% more.',skills:{Mechanics:7},skill:'Mechanics',gain:1.35,spread:1.08},
+BornLeader:{description:'Generational · +7 Communication, +3 Teamfighting; Communication training +30%; +1.5 performance while behind.',skills:{Communication:7,Teamfighting:3},skill:'Communication',gain:1.3,behind:1.5},
+DynastyAnchor:{description:'Generational · +6 Teamfighting, +3 Communication; Teamfighting training +30%; +2 performance on match point.',skills:{Teamfighting:6,Communication:3},skill:'Teamfighting',gain:1.3,matchPoint:2},
+Indomitable:{description:'Generational · Poor games affect Form 45% less; +3 performance while behind and +1.5 on match point.',negative:.55,behind:3,matchPoint:1.5},
+EndlessDrive:{description:'Generational · Training gains +20% with 30% less training fatigue.',pace:1.2,fatigue:.7,fatigueNormal:.7},
+FinalBoss:{description:'Generational · +2.5 match performance, an extra +2 on match point; performances vary 20% less.',performance:2.5,matchPoint:2,spread:.8}
+};
+Object.assign(PERSONALITY,RARE_PERSONALITY,GENERATIONAL_PERSONALITY,SPECIAL_PERSONALITY);
+Object.assign(TRAITS,Object.fromEntries(Object.entries({...RARE_PERSONALITY,...GENERATIONAL_PERSONALITY,...SPECIAL_PERSONALITY}).map(([k,v])=>[k,v.description])));
 export const RARE_TRAITS=Object.keys(RARE_PERSONALITY);
 export const SPECIAL_TRAITS=Object.keys(SPECIAL_PERSONALITY);
-export const COMMON_TRAITS=Object.keys(TRAITS).filter(t=>!RARE_TRAITS.includes(t)&&!SPECIAL_TRAITS.includes(t));
+export const GOAT_TRAITS=['Jhinaholic','FioraMain'];
+export const GENERATIONAL_TRAITS=[...Object.keys(GENERATIONAL_PERSONALITY),...SPECIAL_TRAITS.filter(t=>!GOAT_TRAITS.includes(t))];
+export const COMMON_TRAITS=Object.keys(TRAITS).filter(t=>!RARE_TRAITS.includes(t)&&!GENERATIONAL_TRAITS.includes(t)&&!GOAT_TRAITS.includes(t));
+export const TRAIT_TIERS={common:{label:'Common'},rare:{label:'Rare',chance:1/5},generational:{label:'Generational',chance:.045},goat:{label:'GOAT'}};
+export const traitTier=t=>GOAT_TRAITS.includes(t)?'goat':GENERATIONAL_TRAITS.includes(t)?'generational':RARE_TRAITS.includes(t)?'rare':'common';
 const secretLink=(id,a,b,title,text,bonus,traits)=>Object.assign([a,b,title,text,bonus],{secretId:id,traits});
 export const SECRET_COMBOS=[
 secretLink('bedrock','Tank','Hypercarry','Bedrock & ambition','An unshakeable frontline protects a patient carry.',1.7,['AnchorMind','Patient']),
