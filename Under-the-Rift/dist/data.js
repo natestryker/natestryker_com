@@ -104,7 +104,9 @@ Relentless:{description:'Rare · Intense training +14%, with 10% less fatigue.',
 PatternReader:{description:'Rare · Macro training +15%; +1 performance when fresh.',skill:'Macro',gain:1.15,fresh:1},
 TeamFirst:{description:'Rare · Communication training +15%; normal training fatigue −20%.',skill:'Communication',gain:1.15,fatigueNormal:.8}
 };
-export const SPECIAL_PERSONALITY={OneMoreBubble:{description:'Signature · Mechanics training +20%; +1.5 performance while behind in a series.',skill:'Mechanics',gain:1.2,behind:1.5},StarCartographer:{description:'Signature · Macro training +18%; +1 performance when fresh.',skill:'Macro',gain:1.18,fresh:1}};
+export const SPECIAL_PERSONALITY={OneMoreBubble:{description:'Signature · Mechanics training +20%; +1.5 performance while behind in a series.',skill:'Mechanics',gain:1.2,behind:1.5},StarCartographer:{description:'Signature · Macro training +18%; +1 performance when fresh.',skill:'Macro',gain:1.18,fresh:1},
+Jhinaholic:{description:'Signature · Mechanics +6; Teamfighting +10; Teamfighting training +25%; match performance +1.5 with steadier aim.',skills:{Mechanics:6,Teamfighting:10},skill:'Teamfighting',gain:1.25,performance:1.5,spread:.85},
+FioraMain:{description:'Signature · Mechanics +18; Macro −5; Mechanics training +40%.',skills:{Mechanics:18,Macro:-5},skill:'Mechanics',gain:1.4}};
 Object.assign(PERSONALITY,RARE_PERSONALITY,SPECIAL_PERSONALITY);
 Object.assign(TRAITS,Object.fromEntries(Object.entries({...RARE_PERSONALITY,...SPECIAL_PERSONALITY}).map(([k,v])=>[k,v.description])));
 export const RARE_TRAITS=Object.keys(RARE_PERSONALITY);

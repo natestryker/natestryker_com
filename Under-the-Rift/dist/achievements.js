@@ -46,6 +46,10 @@ one('mascot','Expert analysis','Secrets','Ask the mascot for a roster opinion.',
 one('bench','The legend nobody sees','Secrets','Discover a long-serving substitute’s fan following.',true);
 one('prospect','One more bubble','Secrets','Find the natestryker prospect.',true);
 one('signed-prospect','An unusual signature','Secrets','Recruit the natestryker prospect to your club.',true);
+one('toast','Four shots, one obsession','Secrets','Find the Toast prospect.',true);
+one('signed-toast','A toast to the fourth shot','Secrets','Recruit Toast to your club.',true);
+one('vdupard','The grand duelist','Secrets','Find the Vdupard prospect.',true);
+one('signed-vdupard','En garde','Secrets','Recruit Vdupard to your club.',true);
 one('scrims','Champions behind closed doors','Secrets','Open a Worlds scrim report.',true);
 export const emptyAchievementBook=()=>({unlocked:{},progress:{},seenTraits:[],eggs:[]});
 export function mergeAchievementBooks(a=emptyAchievementBook(),b=emptyAchievementBook()){

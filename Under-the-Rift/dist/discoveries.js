@@ -1,17 +1,42 @@
 import {RARE_TRAITS,SPECIAL_TRAITS,SECRET_COMBOS,SKILLS,PERSONALITY,TRAITS} from './data.js';
-import {starters,overall,chemistry,composition,teamRating,getPlayer,careerStats,regionalPortrait} from './engine.js';
-export const SECRET_NAMES={desk:'The manager’s desk',former:'Hope you kept the receipt',reverse:'The 0–2 comfort zone',chat:'Academy group chat',jersey:'The old jersey',mascot:'An unqualified opinion',bench:'The perfect benchwarmer',prospect:'One more bubble',scrims:'Scrim world champions'};
+import {starters,overall,effectiveSkill,chemistry,composition,teamRating,getPlayer,careerStats,regionalPortrait} from './engine.js';
+export const SECRET_NAMES={desk:'The manager’s desk',former:'Hope you kept the receipt',reverse:'The 0–2 comfort zone',chat:'Academy group chat',jersey:'The old jersey',mascot:'An unqualified opinion',bench:'The perfect benchwarmer',prospect:'One more bubble',toast:'Four shots, one obsession',vdupard:'The grand duelist',scrims:'Scrim world champions'};
+export const SECRET_PROSPECTS={
+ natestryker:{name:'natestryker',role:'MID',niches:['Artillery mage','Control mage'],traits:['OneMoreBubble','StarCartographer']},
+ toast:{name:'Toast',role:'ADC',niches:['Lane bully','Hypercarry'],traits:['Jhinaholic']},
+ vdupard:{name:'Vdupard',role:'TOP',niches:['Duelist','Bruiser'],traits:['FioraMain']}
+};
 export const secretRandom=x=>{x.seed=(Math.imul(1664525,x.seed)+1013904223)>>>0;return x.seed/4294967296;};
 export function ensureDiscoveries(s){
- if(!s.discoveries){const x=s.discoveries={seed:(s.seed^0x6e617465)>>>0,found:{},seenTraits:[],combos:{},awards:{},notices:[],history:{},bench:{},scrims:[],clicks:{},resultsSeen:0,reverseSweeps:0,first:{manager:s.manager,team:s.team,year:s.year,roster:starters(s).map(p=>({id:p.id,name:p.name,portrait:p.portrait,role:p.role}))}};x.prospect={eligible:secretRandom(x)<.12,year:s.year+(s.players.some(p=>p.draftYear===s.year)?1:0),spawned:false,id:null};}
+ if(!s.discoveries){const x=s.discoveries={seed:(s.seed^0x6e617465)>>>0,found:{},seenTraits:[],combos:{},awards:{},notices:[],history:{},bench:{},scrims:[],clicks:{},resultsSeen:0,reverseSweeps:0,first:{manager:s.manager,team:s.team,year:s.year,roster:starters(s).map(p=>({id:p.id,name:p.name,portrait:p.portrait,role:p.role}))}};x.prospect={eligible:true,year:s.year+(s.players.some(p=>p.draftYear===s.year)?1:0),spawned:false,id:null,kind:null,lastRollYear:null};}
+ const q=s.discoveries.prospect;
+ // Preserve already-generated legacy drafts and the lifetime cap; retry future drafts.
+ if(!Object.hasOwn(q,'lastRollYear')){const p=s.players.find(p=>p.secretProspect);q.spawned=!!p||q.spawned;q.id=p?.id||q.id;q.kind=p?.secretKind||(q.spawned?'natestryker':null);q.eligible=true;q.year=Math.max(q.year,s.year+(s.draft?.pool?.length?1:0));q.lastRollYear=s.draft?.pool?.length?s.year:null;if(p)p.secretKind??=q.kind;}
  return s.discoveries;
 }
 export function discover(s,id){const x=ensureDiscoveries(s);if(x.found[id])return false;x.found[id]={year:s.year,step:s.step};return true;}
-export function inspectPlayer(s,p){if(!p)return;const x=ensureDiscoveries(s);for(const t of p.traits)if(!x.seenTraits.includes(t))x.seenTraits.push(t);if(p.secretProspect)discover(s,'prospect');}
-export function seedSecretProspect(s,pool){const x=ensureDiscoveries(s),q=x.prospect;if(q.spawned||!q.eligible||s.year<q.year)return;const p=pool.map(id=>getPlayer(s,id)).find(p=>p.role==='MID'&&p.team===-1);if(!p)return;
- q.spawned=true;q.id=p.id;p.name='natestryker';if(!s.usedNames.includes(p.name))s.usedNames.push(p.name);p.secretProspect=true;p.homeRegion=secretRandom(x)<.5?'LCS':'LCK';p.age=18;p.niches=['Artillery mage','Control mage'];p.skills=Object.fromEntries(SKILLS.map(k=>[k,76+secretRandom(x)*14]));p.initial=overall(p);p.traits=['OneMoreBubble','StarCartographer'];p.learning=1.35+secretRandom(x)*.3;p.growth=45+Math.floor(secretRandom(x)*21);p.form=82;p.portrait=regionalPortrait(s,p.homeRegion);
+export function inspectPlayer(s,p){if(!p)return;const x=ensureDiscoveries(s);for(const t of p.traits)if(!x.seenTraits.includes(t))x.seenTraits.push(t);if(p.secretProspect)discover(s,!p.secretKind||p.secretKind==='natestryker'?'prospect':p.secretKind);}
+export function seedSecretProspect(s,pool){
+ const x=ensureDiscoveries(s),q=x.prospect;if(q.spawned||s.year<q.year||q.lastRollYear===s.year)return;
+ q.lastRollYear=s.year;if(secretRandom(x)>=.2)return;
+ const kinds=Object.keys(SECRET_PROSPECTS),kind=kinds[Math.floor(secretRandom(x)*kinds.length)],spec=SECRET_PROSPECTS[kind];
+ const p=pool.map(id=>getPlayer(s,id)).find(p=>p?.role===spec.role&&p.team===-1);if(!p)return;
+ q.spawned=true;q.id=p.id;q.kind=kind;p.name=spec.name;if(!s.usedNames.includes(p.name))s.usedNames.push(p.name);
+ p.secretProspect=true;p.secretKind=kind;p.homeRegion=secretRandom(x)<.5?'LCS':'LCK';p.age=18;p.niches=[...spec.niches];p.traits=[...spec.traits];
+ p.skills=Object.fromEntries(SKILLS.map(k=>[k,76+secretRandom(x)*14]));p.initial=overall(p);p.learning=1.35+secretRandom(x)*.3;p.growth=45+Math.floor(secretRandom(x)*21);p.form=82;
+ // Artwork selection shares the discovery stream, never the match RNG stream.
+ const portraitState={...s,seed:x.seed};p.portrait=regionalPortrait(portraitState,p.homeRegion);x.seed=portraitState.seed;
 }
 export const draftEligible=(s,p,team)=>!p.secretProspect||['LCS','LCK'].includes(s.teams[team]?.region);
+function validateSpecialProspects(s,fail){
+ const q=s.discoveries.prospect,players=s.players.filter(p=>p.secretProspect);
+ if(players.length>1||players.some(p=>p.secretKind!==undefined&&!Object.hasOwn(SECRET_PROSPECTS,p.secretKind))||s.players.some(p=>p.secretKind&&!p.secretProspect))fail();
+ if(q.lastRollYear!==undefined){
+  if(q.lastRollYear!==null&&(!Number.isInteger(q.lastRollYear)||q.lastRollYear<2026||q.lastRollYear>s.year))fail();
+  if(q.kind!==null&&!Object.hasOwn(SECRET_PROSPECTS,q.kind)||q.spawned!==(players.length===1))fail();
+  if(q.spawned&&(q.id!==players[0].id||q.kind!==(players[0].secretKind||'natestryker'))||!q.spawned&&(q.id!==null||q.kind!==null))fail();
+ }
+}
 function notice(s,id,title,text,player=null){const x=ensureDiscoveries(s);if(x.notices.some(n=>n.id===id))return;x.notices.unshift({id,title,text,player,year:s.year,step:s.step});x.notices=x.notices.slice(0,50);}
 export function trackClubStories(s){const x=ensureDiscoveries(s);
  for(const p of s.players){let h=x.history[p.id];if(!h){h=x.history[p.id]={team:p.team,visited:p.team>=0?[p.team]:[],since:s.step};}if(h.team!==p.team){if(p.team>=0){if(p.team===s.team&&h.visited.includes(p.team)){discover(s,'jersey');notice(s,`jersey:${p.id}:${s.step}`,'We still had your size.',`${p.name} is back at ${s.teams[p.team].name}. The kit manager kept an old jersey—and their former teammates kept the group chat.`,p.id);}if(!h.visited.includes(p.team))h.visited.push(p.team);}h.team=p.team;h.since=s.step;}
@@ -39,9 +64,10 @@ export function mascotOpinion(s){const x=ensureDiscoveries(s),ps=starters(s),p=p
 export {ACHIEVEMENTS,emptyAchievementBook,mergeAchievementBooks} from './achievements.js';
 import {ACHIEVEMENTS} from './achievements.js';
 export function achievementMetrics(s){const x=ensureDiscoveries(s),c=careerStats(s),owned=s.players.filter(p=>p.team===s.team),ps=starters(s),titles=c.titles,m={series:c.series,wins:c.wins,games:c.games,streak:c.longestStreak,titles:titles.length,worlds:c.worlds,msi:c.msi,regional:c.regional,reverse:x.reverseSweeps,overall:Math.max(c.peaks.overall?.value||0,...owned.map(overall)),growth:Math.max(0,...owned.map(p=>overall(p)-p.initial)),chemistry:chemistry(s),tenure:c.longestTenure?.weeks||0,traits:x.seenTraits.length,raretraits:x.seenTraits.filter(t=>RARE_TRAITS.includes(t)).length,eggs:Object.keys(x.found).length,links:Object.keys(x.combos).length,scouted:s.players.filter(p=>p.scout===2).length,networks:Object.values(s.teams[s.team].networks||{}).filter(n=>n===3).length,funds:s.budget,clubs:new Set(s.career.stints.map(t=>t.team)).size};
- for(const k of SKILLS)m['skill-'+k]=+(Math.max(c.peaks.skills[k]?.value||0,...owned.map(p=>p.skills[k]))>=90);
- m['all-rounder']=+owned.some(p=>SKILLS.every(k=>p.skills[k]>=85));m['perfect-form']=+owned.some(p=>p.form>=100);m['five-nineties']=+ps.every(p=>overall(p)>=90);m['rested']=+ps.every(p=>p.fatigue===0);m['duo-max']=+(c.peaks.duo?.value>=100);m['mvp-ten']=+(c.mvps[0]?.count>=10);m['rating-perfect']=+(c.bestMatch?.value>=100);
- m['academy-starter']=+ps.some(p=>p.draftedBy===s.team);m['signed-prospect']=+owned.some(p=>p.secretProspect);
+ for(const k of SKILLS)m['skill-'+k]=+(Math.max(c.peaks.skills[k]?.value||0,...owned.map(p=>effectiveSkill(p,k)))>=90);
+ m['all-rounder']=+owned.some(p=>SKILLS.every(k=>effectiveSkill(p,k)>=85));m['perfect-form']=+owned.some(p=>p.form>=100);m['five-nineties']=+ps.every(p=>overall(p)>=90);m['rested']=+ps.every(p=>p.fatigue===0);m['duo-max']=+(c.peaks.duo?.value>=100);m['mvp-ten']=+(c.mvps[0]?.count>=10);m['rating-perfect']=+(c.bestMatch?.value>=100);
+ m['academy-starter']=+ps.some(p=>p.draftedBy===s.team);m['signed-prospect']=+owned.some(p=>p.secretProspect&&(!p.secretKind||p.secretKind==='natestryker'));
+ for(const kind of ['toast','vdupard'])m['signed-'+kind]=+owned.some(p=>p.secretProspect&&p.secretKind===kind);
  const years=[...new Set(titles.map(h=>h.year))];m['golden-road']=+years.some(y=>s.teams.some(t=>['Spring','Summer','MSI','Worlds'].every(ev=>titles.some(h=>h.year===y&&h.winner===t.id&&h.event===(['Spring','Summer'].includes(ev)?t.region+' '+ev:ev)))));
  m['repeat-worlds']=+titles.some(h=>h.event==='Worlds'&&titles.some(k=>k.event==='Worlds'&&k.winner===h.winner&&k.year===h.year-1));m['four-regions']=+(new Set(titles.filter(h=>!['MSI','Worlds'].includes(h.event)).map(h=>s.teams[h.winner].region)).size===4);
  const own=s.results.map((r,i)=>({r,stint:s.career.stints.find(t=>i>=t.start&&(t.end===null||i<t.end)&&(r.a===t.team||r.b===t.team))})).filter(x=>x.stint);
@@ -52,7 +78,7 @@ export function achievementMetrics(s){const x=ensureDiscoveries(s),c=careerStats
 }
 export function updateDiscoveries(s){ensureDiscoveries(s);trackClubStories(s);afterSecretResults(s);generateScrimReport(s);const x=s.discoveries,m=achievementMetrics(s);x.progress??={};for(const [key,value] of Object.entries(m))x.progress[key]=Math.max(x.progress[key]||0,value);for(const a of ACHIEVEMENTS)if((x.progress[a.metric]||0)>=a.goal&&!x.awards[a.id])x.awards[a.id]={year:s.year,step:s.step,manager:s.manager,club:s.teams[s.team].name};return x;}
 export function careerAchievementBook(s){const x=ensureDiscoveries(s);return {unlocked:x.awards,progress:x.progress||{},seenTraits:x.seenTraits,eggs:Object.keys(x.found)};}
-export function validateDiscoveries(s,fail){const x=s.discoveries;if(!x)return;const obj=v=>v&&typeof v==='object'&&!Array.isArray(v);if(!obj(x)||!Number.isInteger(x.seed)||!obj(x.found)||!obj(x.combos)||!obj(x.awards)||!Array.isArray(x.seenTraits)||!x.seenTraits.every(t=>typeof t==='string')||!Array.isArray(x.notices)||!Array.isArray(x.scrims)||!obj(x.history)||!obj(x.bench)||!obj(x.clicks)||!obj(x.first)||!Array.isArray(x.first.roster)||!obj(x.prospect)||typeof x.prospect.eligible!=='boolean'||typeof x.prospect.spawned!=='boolean'||!Number.isInteger(x.resultsSeen)||x.resultsSeen<0||x.resultsSeen>s.results.length||!Number.isFinite(x.reverseSweeps))fail();if(Object.keys(x.found).some(k=>!Object.hasOwn(SECRET_NAMES,k))||Object.keys(x.combos).some(k=>!SECRET_COMBOS.some(c=>c.secretId===k)))fail();for(const report of x.scrims)if(!Number.isInteger(report.year)||!Array.isArray(report.rows)||report.rows.some(r=>!s.teams[r.team]||!Number.isInteger(r.wins)||!Number.isInteger(r.losses)||r.wins<0||r.losses<0))fail();validateDiscoveryDetails(s,fail);}
+export function validateDiscoveries(s,fail){const x=s.discoveries;if(!x)return;const obj=v=>v&&typeof v==='object'&&!Array.isArray(v);if(!obj(x)||!Number.isInteger(x.seed)||!obj(x.found)||!obj(x.combos)||!obj(x.awards)||!Array.isArray(x.seenTraits)||!x.seenTraits.every(t=>typeof t==='string')||!Array.isArray(x.notices)||!Array.isArray(x.scrims)||!obj(x.history)||!obj(x.bench)||!obj(x.clicks)||!obj(x.first)||!Array.isArray(x.first.roster)||!obj(x.prospect)||typeof x.prospect.eligible!=='boolean'||typeof x.prospect.spawned!=='boolean'||!Number.isInteger(x.resultsSeen)||x.resultsSeen<0||x.resultsSeen>s.results.length||!Number.isFinite(x.reverseSweeps))fail();if(Object.keys(x.found).some(k=>!Object.hasOwn(SECRET_NAMES,k))||Object.keys(x.combos).some(k=>!SECRET_COMBOS.some(c=>c.secretId===k)))fail();for(const report of x.scrims)if(!Number.isInteger(report.year)||!Array.isArray(report.rows)||report.rows.some(r=>!s.teams[r.team]||!Number.isInteger(r.wins)||!Number.isInteger(r.losses)||r.wins<0||r.losses<0))fail();validateSpecialProspects(s,fail);validateDiscoveryDetails(s,fail);}
 
 export function validateDiscoveryDetails(s,fail){const x=s.discoveries;if(!x)return;const obj=v=>v&&typeof v==='object'&&!Array.isArray(v),num=v=>Number.isFinite(v)&&v>=0,str=v=>typeof v==='string'&&v.length<2000,team=v=>Number.isInteger(v)&&!!s.teams[v];
  if(!team(x.first.team)||!str(x.first.manager)||!num(x.first.year)||x.first.roster.some(p=>!obj(p)||!str(p.id)||!str(p.name)||!Number.isInteger(p.portrait))||!num(x.prospect.year)||!num(x.reverseSweeps)||x.progress&&(!obj(x.progress)||Object.values(x.progress).some(v=>!num(v))))fail();
