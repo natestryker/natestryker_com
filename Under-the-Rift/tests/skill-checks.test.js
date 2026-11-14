@@ -69,7 +69,7 @@ test('timing requires the narrowed target and still rewards Mechanics',()=>{
  assert.equal(score('timing',NaN).bonus,-.03);
 });
 
-test('timing display and scoring agree in both directions; the fast track expires',()=>{
+test('timing display and scoring agree in both directions across unlimited bounces',()=>{
  for(const reverse of [false,true]){
   const h=mount('timing',{reverse});h.start();
   assert.match(h.stage().innerHTML,/width:8.5%/);
@@ -79,9 +79,18 @@ test('timing display and scoring agree in both directions; the fast track expire
  }
  const miss=mount('timing');miss.start();miss.advance(400);miss.hit().onclick();
  assert.equal(miss.c.bonus,-.03);
- const timeout=mount('timing');timeout.start();timeout.advance(1010);
- assert.equal(timeout.c.bonus,-.03);
- assert.equal(timeout.pending.size,0);
+ for(const reverse of [false,true]){
+  for(const elapsed of [1500,2500,10500]){
+   const h=mount('timing',{reverse});h.start();h.advance(elapsed);
+   assert.equal(h.c.status,'attempted');assert.equal(h.pending.size,1);
+   const displayed=Number.parseFloat(h.stage().querySelector('#timing-marker').style.left);
+   assert.ok(Math.abs(displayed-50)<2);
+   h.hit().onkeydown({code:'Space',repeat:false,preventDefault(){}});
+   assert.equal(h.c.bonus,.06);assert.equal(h.pending.size,0);
+  }
+ }
+ const edge=mount('timing');edge.start();edge.advance(1000);edge.hit().onclick();assert.equal(edge.c.bonus,-.03);
+ const closed=mount('timing');closed.start();closed.advance(10000);closed.dialog.close();assert.equal(closed.pending.size,0);assert.equal(closed.c.bonus,-.03);
 });
 
 test('reaction keeps its ability-based boundaries and explains misses',()=>{

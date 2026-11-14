@@ -36,3 +36,12 @@ html{scroll-padding-bottom:120px}.topbar{height:auto;min-height:88px;padding-top
 .reactioncue.feint{background:#a15b22;color:#fff3de}.reactioncue.ready{background:#286744;color:#fff}.checkfeedback{font-variant-numeric:tabular-nums;font-weight:700}
 .special-player-name{color:#713493;font-weight:800}.captain-badge{display:inline-block;padding:3px 8px;margin:0 6px 6px 0;border:1px solid #967035;border-radius:4px;background:#e8d3a5;color:#593c13;font-size:13px;font-weight:750;white-space:nowrap}.captain-summary{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px 24px;padding:16px 20px;margin:0 0 22px;border:1px solid var(--line);border-left:4px solid #967035;border-radius:6px;background:#dfd9cb}.captain-summary>div{display:grid;gap:4px;min-width:0}.captain-summary strong{font-size:19px;overflow-wrap:anywhere}.captain-effect{font-size:14px;color:#5e491f}.matchstage .captain-summary{margin:20px 0}.editname{flex-wrap:wrap}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important;scroll-behavior:auto!important}}
+.gcd .panelhead p{margin:8px 0 0;font-size:15px;color:var(--muted)}
+.gcdregion{padding:0 22px 22px}.gcdregion>h3{margin:0 0 14px;font-size:18px;letter-spacing:1px}
+.gcdteam{border:1px solid var(--line);border-radius:8px;margin-bottom:10px;overflow:hidden}
+.gcdteam>summary{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:18px;cursor:pointer;list-style:none}
+.gcdteam>summary:before{content:'+';font-size:24px;color:#ab4c14;width:18px}.gcdteam[open]>summary:before{content:'−'}
+.gcdteam>summary>.teamlabel{flex:1;min-width:180px}.gcdmeta{font-size:14px;color:var(--muted)}.gcdteam>summary>strong{font-size:15px}
+.gcdplan{display:flex;flex-wrap:wrap;gap:12px 24px;padding:14px 18px;border-top:1px solid var(--line);font-size:14px}
+.gcdtable{min-width:1200px}.gcdtable th,.gcdtable td{padding:14px 12px}.gcdtable .person{min-width:185px}
+@media(max-width:650px){.gcdregion{padding:0 12px 16px}.gcdteam>summary{padding:14px;gap:10px}.gcdmeta{padding-left:28px;width:100%}.gcdteam>summary>strong{padding-left:28px}}
