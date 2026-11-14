@@ -2,6 +2,22 @@
 
 Browser-local esports management game built with plain HTML/CSS and JavaScript ES modules. Serve `dist/` through a static web server; `npm test` runs the deterministic engine tests.
 
+## Skill-check tuning
+
+- New decision moments have a 50% chance of replacing tactical calls with a skill check. Saved moment modes are retained.
+- Timing checks cross the track in 900–1300 ms. The target is 6–11% of the track, depending on Mechanics; the same window drives rendering and scoring. Target position and direction still vary.
+- Reaction checks distinguish amber HOLD feints from the green GO cue. Feint variants show one or two feints with variable pauses. Results show reaction time and allowance, or explain an early press/timeout. The existing Mechanics-based allowance remains 330 + Mechanics ms, with presses below 80 ms rejected. The check ends when its response window closes.
+- Timing and reaction buttons respond on Space/Enter keydown, ignoring held-key repeats. Trust-the-players and single-attempt behavior are retained.
+
+## Fog-of-war tracking
+
+- Fog tracking is the fourth equally likely replacement check. Overall skill-check frequency remains 50% of new decision moments; fog therefore appears in about 12.5% of moments. Existing saved modes and checks do not reroll.
+- Twelve authored routes cover lanes, objective pits and jungle quadrants. Watch the gold-ringed enemy J marker among M/S distractors for 4.2 seconds, including a brief vision gap. All enemies and trails disappear after 3.2 seconds. Then choose J's destination within eight seconds. Four numbered map destinations match four buttons; their order rotates with the saved variant.
+- The engine scores the chosen destination against the same route data used to animate the map. Correct answers directly earn the moment's existing bounded points; wrong answers, timeouts and interrupted started checks lose them. Trust the players remains available before starting. Save validation accepts old check types and validates fog scenarios, variants and completed answers. Reloading a started check is a miss, retaining the single-attempt rule.
+- Results explain the read and reveal the full route, its last visible position and the correct destination. Layouts adapt to small screens; the moving map scrolls fully into view before observation begins. Answers use ordinary keyboard-focusable buttons and receive focus after the observation phase. No sound or external assets are required.
+- Files: `dist/fog-tracking-data.js` owns routes and shared geometry; `dist/fog-tracking.js` renders the SVG map and manages observation/answer timers. The existing skill-check modal owns cleanup on close, timeout and resolution.
+- Validation: all 119 automated tests pass, including route geometry, rotated choices, fog visibility, timers, one-attempt behavior, save validation and actual match scoring. Headless Chrome checks pass at desktop and 390px mobile widths for observation visibility, Tab/Enter selection, correct/wrong results, reload, timeout, interruption and trust-the-players, without browser exceptions.
+
 ## Original v0.4 release
 - Neutral medium-gray interface with tangerine accents, larger supporting text, male player portrait selection and a prominent roster rating.
 - Roster/training profile arrows, full composition-link table, training fatigue/Form breakdown, bulk recovery and threshold-based automatic recovery.

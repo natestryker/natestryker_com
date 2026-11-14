@@ -157,6 +157,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--orange-hover);outli
 .creation-art.sidestep{background:radial-gradient(circle at center,#1b4960 0,#122b43 55%,#0f2034 100%)}
 .creation-art.riftcraft{background:radial-gradient(circle at center,#473153 0,#24253f 60%,#181a32 100%)}
 .creation-art.under-rift{background:radial-gradient(circle at center,#425743 0,#293c35 58%,#1b2b2c 100%)}
+.creation-art.riftguessr{background:radial-gradient(circle at center,#254a4b 0,#182f3c 58%,#122234 100%);color:#9ed2ca}
 .creation-art.lollab{background:radial-gradient(circle at center,#423729 0,#2b2730 55%,#1b2230 100%)}
 .creation-art.minecraft{background:radial-gradient(circle at center,#244738 0,#1b3035 58%,#152331 100%)}
 .arena-signal{display:flex;align-items:center;gap:24px}.arena-signal i{display:block;width:30px;height:30px;border:2px solid #83d7e8;border-radius:50%;box-shadow:0 0 22px #43bcd633}.arena-signal i:first-child{width:15px;height:15px;border-color:#fdad7c}.arena-signal b{font-size:60px;font-weight:400;color:#fdad7c;transform:rotate(-9deg)}

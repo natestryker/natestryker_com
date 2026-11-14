@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#010a13">
+  <meta name="description" content="How well do you know the Rift? Find five hidden locations, place your guesses, and beat your highscore.">
+  <title>RiftGuessr — Find your place on the Rift</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preload" href="assets/terrain/preview.jpg" as="image">
+  <script src="game.js" type="module"></script>
+</head>
+<body>
+  <main id="lobby" class="screen lobby">
+    <header class="lobby-header">
+      <a class="wordmark" href="../creations.html" aria-label="Back to Creations"><span class="brand-symbol" aria-hidden="true">⌖</span> RIFT<span>GUESSR</span></a>
+      <button class="text-button" id="open-scores" type="button"><span aria-hidden="true">♜</span> Highscores</button>
+    </header>
+    <section class="lobby-content" aria-labelledby="lobby-title">
+      <p class="eyebrow">SUMMONER’S RIFT</p>
+      <h1 id="lobby-title">Know every<br><em>corner?</em></h1>
+      <p class="lobby-intro">Five locations. One Rift. How close can you get?</p>
+      <fieldset class="difficulty-picker">
+        <legend>Select difficulty</legend>
+        <div class="difficulty-grid">
+          <label class="difficulty-option"><input type="radio" name="difficulty" value="easy"><span class="difficulty-card"><span class="difficulty-rune" aria-hidden="true">Ⅰ</span><strong>Easy</strong><span>Wider clues · 20 seconds</span><b class="difficulty-best" data-best="easy">Best —</b></span></label>
+          <label class="difficulty-option"><input type="radio" name="difficulty" value="normal" checked><span class="difficulty-card"><span class="difficulty-rune" aria-hidden="true">Ⅱ</span><strong>Normal</strong><span>Smaller clues · 13 seconds</span><b class="difficulty-best" data-best="normal">Best —</b></span></label>
+          <label class="difficulty-option"><input type="radio" name="difficulty" value="hard"><span class="difficulty-card"><span class="difficulty-rune" aria-hidden="true">Ⅲ</span><strong>Hard</strong><span>Tiny clues · 8 seconds</span><b class="difficulty-best" data-best="hard">Best —</b></span></label>
+        </div>
+      </fieldset>
+      <button id="start-game" class="gold-button start-button" type="button" disabled>Loading terrain…</button>
+      <p id="load-status" role="status" class="load-status"></p>
+    </section>
+    <footer class="lobby-footer"><a href="../creations.html">← Creations</a><button id="open-settings" type="button" class="text-button">Map &amp; credits</button></footer>
+  </main>
+  <main id="game-screen" class="screen game-screen" hidden>
+    <canvas id="clue-canvas" class="clue-canvas" role="img" aria-label="A close view of a hidden location on Summoner's Rift"></canvas>
+    <div class="clue-shade" aria-hidden="true"></div>
+    <header class="game-hud">
+      <div class="hud-left"><button id="leave-game" type="button" class="icon-button" aria-label="Return to difficulty selection">←</button><div><strong id="round-readout">Round 1 / 5</strong><span id="difficulty-readout">Normal</span></div></div>
+      <div class="hud-center"><h1>Find this location.</h1><div id="round-timer" class="round-timer is-stopped" role="timer" aria-label="Time remaining"><span aria-hidden="true">◷</span><strong id="time-left">—</strong><span aria-hidden="true">s</span></div></div><div class="hud-score"><span>Score</span><strong id="total-score">0</strong></div>
+    </header>
+    <div class="location-reticle" aria-hidden="true"><span></span></div>
+    <p class="clue-label" id="clue-label">Where on the Rift?</p>
+    <section id="guess-dock" class="guess-dock" aria-label="Make your guess">
+      <div class="dock-heading"><h2>Make your guess</h2><button id="expand-map" type="button" class="icon-button" aria-label="Keep map expanded" aria-expanded="false">⤢</button></div>
+      <div id="map-viewport" class="map-viewport" tabindex="0" role="button" aria-label="Guess map. Click to place a pin, drag to pan when zoomed, or use arrow keys to move your pin.">
+        <canvas id="map-canvas" class="map-canvas" aria-hidden="true"></canvas>
+        <div id="map-world" class="map-world">
+          <svg id="result-line" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true" hidden><line id="distance-line" x1="0" y1="0" x2="0" y2="0" vector-effect="non-scaling-stroke"/></svg>
+          <span id="guess-marker" class="map-marker guess-marker" hidden aria-label="Your guess">◆</span><span id="correct-marker" class="map-marker correct-marker" hidden aria-label="Correct location">◎</span>
+        </div>
+        <div class="map-controls" aria-label="Map zoom"><button id="zoom-in" type="button" aria-label="Zoom map in">+</button><button id="zoom-out" type="button" aria-label="Zoom map out">−</button><button id="zoom-reset" type="button" aria-label="Reset map view">⌖</button></div>
+      </div>
+      <div id="round-result" class="round-result" role="status" hidden><div><strong id="round-rating">Great eye.</strong><span id="round-distance"></span></div><b id="round-points">+0</b></div>
+      <div class="dock-actions"><button id="clear-guess" class="clear-button" type="button" disabled aria-label="Clear guess">×</button><button id="primary-btn" type="button" class="gold-button" disabled>Place your pin</button></div>
+    </section>
+    <p id="game-announcement" class="sr-only" aria-live="polite"></p>
+  </main>
+  <main id="results-screen" class="screen results-screen" hidden>
+    <section class="results-card" aria-labelledby="results-title">
+      <p class="eyebrow" id="results-difficulty">NORMAL · FIVE ROUNDS</p><h1 id="results-title">Rift, explored.</h1>
+      <p class="final-score"><strong id="end-total">0</strong><span>/ 25,000</span></p><p id="end-note" class="end-note"></p><p id="new-best" class="new-best" hidden>New highscore</p>
+      <ol id="round-summary" class="round-summary" aria-label="Round scores"></ol>
+      <p class="results-best">Your best on <span id="result-mode">Normal</span> <strong id="result-best">0</strong></p>
+      <div class="results-actions"><button id="play-again" class="gold-button" type="button">Play again</button><button id="results-scores" class="outline-button" type="button">Highscores</button></div>
+      <p id="save-status" role="status" class="save-status"></p>
+    </section>
+  </main>
+  <dialog id="scores-dialog" aria-labelledby="scores-title">
+    <div class="dialog-heading"><h2 id="scores-title">Your highscores</h2><button class="icon-button" data-close-dialog type="button" aria-label="Close highscores">×</button></div>
+    <div class="score-bests" id="score-bests"></div><p class="overall-best">Best overall <strong id="overall-best">—</strong></p>
+    <h3>Recent runs</h3><div id="recent-runs" class="recent-runs"></div><p id="scores-save-status" role="status" class="save-status"></p>
+  </dialog>
+  <dialog id="settings-dialog" aria-labelledby="settings-title">
+    <div class="dialog-heading"><h2 id="settings-title">Map &amp; credits</h2><button class="icon-button" data-close-dialog type="button" aria-label="Close map settings">×</button></div>
+    <p id="map-source">Summoner’s Rift · high-resolution in-game terrain.</p>
+    <button id="upload-map-btn" type="button" class="outline-button">Use your own map image</button><input id="upload-map" type="file" accept="image/*" hidden><p id="upload-status" class="load-status" role="status"></p>
+    <p>Map controls: scroll or pinch to zoom, drag to pan. Arrow keys move your pin; hold Alt for precision or Shift for larger steps. + and − zoom. Home resets the map.</p>
+    <p>League of Legends and Summoner’s Rift belong to Riot Games. This is an unofficial fan game.</p>
+    <p><a href="https://summonersrift.mvilim.dev/about.html" target="_blank" rel="noopener noreferrer">Terrain capture source ↗</a></p>
+  </dialog>
+  <noscript><p class="noscript">Enable JavaScript to play RiftGuessr.</p></noscript>
+</body>
+</html>

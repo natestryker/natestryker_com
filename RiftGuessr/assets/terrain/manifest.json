@@ -1,0 +1,15 @@
+{
+    "width":  11537,
+    "height":  9544,
+    "tileSize":  1024,
+    "scales":  [
+                   1,
+                   2,
+                   4
+               ],
+    "previewScale":  8,
+    "preview":  "preview.jpg",
+    "pattern":  "{scale}/{x}-{y}.jpg",
+    "label":  "Summoner\u0027s Rift (Season 14)",
+    "source":  "https://summonersrift.mvilim.dev/"
+}
