@@ -14,6 +14,7 @@ export function ensureDiscoveries(s){
  // Preserve already-generated legacy drafts and the lifetime cap; retry future drafts.
  if(!Object.hasOwn(q,'lastRollYear')){const p=s.players.find(p=>p.secretProspect);q.spawned=!!p||q.spawned;q.id=p?.id||q.id;q.kind=p?.secretKind||(q.spawned?'natestryker':null);q.eligible=true;q.year=Math.max(q.year,s.year+(s.draft?.pool?.length?1:0));q.lastRollYear=s.draft?.pool?.length?s.year:null;if(p)p.secretKind??=q.kind;}
  const prospect=q.spawned?getPlayer(s,q.id):null;if(prospect?.secretProspect&&!prospect.traits.includes('Captain'))prospect.traits.push('Captain');
+ s.discoveries.comboReveals??={};s.discoveries.revealSeed??=(s.discoveries.seed^0x72ac459b)>>>0;
  return s.discoveries;
 }
 export function discover(s,id){const x=ensureDiscoveries(s);if(x.found[id])return false;x.found[id]={year:s.year,step:s.step};return true;}
@@ -48,6 +49,34 @@ export function trackClubStories(s){const x=ensureDiscoveries(s);
 }
 export function formerPlayerLine(s,opponent){const x=ensureDiscoveries(s);return starters(s,opponent).find(p=>x.history[p.id]?.visited.includes(s.team)&&p.team!==s.team);}
 export function discoverLineup(s){const x=ensureDiscoveries(s);for(const c of composition(s).links)if(c.secretId&&!x.combos[c.secretId]){x.combos[c.secretId]={year:s.year,step:s.step};notice(s,'combo:'+c.secretId,'A hidden connection',`${c[2]} has been added to All combinations. Your starters found something special together.`);}}
+// Entitlements come from managed titles, so opening or dismissing a celebration
+// cannot grant another credit. Rewards follow the manager within this career.
+export function combinationRewards(s){
+ const claims=s.discoveries?.comboReveals||{},wins=new Map();
+ for(const h of s.honors)if(['MSI','Worlds'].includes(h.event)&&h.winner===h.managerTeam){
+  const key=`${h.year}:${h.event}:${h.winner}`;wins.set(key,{key,year:h.year,event:h.event,team:h.winner,claimed:claims[key]||null});
+ }
+ return [...wins.values()];
+}
+export function revealCombination(s){
+ const reward=combinationRewards(s).find(r=>!r.claimed),available=SECRET_COMBOS.filter(c=>!s.discoveries?.combos[c.secretId]);
+ if(!reward||!available.length)return null;
+ const x=ensureDiscoveries(s),stream={seed:x.revealSeed},combo=available[Math.floor(secretRandom(stream)*available.length)];
+ x.revealSeed=stream.seed;x.comboReveals[reward.key]=combo.secretId;
+ x.combos[combo.secretId]={year:s.year,step:s.step,source:'title',title:reward.event,titleYear:reward.year};
+ notice(s,'title-combo:'+reward.key,'Champions’ insight',`Your ${reward.year} ${reward.event} title revealed ${combo[2]}. Find its niches and traits in the Composition playbook.`);
+ s.news.unshift(`${reward.year} ${reward.event} reward: ${combo[2]} revealed in the Composition playbook.`);
+ return combo;
+}
+
+function validateCombinationRewards(s,fail){
+ const x=s.discoveries;if(!x)return;
+ if(x.revealSeed!==undefined&&(!Number.isInteger(x.revealSeed)||x.revealSeed<0||x.revealSeed>4294967295))fail();
+ if(x.comboReveals===undefined)return;
+ if(!x.comboReveals||typeof x.comboReveals!=='object'||Array.isArray(x.comboReveals))fail();
+ const earned=new Set(combinationRewards(s).map(r=>r.key)),reveals=Object.entries(x.comboReveals);
+ if(new Set(reveals.map(([,id])=>id)).size!==reveals.length||reveals.some(([key,id])=>!earned.has(key)||!SECRET_COMBOS.some(c=>c.secretId===id)||!x.combos[id]))fail();
+}
 export function beforeSecretMatch(s,opponent){trackClubStories(s);discoverLineup(s);const p=formerPlayerLine(s,opponent);if(p){discover(s,'former');notice(s,`former:${s.year}:${s.step}:${p.id}`,'A familiar face on the other side',`${p.name}: “Hope you kept the receipt.” Your former player starts for ${s.teams[opponent].name} today.`,p.id);return {player:p.id,text:`${p.name}: “Hope you kept the receipt.”`};}return null;}
 export function afterSecretResults(s){const x=ensureDiscoveries(s);for(let i=x.resultsSeen;i<s.results.length;i++){const r=s.results[i],stint=s.career?.stints.find(t=>i>=t.start&&(t.end===null||i<t.end)&&(r.a===t.team||r.b===t.team));if(!stint)continue;const team=stint.team,games=r.games||[];
  if(r.winner===team&&games.length===5&&games[0].winner!==team&&games[1].winner!==team){x.reverseSweeps++;discover(s,'reverse');notice(s,'reverse:'+i,x.reverseSweeps===1?'The 0–2 comfort zone':'You had them right where you wanted them.',x.reverseSweeps===1?'Down two games. Three wins later, nobody is leaving early.':'Another reverse sweep. The fans have stopped trusting your first two games.');}
@@ -80,7 +109,7 @@ export function achievementMetrics(s){const x=ensureDiscoveries(s),c=careerStats
 }
 export function updateDiscoveries(s){ensureDiscoveries(s);trackClubStories(s);afterSecretResults(s);generateScrimReport(s);const x=s.discoveries,m=achievementMetrics(s);x.progress??={};for(const [key,value] of Object.entries(m))x.progress[key]=Math.max(x.progress[key]||0,value);for(const a of ACHIEVEMENTS)if((x.progress[a.metric]||0)>=a.goal&&!x.awards[a.id])x.awards[a.id]={year:s.year,step:s.step,manager:s.manager,club:s.teams[s.team].name};return x;}
 export function careerAchievementBook(s){const x=ensureDiscoveries(s);return {unlocked:x.awards,progress:x.progress||{},seenTraits:x.seenTraits,eggs:Object.keys(x.found)};}
-export function validateDiscoveries(s,fail){const x=s.discoveries;if(!x)return;const obj=v=>v&&typeof v==='object'&&!Array.isArray(v);if(!obj(x)||!Number.isInteger(x.seed)||!obj(x.found)||!obj(x.combos)||!obj(x.awards)||!Array.isArray(x.seenTraits)||!x.seenTraits.every(t=>typeof t==='string')||!Array.isArray(x.notices)||!Array.isArray(x.scrims)||!obj(x.history)||!obj(x.bench)||!obj(x.clicks)||!obj(x.first)||!Array.isArray(x.first.roster)||!obj(x.prospect)||typeof x.prospect.eligible!=='boolean'||typeof x.prospect.spawned!=='boolean'||!Number.isInteger(x.resultsSeen)||x.resultsSeen<0||x.resultsSeen>s.results.length||!Number.isFinite(x.reverseSweeps))fail();if(Object.keys(x.found).some(k=>!Object.hasOwn(SECRET_NAMES,k))||Object.keys(x.combos).some(k=>!SECRET_COMBOS.some(c=>c.secretId===k)))fail();for(const report of x.scrims)if(!Number.isInteger(report.year)||!Array.isArray(report.rows)||report.rows.some(r=>!s.teams[r.team]||!Number.isInteger(r.wins)||!Number.isInteger(r.losses)||r.wins<0||r.losses<0))fail();validateSpecialProspects(s,fail);validateDiscoveryDetails(s,fail);}
+export function validateDiscoveries(s,fail){const x=s.discoveries;if(!x)return;const obj=v=>v&&typeof v==='object'&&!Array.isArray(v);if(!obj(x)||!Number.isInteger(x.seed)||!obj(x.found)||!obj(x.combos)||!obj(x.awards)||!Array.isArray(x.seenTraits)||!x.seenTraits.every(t=>typeof t==='string')||!Array.isArray(x.notices)||!Array.isArray(x.scrims)||!obj(x.history)||!obj(x.bench)||!obj(x.clicks)||!obj(x.first)||!Array.isArray(x.first.roster)||!obj(x.prospect)||typeof x.prospect.eligible!=='boolean'||typeof x.prospect.spawned!=='boolean'||!Number.isInteger(x.resultsSeen)||x.resultsSeen<0||x.resultsSeen>s.results.length||!Number.isFinite(x.reverseSweeps))fail();if(Object.keys(x.found).some(k=>!Object.hasOwn(SECRET_NAMES,k))||Object.keys(x.combos).some(k=>!SECRET_COMBOS.some(c=>c.secretId===k)))fail();for(const report of x.scrims)if(!Number.isInteger(report.year)||!Array.isArray(report.rows)||report.rows.some(r=>!s.teams[r.team]||!Number.isInteger(r.wins)||!Number.isInteger(r.losses)||r.wins<0||r.losses<0))fail();validateSpecialProspects(s,fail);validateDiscoveryDetails(s,fail);validateCombinationRewards(s,fail);}
 
 export function validateDiscoveryDetails(s,fail){const x=s.discoveries;if(!x)return;const obj=v=>v&&typeof v==='object'&&!Array.isArray(v),num=v=>Number.isFinite(v)&&v>=0,str=v=>typeof v==='string'&&v.length<2000,team=v=>Number.isInteger(v)&&!!s.teams[v];
  if(!team(x.first.team)||!str(x.first.manager)||!num(x.first.year)||x.first.roster.some(p=>!obj(p)||!str(p.id)||!str(p.name)||!Number.isInteger(p.portrait))||!num(x.prospect.year)||!num(x.reverseSweeps)||x.progress&&(!obj(x.progress)||Object.values(x.progress).some(v=>!num(v))))fail();

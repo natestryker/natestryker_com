@@ -24,6 +24,9 @@ export function scoutEstimate(s,p,skill=null){
  return {...bounds,estimate:(bounds.low+bounds.high)/2,exact:false};
 }
 
+// Scouting improves the report without changing the player's place on a board.
+export const scoutOrderingEstimate=(s,p)=>scoutEstimate(s,{...p,scout:0}).estimate;
+
 export function scoutingLabel(s,p,skill=null){
  const report=scoutEstimate(s,p,skill);
  return report.exact?String(skill?Math.round(report.estimate):report.estimate):`${report.low}–${report.high}`;
