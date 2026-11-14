@@ -781,5 +781,34 @@
         "losses": 89
       }
     ]
+  },
+  {
+    "at": "2026-11-14T08:58:36.404Z",
+    "entries": [
+      {
+        "queueType": "RANKED_SOLO_5x5",
+        "tier": "MASTER",
+        "rank": "I",
+        "leaguePoints": 556,
+        "wins": 103,
+        "losses": 89
+      },
+      {
+        "queueType": "RANKED_PREMADE_5x5",
+        "tier": "DIAMOND",
+        "rank": "II",
+        "leaguePoints": 36,
+        "wins": 6,
+        "losses": 5
+      },
+      {
+        "queueType": "RANKED_FLEX_SR",
+        "tier": "DIAMOND",
+        "rank": "I",
+        "leaguePoints": 65,
+        "wins": 57,
+        "losses": 45
+      }
+    ]
   }
 ]
