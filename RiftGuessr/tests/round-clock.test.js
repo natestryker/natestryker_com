@@ -18,8 +18,8 @@ function setup(){
  return {clock,ticks,jobs,advance,jump:ms=>{time+=ms;},expired:()=>expired};
 }
 
-test('Easy, Normal and Hard have exactly the requested per-round time limits',()=>{
- assert.deepEqual(Object.fromEntries(Object.entries(DIFFICULTIES).map(([key,mode])=>[key,mode.timeLimit])),{easy:20,normal:13,hard:8});
+test('Easy, Normal and Hard all allow 15 seconds per round',()=>{
+ assert.deepEqual(Object.fromEntries(Object.entries(DIFFICULTIES).map(([key,mode])=>[key,mode.timeLimit])),{easy:15,normal:15,hard:15});
 });
 test('each clock runs for its full limit and expires exactly once',()=>{
  for(const mode of Object.values(DIFFICULTIES)){
@@ -32,6 +32,14 @@ test('each clock runs for its full limit and expires exactly once',()=>{
 test('display updates whole seconds once rather than announcing every scheduler tick',()=>{
  const h=setup();h.clock.start(8);h.advance(3000);assert.deepEqual(h.ticks,[8,7,6,5]);
  h.advance(5000);assert.deepEqual(h.ticks,[8,7,6,5,4,3,2,1,0]);
+});
+test('the five-second warning tick happens once per round and is cancelled by early submission',()=>{
+ const h=setup();h.clock.start(15);h.advance(9999);assert.equal(h.ticks.includes(5),false);
+ h.advance(1);assert.equal(h.ticks.filter(s=>s===5).length,1);
+ h.clock.refresh();h.advance(800);assert.equal(h.ticks.filter(s=>s===5).length,1);
+ h.clock.stop();h.clock.start(15);h.advance(3000);h.clock.stop();h.advance(20000);
+ assert.equal(h.ticks.filter(s=>s===5).length,1);
+ h.clock.start(15);h.advance(10000);assert.equal(h.ticks.filter(s=>s===5).length,2);
 });
 test('a delayed callback cannot extend the round or accept an input beyond the deadline',()=>{
  const h=setup();h.clock.start(13);h.jump(13000);

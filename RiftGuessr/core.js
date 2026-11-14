@@ -2,9 +2,9 @@ export const ROUNDS=5;
 export const MAX_SCORE=25000;
 export const SCORE_KEY='riftguessr-scores-v2';
 export const DIFFICULTIES=Object.freeze({
- easy:{label:'Easy',crop:.08,timeLimit:20},
- normal:{label:'Normal',crop:.04,timeLimit:13},
- hard:{label:'Hard',crop:.02,timeLimit:8}
+ easy:{label:'Easy',crop:.08,timeLimit:15},
+ normal:{label:'Normal',crop:.04,timeLimit:15},
+ hard:{label:'Hard',crop:.02,timeLimit:15}
 });
 export const SCORE_RULES=Object.freeze({perfectRadius:.01,decay:5});
 export const SPOT_COLUMNS=120,SPOT_ROWS=100;

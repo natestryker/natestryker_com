@@ -20,11 +20,11 @@ The capture is packaged as a local pyramid of JPEG tiles, with full, half and qu
 
 | Difficulty | Clue span along the longest screen dimension | Time per location |
 | --- | --- | --- |
-| Easy | 8% of map width | 20 seconds |
-| Normal | 4% | 13 seconds |
-| Hard | 2% | 8 seconds |
+| Easy | 8% of map width | 15 seconds |
+| Normal | 4% | 15 seconds |
+| Hard | 2% | 15 seconds |
 
-The timer starts when the clue finishes loading, turns red with five seconds remaining, and stops on submission. On expiry, the current pin is automatically scored; no pin earns zero points and still reveals the answer. Results remain on screen until **Next round** or **View results** is pressed. A new round gets its full time limit. Returning to difficulty selection cancels the timer.
+The timer starts when the clue finishes loading, turns red and plays a short two-note chime with five seconds remaining, and stops on submission. Audio is unlocked by the Start button and generated locally with Web Audio; browsers without audio support can still play. On expiry, the current pin is automatically scored; no pin earns zero points and still reveals the answer. Results remain on screen until **Next round** or **View results** is pressed. A new round gets its full time limit. Returning to difficulty selection cancels the timer and any playing chime.
 
 An absolute deadline keeps time accurate when a tab is in the background. Pin placement, clearing and manual submission check that deadline before accepting input. Expiry resolves once; callbacks from earlier rounds cannot alter a later round.
 
@@ -74,11 +74,11 @@ The fetch script caches public source tiles in the OS temporary directory, uses 
 
 ## Validation
 
-All 23 tests pass with `npm test` or `node --test tests/*.test.js`, covering crop-safe selection, expanded spot coverage, normal-view scene data, forgiving scoring, unlimited zoom coordinate transforms, score persistence, image-pyramid integrity and deadline-based timers.
+All 29 tests pass with `npm test` or `node --test tests/*.test.js`, covering crop-safe selection, expanded spot coverage, normal-view scene data, forgiving scoring, unlimited zoom coordinate transforms, score persistence, image-pyramid integrity, deadline-based timers and audio activation, scheduling and cleanup.
 
 Desktop and mobile browser checks pass for image orientation and pixel alignment, exact joins across tile boundaries, zoom beyond one billion times without oversized DOM layers, pin placement, mobile touch/pinch, forgiving scores, five-round score saving, reload and missing-asset fallbacks. No browser exceptions were observed.
 
-Timer browser checks pass for all three displayed limits, delayed asset loading, manual submission, cancellation on leaving, a real eight-second expiry, automatic scoring of an existing pin, no-pin zero scores, rejection of late pin/clear/submit inputs, fresh timers each round, five-round persistence and the mobile HUD layout.
+Timer browser checks pass for all three 15-second limits, delayed asset loading, manual submission, cancellation on leaving, automatic scoring of an existing pin, no-pin zero scores, rejection of late pin/clear/submit inputs, fresh timers each round, five-round persistence and the mobile HUD layout. Audio checks verify a real countdown to the five-second chime, browser audio activation from Start, one cue per round, cleanup after playback or leaving, and silence after early submission.
 
 ## Files
 
@@ -88,5 +88,6 @@ Timer browser checks pass for all three displayed limits, delayed asset loading,
 - `terrain-source.js`: image pyramid, bounded tile cache and custom/fallback images.
 - `clue-renderer.js`: unmodified camera-view crops.
 - `round-clock.js`: round deadlines, countdown updates and timer cleanup.
+- `countdown-audio.js`: five-second warning chime and browser audio activation.
 - `scripts/`: reproducible source download and asset packaging.
 - `assets/`: high-resolution terrain pyramid, classic fallback and source notes.

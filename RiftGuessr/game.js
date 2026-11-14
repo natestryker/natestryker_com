@@ -2,6 +2,7 @@ import {ROUNDS,SCORE_KEY,DIFFICULTIES,clamp,createScene,scoreGuess,zoomAt,screen
 import {ClueRenderer} from './clue-renderer.js';
 import {TerrainSource,ImageSource,loadImage} from './terrain-source.js';
 import {RoundClock} from './round-clock.js';
+import {CountdownAudio} from './countdown-audio.js';
 
 const $=id=>document.getElementById(id);
 const fmt=n=>n.toLocaleString('en-US');
@@ -13,12 +14,13 @@ let round=1,total=0,rounds=[],locations=[],gameId='',previousBest=0,runSaved=fal
 let view={zoom:1,x:0,y:0},hovered=false,pinned=false,keyboardFocus=false,localURL=null;
 let renderer;
 let mapFrame=0,mapVersion=0,roundRequest=0;
+const countdownAudio=new CountdownAudio();
 const roundClock=new RoundClock({
  onTick:seconds=>{
   $('time-left').textContent=seconds;
   $('round-timer').setAttribute('aria-label',seconds+' seconds remaining');
   $('round-timer').classList.toggle('is-urgent',seconds<=5);
-  if(seconds===5)$('game-announcement').textContent='5 seconds remaining.';
+  if(seconds===5){$('game-announcement').textContent='5 seconds remaining.';countdownAudio.play();}
  },
  onExpire:()=>submitGuess({timedOut:true})
 });
@@ -90,6 +92,7 @@ function makeGuess(point){
 }
 async function beginRound(){
  const request=++roundRequest;
+ countdownAudio.stop();
  roundClock.stop();$('time-left').textContent='—';$('round-timer').classList.remove('is-urgent');$('round-timer').classList.add('is-stopped');
  $('round-timer').setAttribute('aria-label','Timer starts when the location is ready');
  phase='loading';scene=createScene(difficulty,locations,Math.random,{spots:source.spots,aspect:source.width/source.height});locations.push({x:scene.x,y:scene.y});
@@ -105,12 +108,14 @@ async function beginRound(){
 }
 function startGame(){
  if(phase!=='lobby'||!source||!renderer)return;
+ countdownAudio.unlock();
  difficulty=document.querySelector('[name="difficulty"]:checked').value;
  gameId=globalThis.crypto?.randomUUID?.()||Date.now()+'-'+Math.random().toString(16).slice(2);
  round=1;total=0;rounds=[];locations=[];runSaved=false;previousBest=book.best[difficulty];
  showScreen('game-screen');document.activeElement?.blur();beginRound();
 }
 function goLobby(){
+ countdownAudio.stop();
  roundClock.stop();
  roundRequest++;phase='lobby';pinned=false;hovered=false;keyboardFocus=false;showScreen('lobby');renderScores();
  $('start-game').focus();
@@ -130,7 +135,7 @@ function saveCompletedRun(){
 function submitGuess({timedOut=false}={}){
  if(phase!=='guessing')return;
  if(!timedOut&&(roundClock.check()||!pin))return;
- roundClock.stop();$('round-timer').classList.add('is-stopped');
+ roundClock.stop();countdownAudio.stop();$('round-timer').classList.add('is-stopped');
  phase='revealed';
  const result=pin?scoreGuess(pin,scene,source.width/source.height,difficulty):{distance:null,points:0};total+=result.points;rounds.push(result);
  marker('correct-marker',scene);
