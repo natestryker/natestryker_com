@@ -1,0 +1,92 @@
+[
+  {
+    "name": "dompurify",
+    "version": "3.4.18",
+    "license": "(MPL-2.0 OR Apache-2.0)",
+    "archive_sha256": "8b86f79c6481fec23dd81d4de32179422668912ed033c0c47e786a6e70cb3379",
+    "gitHead": null
+  },
+  {
+    "name": "@ffmpeg/core",
+    "version": "0.12.10",
+    "license": "GPL-2.0-or-later",
+    "archive_sha256": "d00089ce82e1bdf637ddbe42e0c3d41a1ba8cf4c9e825e7fa4d0bb970e844bd4",
+    "gitHead": null
+  },
+  {
+    "name": "js-yaml",
+    "version": "4.1.1",
+    "license": "MIT",
+    "archive_sha256": "948181607d4fb62dde7b9e04a62d89b20e62cd0c5659ceb711bc31768d00436f",
+    "gitHead": null
+  },
+  {
+    "name": "mammoth",
+    "version": "1.13.0",
+    "license": "BSD-2-Clause",
+    "archive_sha256": "fe778792e43b06dbbff93d20e22951fe1bc55a05eb04ec823961e8639c62260b",
+    "gitHead": null
+  },
+  {
+    "name": "marked",
+    "version": "18.2.1",
+    "license": "MIT",
+    "archive_sha256": "d66c5213fc203466186060105b01f51896764ba64b3797d2620d02e28e34b8ca",
+    "gitHead": null
+  },
+  {
+    "name": "pako",
+    "version": "2.1.0",
+    "license": "(MIT AND Zlib)",
+    "archive_sha256": "49fedc8866b4abfc8e71dc7fe75ad4ef1ff1ac9601b0642cff88ee5bf2338709",
+    "gitHead": null
+  },
+  {
+    "name": "papaparse",
+    "version": "5.7.1",
+    "license": "MIT",
+    "archive_sha256": "c78b4aa4a792378059ebcfc71b91601a310e0456f431999c8e95b6f4b614b85c",
+    "gitHead": null
+  },
+  {
+    "name": "@pdf-lib/fontkit",
+    "version": "1.1.1",
+    "license": "MIT",
+    "archive_sha256": "6dd0ae9209fce419b2ed76c97166863167b4df56d75fbe3c7f1d1e6e49c85867",
+    "gitHead": null
+  },
+  {
+    "name": "xlsx",
+    "version": "0.20.3",
+    "license": "Apache-2.0",
+    "archive_sha256": "8dc73fc3b00203e72d176e85b50938627c7b086e607c682e8d3c22c02bb99fe8",
+    "gitHead": null
+  },
+  {
+    "name": "smol-toml",
+    "version": "1.9.1",
+    "license": "BSD-3-Clause",
+    "archive_sha256": "4ac8392f1918c22a4366be19047cf53aa42646077d4c711b2ef73263beefb172",
+    "gitHead": null
+  },
+  {
+    "name": "turndown",
+    "version": "7.2.5",
+    "license": "MIT",
+    "archive_sha256": "7e91c1d36c07a6fd25825734ac71890e89a4113a431e138af8b02b1c99e98e0b",
+    "gitHead": null
+  },
+  {
+    "name": "utif",
+    "version": "3.1.0",
+    "license": "MIT",
+    "archive_sha256": "30104fa81f0556b5b60fd5f9695a51e45b48f64abb5226977d02490072128f8a",
+    "gitHead": null
+  },
+  {
+    "name": "sql.js",
+    "version": "1.16.0",
+    "license": "MIT",
+    "archive_sha256": "bb6f5c7e4ac6de569e4f3eee38122b56d777c387ec74fbb1a7075adf37097df6"
+  }
+]

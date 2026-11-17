@@ -11,9 +11,11 @@ const redirects={
  'match-history.html':'/match-history/','secret.html':'/secret/',
  'creations/lol-lab.html':'/creations/lol-lab/',
  'creations/riftcraft.html':'/creations/riftcraft/',
- 'creations/sidestep-school.html':'/creations/sidestep-school/'
+ 'creations/sidestep-school.html':'/creations/sidestep-school/',
+ 'creations/pdf-image-converter/index.html':'/creations/converter/',
+ 'creations/mp4-to-mp3/index.html':'/creations/converter/'
 };
-const pages=['/',...Object.values(redirects),'/games/lol-lab/','/games/riftcraft/','/games/sidestep-school/','/RiftGuessr/','/Under-the-Rift/dist/','/Image-to-Minecraft-Converter/dist/'];
+const pages=['/',...Object.values(redirects),'/games/lol-lab/','/games/riftcraft/','/games/sidestep-school/','/RiftGuessr/','/Under-the-Rift/dist/','/Image-to-Minecraft-Converter/dist/','/creations/converter/','/creations/converter/support/','/creations/converter/licenses/'];
 const read=path=>readFile(new URL(path.replace(/^\//,''),root),'utf8');
 
 test('all clean routes have their own entry page, canonical URL and index normalization',async()=>{

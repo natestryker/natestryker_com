@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b1120">
+<meta name="description" content="A private, browser-based file converter for images, PDFs, documents, spreadsheets, data, audio, video and archives. No uploads.">
+<title>File Converter | natestryker.com</title>
+<link rel="icon" type="image/png" href="/images/favicon.png"><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/creations/converter.css"><link rel="stylesheet" href="./style.css">
+<link rel="canonical" href="https://natestryker.com/creations/converter/"><script src="/assets/clean-urls.js"></script><script type="module" src="./app.mjs"></script>
+</head>
+<body class="site-page">
+<header class="site-header"><div class="wrap header-inner"><a class="brand" href="/">natestryker.com</a><nav class="nav-links" aria-label="Main navigation"><a href="/about/">About Me</a><a href="/games/">Game-Stuff</a><a href="/creations/" class="active">Creations</a><a href="/archive/">Archive</a><a href="/league/">Account Tracker</a></nav></div></header>
+<main class="wrap inside-main converter-main">
+  <a class="converter-back" href="/creations/">&larr; Back to Creations</a>
+  <div class="page-intro"><h1>File Converter<span class="heading-dot">.</span></h1><span class="privacy-note">Files stay on your device.</span></div>
+  <noscript><p>JavaScript is required for local conversion. Your files are never sent to a server.</p></noscript>
+  <div class="converter-layout" id="workspace">
+    <section class="surface-panel converter-panel file-panel" aria-labelledby="files-heading">
+      <div class="panel-heading"><h2 id="files-heading"><span>01</span> Files</h2><a href="#catalog" class="catalog-jump">Browse &darr;</a></div>
+      <input id="file-input" type="file" multiple hidden>
+      <button id="drop-zone" class="drop-zone" type="button"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M29 6H14a4 4 0 0 0-4 4v28a4 4 0 0 0 4 4h20a4 4 0 0 0 4-4V16L29 6Z"/><path d="M28 6v11h10M24 34V22m-5 5 5-5 5 5"/></svg><strong>Drop files here</strong><span>or click to browse</span><small class="drop-limits">100 files &middot; 150 MB total &middot; media: 64 MB each</small></button>
+      <div class="file-toolbar" id="file-toolbar" hidden><span id="file-count"></span><button id="clear-files" class="converter-button" type="button">Clear all</button></div>
+      <ol id="file-list" class="file-list" aria-label="Files and compatible output formats"></ol>
+    </section>
+    <section class="surface-panel converter-panel settings-panel" aria-labelledby="settings-heading">
+      <div class="panel-heading"><h2 id="settings-heading"><span>02</span> Settings</h2></div>
+      <fieldset id="settings" class="converter-fields"><legend class="visually-hidden">Conversion settings</legend>
+        <label class="converter-field">Action<select id="batch-mode"><option value="each">Convert each file</option></select></label>
+        <label class="converter-field" id="bulk-field" hidden>Output for all<select id="bulk-output"><option value="">Choose a format…</option></select></label>
+        <div id="image-settings" class="converter-fields" hidden>
+          <label class="converter-field">Quality<select id="quality"><option value="0.75">75%</option><option value="0.9" selected>90%</option><option value="1">100%</option></select></label>
+          <label class="converter-field">Image width<input id="image-width" type="number" min="1" max="16384" placeholder="Keep original size"></label>
+          <label class="converter-field">JPG / BMP background<input id="background" type="color" value="#ffffff"></label>
+        </div>
+        <div id="pdf-read-settings" class="converter-fields" hidden>
+          <label class="converter-field" id="pdf-resolution-field">PDF resolution<select id="resolution"><option value="1">72 DPI</option><option value="2" selected>144 DPI</option><option value="3">216 DPI</option></select></label>
+          <label class="converter-field">PDF password<input id="pdf-password" type="password" autocomplete="off" placeholder="Only if needed"></label>
+        </div>
+        <div id="pdf-pages-settings" class="converter-fields" hidden>
+          <label class="converter-field">PDF pages<input id="page-range" type="text" placeholder="All pages" autocomplete="off" spellcheck="false"><small>e.g. 1, 3-5 &middot; max 100 pages</small></label>
+        </div>
+        <div id="pdf-create-settings" class="converter-fields" hidden>
+          <label class="converter-field">Page size<select id="page-size"><option value="fit">Fit each image</option><option value="a4">A4</option><option value="letter">US Letter</option></select></label>
+          <label class="converter-field">Orientation<select id="orientation"><option value="auto">Auto</option><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select></label>
+          <label class="converter-field">Margins<select id="margin"><option value="0">None</option><option value="18" selected>¼ inch</option><option value="36">½ inch</option></select></label>
+        </div>
+        <label class="converter-field" id="rotation-field" hidden>Rotate pages<select id="rotation"><option value="90">90° clockwise</option><option value="180">180°</option><option value="270">90° counterclockwise</option></select></label>
+        <label class="converter-field" id="watermark-field" hidden>Watermark text<input id="watermark" type="text" maxlength="100" placeholder="e.g. DRAFT"></label>
+        <div id="media-settings" class="converter-fields" hidden>
+          <label class="converter-field">Start (seconds)<input id="start-time" type="number" min="0" step="0.1" value="0"></label>
+          <label class="converter-field">Duration (seconds)<input id="clip-duration" type="number" min="0" step="0.1" placeholder="To end"><small>Max: audio 20 min &middot; video 5 min &middot; GIF 30 sec</small></label>
+        </div>
+        <div id="audio-settings" class="converter-fields" hidden>
+          <label class="converter-field">Bitrate<select id="bitrate"><option value="128">128 kbps</option><option value="192" selected>192 kbps</option><option value="256">256 kbps</option><option value="320">320 kbps</option></select></label>
+          <label class="converter-field">Sample rate<select id="sample-rate"><option value="22050">22,050 Hz</option><option value="44100" selected>44,100 Hz</option><option value="48000">48,000 Hz</option></select></label>
+          <label class="converter-field">Channels<select id="channels"><option value="stereo">Stereo</option><option value="mono">Mono</option></select></label>
+          <label class="check-field"><input id="normalize" type="checkbox"> Normalize volume</label>
+        </div>
+        <div id="video-settings" class="converter-fields" hidden>
+          <label class="converter-field">Video width<select id="video-width"><option value="640">640 px</option><option value="1280" selected>1280 px</option><option value="1920">1920 px</option></select></label>
+          <label class="converter-field">Frame rate<select id="frame-rate"><option value="0.5">0.5 fps</option><option value="1" selected>1 fps</option><option value="5">5 fps</option><option value="10">10 fps</option></select></label>
+        </div>
+        <label class="converter-field" id="name-field" hidden>Filename<input id="combined-name" type="text" maxlength="100" placeholder="Default name"></label>
+      </fieldset>
+      <p id="settings-empty" class="converter-hint">Add a file.</p>
+      <button id="convert" class="converter-button primary convert-action" type="button" disabled>Convert files</button><button id="cancel" class="converter-button convert-action" type="button" hidden>Cancel</button>
+    </section>
+  </div>
+  <div class="conversion-feedback"><p id="status" class="converter-status" role="status" aria-live="polite"></p><progress id="progress" class="converter-progress" hidden aria-label="Conversion progress"></progress></div>
+  <section id="results" class="converter-results" aria-labelledby="results-title" hidden><div class="results-heading"><div><h2 id="results-title">Downloads</h2><p id="results-summary" class="converter-hint"></p></div><button id="download-zip" class="converter-button primary" type="button">Download ZIP</button><a id="zip-link" class="converter-button primary" hidden>Download ZIP</a></div><div id="result-grid" class="result-grid"></div></section>
+  <section id="catalog" class="converter-catalog" aria-labelledby="catalog-heading"><div class="catalog-intro"><div><h2 id="catalog-heading">Converters</h2></div><span id="catalog-total" hidden></span></div>
+    <label class="catalog-search"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><span class="visually-hidden">Search converters</span><input id="catalog-search" type="search" placeholder="Search formats..." autocomplete="off"></label>
+    <div id="category-filters" class="category-filters" role="group" aria-label="Converter categories"></div>
+    <p id="catalog-status" class="converter-hint" role="status"></p><div id="catalog-list" class="catalog-list"></div><button id="show-more" class="converter-button catalog-more" type="button" hidden>Show more</button>
+  </section>
+  <details class="converter-info converter-help"><summary>Help &amp; limits</summary><p>Text: 5 MB. Images: 16 megapixels. Archives: 150 MB / 500 files. Total output: 200 MB. Keep this tab open until conversion finishes.</p><p><a href="./support/">Formats &amp; limitations</a> &middot; <a href="./licenses/">Credits</a></p></details>
+</main>
+<footer class="site-footer"><div class="wrap footer-inner"><span>&copy; 2026 Nate &middot; natestryker.com</span></div></footer>
+</body></html>

@@ -1,0 +1,4 @@
+# Preserve upstream library bytes and their recorded checksums on all platforms.
+creations/converter/vendor/** -text
+creations/pdf-image-converter/vendor/** -text
+creations/mp4-to-mp3/vendor/** -text
