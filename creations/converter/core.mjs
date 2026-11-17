@@ -1,4 +1,4 @@
-export const LIMITS = {file:150*1024*1024, media:64*1024*1024, text:5*1024*1024, expanded:150*1024*1024, outputs:200*1024*1024, files:100, entries:500, pixels:16_000_000};
+export const LIMITS = {file:400*1024*1024, media:400*1024*1024, text:5*1024*1024, expanded:150*1024*1024, outputs:400*1024*1024, files:100, entries:500, pixels:16_000_000};
 export const utf8 = new TextDecoder('utf-8', {fatal:true});
 export const encode = text => new TextEncoder().encode(text);
 export function decode(bytes) {

@@ -15,7 +15,8 @@ export class ConverterWorker {
   call(action,payload={},progress){
     this.start();const id=++this.serial;
     return new Promise((resolve,reject)=>{
-      const timer=setTimeout(()=>this.cancel(new Error('Processing took too long. Try a smaller file or a shorter clip.')),240000);
+      const media=action==='convert'&&payload.options?.engine==='media';
+      const timer=media?null:setTimeout(()=>this.cancel(new Error('Processing took too long. Try a smaller file or a shorter clip.')),240000);
       this.requests.set(id,{resolve,reject,progress,timer});
       this.worker.postMessage({id,action,...payload});
     });

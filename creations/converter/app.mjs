@@ -3,13 +3,24 @@ import {LIMITS,stem,sizeLabel,signature,decode,encode,uniqueNames} from './core.
 import {ConverterWorker} from './client.mjs';
 import {prepareFile,prepareText,parseXML,cleanHTML,htmlText,htmlDocument,markdown} from './documents.mjs';
 import {readPDF} from './pdf-read.mjs';
+import {timeRemaining} from './progress.mjs';
 
 const $=id=>document.getElementById(id),worker=new ConverterWorker();
 const state={files:[],outputs:[],zipUrl:null,busy:false,inspecting:false,canceled:false,preferred:null,category:'All',visible:18,control:null};
 const capabilities={workers:typeof Worker==='function',wasm:typeof WebAssembly==='object',offscreen:typeof OffscreenCanvas==='function'&&typeof createImageBitmap==='function',webp:document.createElement('canvas').toDataURL('image/webp').startsWith('data:image/webp')};
-let nextFile=0;
-function message(text,error=false){$('status').textContent=text;$('status').classList.toggle('error',error);}
-function progress(data){if(data.message)message(data.message);if(Number.isFinite(data.fraction)){$('progress').max=1;$('progress').value=data.fraction;}else $('progress').removeAttribute('value');}
+let nextFile=0,progressContext=null;
+function message(text,error=false){if($('status').textContent!==text)$('status').textContent=text;$('status').classList.toggle('error',error);}
+function progress(data){
+  if(data.message)message(data.message);
+  const fraction=Number.isFinite(data.fraction)?Math.max(0,Math.min(1,data.fraction)):null;
+  const overall=fraction===null?null:progressContext?(progressContext.index+fraction)/progressContext.total:fraction;
+  if(overall!==null){$('progress').max=1;$('progress').value=overall;}else $('progress').removeAttribute('value');
+  $('progress-percent').textContent=overall===null?'':`${Math.floor(overall*100)}%`;
+  $('progress-file').textContent=progressContext?.total>1?`File ${progressContext.index+1} of ${progressContext.total}`:'';
+  const estimate=data.phase==='processing'?timeRemaining(data.remaining):data.phase==='finalizing'?'Finishing file…':'';
+  $('progress-estimate').textContent=estimate&&progressContext?.total>1?`This file: ${estimate}`:estimate;
+}
+function resetProgress(context=null){progressContext=context;progress({fraction:null});}
 function option(value,text){const node=document.createElement('option');node.value=value;node.textContent=text;return node;}
 const outputLabel=target=>target==='jpg'?'JPG (.jpg)':target==='jpeg'?'JPEG (.jpeg)':formats[target]||target;
 function choices(row){return row.info?compatible(row.info,capabilities):[];}
@@ -26,6 +37,7 @@ function controls(){
   for(const id of ['file-input','drop-zone','clear-files','settings'])$(id).disabled=locked;
   $('cancel').hidden=!locked;$('cancel').disabled=state.canceled;
   $('progress').hidden=!locked;
+  $('progress-detail').hidden=!locked;
   const mode=$('batch-mode').value,count=state.files.filter(row=>selected(row)&&!row.error).length;
   $('convert').disabled=locked||!state.files.length||(mode==='each'&&!count);
   $('convert').textContent=state.busy?'Processing…':mode==='each'?count?`Convert ${count} file${count===1?'':'s'}`:'Convert files':mode==='combine-images'?'Create combined PDF':mode==='merge-pdf'?'Merge PDFs':'Create ZIP';
@@ -106,9 +118,9 @@ async function addFiles(incoming){
   if(state.busy||state.inspecting){message('Wait for the current task, or cancel it before adding more files.');return;}
   const files=[...incoming];$('file-input').value='';if(!files.length)return;
   if(state.files.length+files.length>LIMITS.files){message('Choose up to 100 files at a time.',true);return;}
-  if(files.some(file=>!file.size||file.size>LIMITS.file)){message('Files must be non-empty and 150 MB or less.',true);return;}
-  if([...state.files.map(row=>row.original),...files].reduce((sum,file)=>sum+file.size,0)>LIMITS.file){message('Keep the batch total at 150 MB or less.',true);return;}
-  clearResults();state.inspecting=true;state.canceled=false;controls();
+  if(files.some(file=>!file.size||file.size>LIMITS.file)){message('Files must be non-empty and 400 MB or less.',true);return;}
+  if([...state.files.map(row=>row.original),...files].reduce((sum,file)=>sum+file.size,0)>LIMITS.file){message('Keep the batch total at 400 MB or less.',true);return;}
+  clearResults();resetProgress();state.inspecting=true;state.canceled=false;controls();
   for(const original of files){
     if(state.canceled)break;
     const row={id:++nextFile,original,file:original,info:null,prepared:{},target:'',status:'Inspecting…',error:null};state.files.push(row);renderFiles();
@@ -159,7 +171,7 @@ async function runOne(row,settings){
 }
 function keepOutputs(outputs){
   const current=state.outputs.reduce((sum,out)=>sum+out.blob.size,0),incoming=outputs.reduce((sum,out)=>sum+out.bytes.length,0);
-  if(current+incoming>LIMITS.outputs)throw new Error('The batch outputs exceed 200 MB. Convert fewer files or choose a smaller output format.');
+  if(current+incoming>LIMITS.outputs)throw new Error('The batch outputs exceed 400 MB. Convert fewer files or choose a smaller output format.');
   if(state.outputs.length+outputs.length>LIMITS.entries)throw new Error('A batch can produce up to 500 outputs.');
   const renamed=uniqueNames([...state.outputs,...outputs]).slice(state.outputs.length);
   for(const output of renamed){const blob=new Blob([output.bytes],{type:output.type});state.outputs.push({name:output.name,type:output.type,blob,url:URL.createObjectURL(blob)});}
@@ -182,7 +194,7 @@ async function convert(){
   const settings=options(),mode=$('batch-mode').value,rows=mode==='each'?state.files.filter(row=>selected(row)&&!row.error):state.files;
   if(!rows.length)return;
   if(!$('settings').reportValidity())return;
-  clearResults();state.busy=true;state.canceled=false;state.control={canceled:false,cancel:null};controls();let errors=0;
+  clearResults();resetProgress();state.busy=true;state.canceled=false;state.control={canceled:false,cancel:null};controls();let errors=0;
   try{
     if(mode!=='each'){
       message(mode==='pack-zip'?'Packaging original files…':'Preparing combined PDF…');
@@ -194,7 +206,7 @@ async function convert(){
       if(state.canceled)throw new DOMException('Canceled','AbortError');keepOutputs(result);for(const row of rows)row.status='Done';
     }else for(const [index,row]of rows.entries()){
       if(state.canceled)break;
-      row.status='Processing…';renderFiles();progress({message:`Converting ${row.original.name} (${index+1}/${rows.length})…`,fraction:index/rows.length});
+      resetProgress({index,total:rows.length});row.status='Processing…';renderFiles();progress({message:`Converting ${row.original.name} (${index+1}/${rows.length})…`,fraction:0});
       try{const result=await runOne(row,settings);if(state.canceled)break;keepOutputs(result);row.status='Done';row.error=null;}
       catch(error){if(error.name==='AbortError'||state.canceled)break;row.error=error.message;row.status='Error';errors++;}
       renderFiles();await new Promise(resolve=>setTimeout(resolve,0));
@@ -214,6 +226,12 @@ function renderCatalog(){
     title.textContent=item.title;arrow.textContent='↗';arrow.setAttribute('aria-hidden','true');copy.append(title);button.append(copy,arrow);
     button.addEventListener('click',()=>{
       if(state.busy||state.inspecting){message('Finish or cancel the current task before selecting a conversion.');return;}
+      if(state.preferred?.id===item.id){
+        state.preferred=null;
+        for(const row of state.files)if(row.target===item.target&&choices(row).some(choice=>choice.id===item.id)){row.target='';row.status=row.error?'Error':'Choose an output';}
+        if(item.batch&&$('batch-mode').value===item.batch)$('batch-mode').value='each';
+        clearResults();refresh();renderCatalog();message(`${item.title} deselected.`);return;
+      }
       state.preferred=item;let changed=0;
       for(const row of state.files)if(choices(row).some(choice=>choice.id===item.id)){row.target=item.target;row.error=null;row.status='Ready';changed++;}
       clearResults();refresh();renderCatalog();message(changed?`${item.title} selected.`:`${item.title}: add ${item.batch==='merge-pdf'?'two or more PDFs':item.batch==='combine-images'?'images':item.batch==='pack-zip'?'files':formats[item.source]||'a file'}.`);
@@ -222,7 +240,7 @@ function renderCatalog(){
   }
   $('show-more').hidden=state.visible>=matches.length;
 }
-for(const category of categories){const button=document.createElement('button');button.type='button';button.className='converter-button';button.textContent=category;button.setAttribute('aria-pressed',String(category==='All'));button.addEventListener('click',()=>{state.category=category;state.visible=18;for(const item of $('category-filters').children)item.setAttribute('aria-pressed',String(item===button));renderCatalog();});$('category-filters').append(button);}
+for(const category of categories){const button=document.createElement('button');button.type='button';button.className='converter-button';button.textContent=category;button.setAttribute('aria-pressed',String(category==='All'));button.addEventListener('click',()=>{state.category=state.category===category?'All':category;state.visible=18;for(const item of $('category-filters').children)item.setAttribute('aria-pressed',String(item.textContent===state.category));renderCatalog();});$('category-filters').append(button);}
 $('catalog-search').addEventListener('input',()=>{state.visible=18;renderCatalog();});
 $('show-more').addEventListener('click',()=>{state.visible+=18;renderCatalog();});
 $('drop-zone').addEventListener('click',()=>$('file-input').click());
@@ -238,7 +256,7 @@ $('convert').addEventListener('click',convert);
 $('cancel').addEventListener('click',()=>{state.canceled=true;if(state.control){state.control.canceled=true;state.control.cancel?.();}worker.cancel();$('cancel').disabled=true;message('Canceling… Completed files will remain available.');});
 $('download-zip').addEventListener('click',async()=>{
   if(state.busy||state.inspecting||!state.outputs.length)return;
-  state.busy=true;state.canceled=false;controls();$('download-zip').disabled=true;
+  resetProgress();state.busy=true;state.canceled=false;controls();$('download-zip').disabled=true;
   try{
     message('Preparing ZIP…');const entries=await Promise.all(state.outputs.map(async output=>({name:output.name,bytes:new Uint8Array(await output.blob.arrayBuffer())})));
     if(state.canceled)throw new DOMException('Canceled','AbortError');

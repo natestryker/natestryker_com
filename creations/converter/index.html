@@ -11,13 +11,13 @@
 <header class="site-header"><div class="wrap header-inner"><a class="brand" href="/">natestryker.com</a><nav class="nav-links" aria-label="Main navigation"><a href="/about/">About Me</a><a href="/games/">Game-Stuff</a><a href="/creations/" class="active">Creations</a><a href="/archive/">Archive</a><a href="/league/">Account Tracker</a></nav></div></header>
 <main class="wrap inside-main converter-main">
   <a class="converter-back" href="/creations/">&larr; Back to Creations</a>
-  <div class="page-intro"><h1>File Converter<span class="heading-dot">.</span></h1><span class="privacy-note">Files stay on your device.</span></div>
+  <div class="page-intro"><h1>File Converter</h1><span class="privacy-note">Files stay on your device.</span></div>
   <noscript><p>JavaScript is required for local conversion. Your files are never sent to a server.</p></noscript>
   <div class="converter-layout" id="workspace">
     <section class="surface-panel converter-panel file-panel" aria-labelledby="files-heading">
       <div class="panel-heading"><h2 id="files-heading"><span>01</span> Files</h2><a href="#catalog" class="catalog-jump">Browse &darr;</a></div>
       <input id="file-input" type="file" multiple hidden>
-      <button id="drop-zone" class="drop-zone" type="button"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M29 6H14a4 4 0 0 0-4 4v28a4 4 0 0 0 4 4h20a4 4 0 0 0 4-4V16L29 6Z"/><path d="M28 6v11h10M24 34V22m-5 5 5-5 5 5"/></svg><strong>Drop files here</strong><span>or click to browse</span><small class="drop-limits">100 files &middot; 150 MB total &middot; media: 64 MB each</small></button>
+      <button id="drop-zone" class="drop-zone" type="button"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M29 6H14a4 4 0 0 0-4 4v28a4 4 0 0 0 4 4h20a4 4 0 0 0 4-4V16L29 6Z"/><path d="M28 6v11h10M24 34V22m-5 5 5-5 5 5"/></svg><strong>Drop files here</strong><span>or click to browse</span><small class="drop-limits">100 files &middot; 400 MB total &middot; no audio or video duration limit</small></button>
       <div class="file-toolbar" id="file-toolbar" hidden><span id="file-count"></span><button id="clear-files" class="converter-button" type="button">Clear all</button></div>
       <ol id="file-list" class="file-list" aria-label="Files and compatible output formats"></ol>
     </section>
@@ -47,7 +47,7 @@
         <label class="converter-field" id="watermark-field" hidden>Watermark text<input id="watermark" type="text" maxlength="100" placeholder="e.g. DRAFT"></label>
         <div id="media-settings" class="converter-fields" hidden>
           <label class="converter-field">Start (seconds)<input id="start-time" type="number" min="0" step="0.1" value="0"></label>
-          <label class="converter-field">Duration (seconds)<input id="clip-duration" type="number" min="0" step="0.1" placeholder="To end"><small>Max: audio 20 min &middot; video 5 min &middot; GIF 30 sec</small></label>
+          <label class="converter-field">Duration (seconds)<input id="clip-duration" type="number" min="0" step="0.1" placeholder="To end"><small>Optional. Leave blank to convert to the end.</small></label>
         </div>
         <div id="audio-settings" class="converter-fields" hidden>
           <label class="converter-field">Bitrate<select id="bitrate"><option value="128">128 kbps</option><option value="192" selected>192 kbps</option><option value="256">256 kbps</option><option value="320">320 kbps</option></select></label>
@@ -65,14 +65,14 @@
       <button id="convert" class="converter-button primary convert-action" type="button" disabled>Convert files</button><button id="cancel" class="converter-button convert-action" type="button" hidden>Cancel</button>
     </section>
   </div>
-  <div class="conversion-feedback"><p id="status" class="converter-status" role="status" aria-live="polite"></p><progress id="progress" class="converter-progress" hidden aria-label="Conversion progress"></progress></div>
+  <div class="conversion-feedback"><p id="status" class="converter-status" role="status" aria-live="polite"></p><progress id="progress" class="converter-progress" hidden aria-label="Conversion progress" aria-describedby="progress-detail"></progress><div id="progress-detail" class="progress-detail" hidden><span id="progress-percent"></span><span id="progress-file"></span><span id="progress-estimate"></span></div></div>
   <section id="results" class="converter-results" aria-labelledby="results-title" hidden><div class="results-heading"><div><h2 id="results-title">Downloads</h2><p id="results-summary" class="converter-hint"></p></div><button id="download-zip" class="converter-button primary" type="button">Download ZIP</button><a id="zip-link" class="converter-button primary" hidden>Download ZIP</a></div><div id="result-grid" class="result-grid"></div></section>
   <section id="catalog" class="converter-catalog" aria-labelledby="catalog-heading"><div class="catalog-intro"><div><h2 id="catalog-heading">Converters</h2></div><span id="catalog-total" hidden></span></div>
     <label class="catalog-search"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><span class="visually-hidden">Search converters</span><input id="catalog-search" type="search" placeholder="Search formats..." autocomplete="off"></label>
     <div id="category-filters" class="category-filters" role="group" aria-label="Converter categories"></div>
     <p id="catalog-status" class="converter-hint" role="status"></p><div id="catalog-list" class="catalog-list"></div><button id="show-more" class="converter-button catalog-more" type="button" hidden>Show more</button>
   </section>
-  <details class="converter-info converter-help"><summary>Help &amp; limits</summary><p>Text: 5 MB. Images: 16 megapixels. Archives: 150 MB / 500 files. Total output: 200 MB. Keep this tab open until conversion finishes.</p><p><a href="./support/">Formats &amp; limitations</a> &middot; <a href="./licenses/">Credits</a></p></details>
+  <details class="converter-info converter-help"><summary>Help &amp; limits</summary><p>Files: 400 MB total. No audio, video or GIF duration limit. Text: 5 MB. Images: 16 megapixels. Extracted archives: 150 MB / 500 files. Frame export: 200 frames. Total output: 400 MB. Keep this tab open until conversion finishes.</p><p><a href="./support/">Formats &amp; limitations</a> &middot; <a href="./licenses/">Credits</a></p></details>
 </main>
 <footer class="site-footer"><div class="wrap footer-inner"><span>&copy; 2026 Nate &middot; natestryker.com</span></div></footer>
 </body></html>

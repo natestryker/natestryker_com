@@ -5,7 +5,7 @@ async function handle({id,action,file,info,target,options={},prepared={},files,i
   try{
     const C=await import('./core.mjs');let result;
     if(action==='inspect'){
-      if(file.size>C.LIMITS.file)throw new Error('Files must be 150 MB or less.');
+      if(file.size>C.LIMITS.file)throw new Error('Files must be 400 MB or less.');
       const head=new Uint8Array(await file.slice(0,65536).arrayBuffer());let format=C.signature(head),details={};
       if(format==='zip'){
         const A=await import('./archive.mjs'),index=A.zipIndex(new Uint8Array(await file.arrayBuffer())),names=index.map(item=>item.path);

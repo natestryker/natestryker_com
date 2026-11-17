@@ -1,5 +1,5 @@
-.heading-dot{color:var(--orange)}
 .converter-button.primary[href]:hover{background:var(--orange-hover);color:var(--bg);border-color:var(--orange-hover)}
+.progress-detail{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:10px;color:var(--muted);font:12px/1.6 Arial,sans-serif;font-variant-numeric:tabular-nums}.progress-detail[hidden]{display:none}.progress-detail span:empty{display:none}#progress-percent{color:var(--text)}#progress-estimate{margin-left:auto}
 .active-notes{white-space:pre-line;padding:13px;border:1px solid #544137;border-radius:7px;background:#201e25;color:#d2bdac;font-size:11px}
 .converter-help summary{cursor:pointer;color:var(--muted);font-size:12px}.converter-help[open] summary{margin-bottom:12px}.converter-help summary:hover{color:var(--orange-hover)}
 .converter-main .intro-copy{font-size:16px;line-height:1.75}.converter-main .page-intro{margin-bottom:32px}

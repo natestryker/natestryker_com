@@ -4,6 +4,53 @@ import {parsePages, pageLayout, filename} from '../creations/pdf-image-converter
 import {signature, orderedPages, safePath, uniqueNames, dataCapabilities, rowsOf, recordsOf, sqlOf, validateData} from '../creations/converter/core.mjs';
 import {catalog, compatible, searchCatalog} from '../creations/converter/catalog.mjs';
 import {tar, untar, zipIndex} from '../creations/converter/archive.mjs';
+import {mediaDuration,MediaProgress,timeRemaining} from '../creations/converter/progress.mjs';
+import {readFile} from 'node:fs/promises';
+import vm from 'node:vm';
+
+test('media progress estimates the selected clip rather than the full source duration',()=>{
+  assert.equal(mediaDuration({duration:3600},{start:120,duration:60}),60);
+  assert.equal(mediaDuration({duration:3600},{start:3500,duration:600}),100);
+  assert.equal(mediaDuration({duration:3600},{}),3600);
+  let clock=0;const estimate=new MediaProgress(60,()=>clock);
+  assert.equal(estimate.update(0).remaining,null,'No estimate before encoding starts');
+  clock=2000;assert.equal(estimate.update(10e6).remaining,null,'Allow a warm-up period');
+  clock=10000;let update=estimate.update(20e6);
+  assert.equal(update.fraction,1/3);assert.equal(update.remaining,20);
+  clock=30000;update=estimate.update(40e6);
+  assert.equal(update.fraction,2/3);assert.equal(update.remaining,15,'Estimate adapts to actual speed');
+  assert.equal(estimate.update(-1).fraction,2/3,'Timestamps cannot move progress backward');
+  update=estimate.update(90e6);assert.equal(update.fraction,.99);assert.equal(update.phase,'finalizing');assert.equal(update.remaining,null);
+});
+
+test('unknown media duration stays indeterminate and each encoding gets a fresh estimate',()=>{
+  let clock=0;const unknown=new MediaProgress(0,()=>clock);clock=10000;
+  assert.deepEqual(unknown.update(20e6),{fraction:null,remaining:null,phase:'processing'});
+  const next=new MediaProgress(100,()=>clock);
+  assert.equal(next.update(NaN).fraction,0);assert.equal(next.update(10e6).remaining,null);
+  assert.equal(timeRemaining(null),'Estimating time remaining…');
+  assert.equal(timeRemaining(Infinity),'Estimating time remaining…');
+  assert.equal(timeRemaining(25),'Less than a minute remaining');
+  assert.equal(timeRemaining(121),'About 3 min remaining');
+  assert.equal(timeRemaining(3660),'About 1 hr 1 min remaining');
+});
+
+test('long media jobs have no client timeout and remain cancelable',async()=>{
+  const source=await readFile(new URL('../creations/converter/client.mjs',import.meta.url),'utf8');
+  const timers=new Set(),workers=[];
+  const context={URL,DOMException,setTimeout:callback=>{timers.add(callback);return callback;},clearTimeout:timer=>timers.delete(timer),Worker:class{
+    constructor(){workers.push(this);}
+    postMessage(data){this.request=data;}
+    terminate(){this.terminated=true;}
+  }};
+  vm.runInNewContext(source.replace('export class','class').replace('import.meta.url',JSON.stringify(new URL('../creations/converter/client.mjs',import.meta.url).href))+';globalThis.client=new ConverterWorker();',context);
+  const media=context.client.call('convert',{options:{engine:'media'}});
+  assert.equal(timers.size,0,'A multi-hour encoding must not arm the four-minute watchdog');
+  context.client.cancel();await assert.rejects(media,{name:'AbortError'});assert.equal(workers[0].terminated,true);
+  const next=context.client.call('inspect',{});assert.equal(workers.length,2);assert.equal(timers.size,1);
+  workers[1].onmessage({data:{id:workers[1].request.id,event:'result',result:{format:'mp4'}}});
+  assert.equal((await next).format,'mp4');assert.equal(timers.size,0,'Completed requests clear their timer');
+});
 
 test('page selection deduplicates ranges and rejects nonexistent or excessive pages', () => {
   assert.deepEqual(parsePages('5, 1, 3-5', 8), [1, 3, 4, 5]);

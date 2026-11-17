@@ -26,7 +26,7 @@ export async function readPDF(file,target,options,progress,control){
         const format=target==='pdf-zip'?'png':target,type=['jpg','jpeg'].includes(format)?'image/jpeg':`image/${format}`;
         const blob=await new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('Image export failed. Try a lower resolution.')),type,Number(options.quality)||.9));
         if(blob.type!==type)throw new Error('Your browser does not support this image encoder.');
-        const bytes=new Uint8Array(await blob.arrayBuffer());total+=bytes.length;if(total>LIMITS.outputs)throw new Error('These pages exceed 200 MB. Select fewer pages or a lower DPI.');
+        const bytes=new Uint8Array(await blob.arrayBuffer());total+=bytes.length;if(total>LIMITS.outputs)throw new Error('These pages exceed 400 MB. Select fewer pages or a lower DPI.');
         outputs.push({name:stem(file.name)+'-page-'+number+'.'+format,bytes,type});canvas.width=canvas.height=0;canvas=null;
       }
       page.cleanup();await new Promise(resolve=>setTimeout(resolve,0));
