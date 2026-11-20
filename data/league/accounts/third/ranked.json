@@ -1027,5 +1027,26 @@
         "losses": 73
       }
     ]
+  },
+  {
+    "at": "2026-11-20T20:20:14.771Z",
+    "entries": [
+      {
+        "queueType": "RANKED_FLEX_SR",
+        "tier": "EMERALD",
+        "rank": "I",
+        "leaguePoints": 75,
+        "wins": 28,
+        "losses": 21
+      },
+      {
+        "queueType": "RANKED_SOLO_5x5",
+        "tier": "MASTER",
+        "rank": "I",
+        "leaguePoints": 766,
+        "wins": 100,
+        "losses": 73
+      }
+    ]
   }
 ]
