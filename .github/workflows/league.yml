@@ -26,7 +26,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --test scripts/site-routes.test.mjs scripts/converters.test.mjs scripts/league/*.test.mjs
+      - run: node --test scripts/site-routes.test.mjs scripts/tank-intel.test.mjs scripts/converters.test.mjs scripts/league/*.test.mjs
         id: tests
       - name: Collect Riot data
         id: collect

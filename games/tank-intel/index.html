@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1120">
+  <meta name="description" content="Seven daily World of Tanks trivia prompts. Name current and historical vehicles, maps, equipment, and awards. Find the Tank Ace answer for maximum points.">
+  <title>Tank Intel | natestryker.com</title>
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+  <link rel="canonical" href="https://natestryker.com/games/tank-intel/">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="/assets/clean-urls.js"></script>
+  <script src="game.js" type="module"></script>
+</head>
+<body class="site-page tank-intel">
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="/" aria-label="natestryker.com — homepage">natestryker.com</a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="/about/">About Me</a>
+        <a href="/games/">Game-Stuff</a>
+        <a href="/creations/" class="active" aria-current="page">Creations</a>
+        <a href="/archive/">Archive</a>
+        <a href="/league/">Account Tracker</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap inside-main">
+    <a class="back-link" href="/creations/">Back to Creations</a>
+    <section class="page-intro mast" aria-labelledby="title">
+      <div>
+        <p class="eyebrow">World of Tanks PC trivia</p>
+        <h1 id="title">Tank Intel</h1>
+        <p class="intro-copy">Seven prompts. Score more for the answers fewer players would think of.</p>
+      </div>
+      <nav class="game-modes" id="game-modes" aria-label="Game modes">
+        <button class="btn" id="daily" type="button">Daily</button>
+        <button class="btn review-access" id="practice" type="button" aria-label="Review all prompts and answers">Review</button>
+      </nav>
+    </section>
+    <div class="console" id="daily-console">
+      <section class="card" id="game" aria-label="Trivia game"><p>Loading the garage…</p></section>
+      <aside class="card side" aria-label="Score and progress">
+        <h2>Field report</h2>
+        <div class="readout"><span id="score">0</span> <small>/ 700 pts</small></div>
+        <div class="track" id="progress" aria-label="Round progress"></div>
+        <div class="rarity-legend" id="rarity-legend" aria-label="Answer rarities and points"></div>
+        <p id="mode-note">The daily set changes at 12:00 a.m. Eastern.</p>
+      </aside>
+    </div>
+    <section class="card review-panel" id="review" aria-labelledby="review-title" hidden>
+      <div class="review-heading"><div><p class="eyebrow">Quality verification</p><h2 id="review-title">Prompt and answer review</h2><p id="review-summary"></p></div><button class="btn" id="review-back" type="button">Back to daily</button></div>
+      <details class="rarity-method"><summary>How rarity is determined</summary>
+        <p>Vehicle recognition is estimated from tracked-player counts (60%), lifetime battle counts (30%), and presence across historical rosters (10%). Counts combine NA and EU samples; they do not cover every player. Missing data uses an availability estimate, not zero popularity.</p>
+        <p>Maps, equipment, consumables, and awards use labelled availability or condition estimates. These are recognition proxies, not a survey of player answers. Rarity is relative to each prompt: four familiarity bands, plus exactly one Tank Ace. Exposure ties use alphabetical order so scoring stays consistent.</p>
+      </details>
+      <div class="review-controls"><label>Search prompts, answers, or aliases<input id="review-search" type="search" placeholder="e.g. WT E100, retired maps, optics"></label><label>Rarity<select id="review-rarity"></select></label></div>
+      <div class="review-tools"><p id="review-count" role="status"></p><button class="quiet" id="review-expand" type="button">Expand all</button><button class="quiet" id="review-collapse" type="button">Collapse all</button></div>
+      <div id="review-list"></div>
+    </section>
+    <details class="source-note">
+      <summary>Answer sources and scope</summary>
+      <p>Unofficial World of Tanks PC fan game. Current and historical vehicles, removed maps, and retired equipment count when they fit the prompt. Test-only vehicles and internal map placeholders are excluded. Recognition ratings are estimates based on observed popularity and availability; they are not surveyed answer frequencies.</p>
+      <p><a href="https://tanks.gg/list">tanks.gg vehicle data</a> · <a href="https://unicum.gg/docs/tanks/get-region-tanks">NA/EU population samples</a> · <a href="https://unicum.gg/na/maps">Map history</a> · <a href="https://worldoftanks.eu/en/content/guide/game-mechanics-and-achievements/equipment/">Equipment</a> · <a href="https://worldoftanks.eu/en/content/guide/game-mechanics-and-achievements/consumables/">Consumables</a></p>
+    </details>
+    <noscript><p>Enable JavaScript to play Tank Intel.</p></noscript>
+  </main>
+  <footer class="site-footer"><div class="wrap footer-inner"><span>© 2026 Nate · natestryker.com</span></div></footer>
+</body>
+</html>
